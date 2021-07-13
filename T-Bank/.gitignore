@@ -1,0 +1,11 @@
+.idea/
+build/
+target/
+out/
+
+*.ipr
+*.iml
+*.iws
+*.log
+*.mdmp
+*.class

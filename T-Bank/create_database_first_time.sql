@@ -1,0 +1,1 @@
+create database t_bank_db;

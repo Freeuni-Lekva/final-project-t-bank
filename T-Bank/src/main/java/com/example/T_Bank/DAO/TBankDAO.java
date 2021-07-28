@@ -28,11 +28,13 @@ public class TBankDAO {
     }
 
     public Account login(String userName, String password){
+        return accountDao.login(userName, password);
 
-        return null;
     }
 
-    public boolean register(){
-        return true;
+    public boolean register(String firstName, String lastName, String personalId,
+                            String userName, String password, String birthdate){
+        return accountDao.register(firstName, lastName, personalId,
+                    userName, password, birthdate);
     }
 }

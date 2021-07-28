@@ -8,7 +8,8 @@ public class Account {
     private String password;
     private int accountId;
 
-    public Account(String userName, String firstName, String lastName, String personalId, String password, int accountId) {
+    public Account(String userName, String firstName, String lastName,
+                   String personalId, String password, int accountId) {
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;

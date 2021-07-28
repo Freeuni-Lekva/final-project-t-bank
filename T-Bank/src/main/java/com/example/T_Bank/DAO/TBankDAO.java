@@ -1,5 +1,7 @@
 package com.example.T_Bank.DAO;
 
+import com.example.T_Bank.DAO.Implementations.AccountDAOImplementation;
+import com.example.T_Bank.Storage.Account;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.sql.Connection;
@@ -9,6 +11,7 @@ import java.sql.SQLException;
 public class TBankDAO {
     private BasicDataSource dataSource;
     private Connection connection;
+    private AccountDAO accountDao;
     public TBankDAO(){
         dataSource = new BasicDataSource();
 
@@ -21,5 +24,15 @@ public class TBankDAO {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        accountDao = new AccountDAOImplementation(connection);
+    }
+
+    public Account login(String userName, String password){
+
+        return null;
+    }
+
+    public boolean register(){
+        return true;
     }
 }

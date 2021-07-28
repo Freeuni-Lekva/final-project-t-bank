@@ -18,7 +18,7 @@ public class AccountDAOImplementation implements AccountDAO {
     }
 
     @Override
-    public void register() {
-
+    public boolean register() {
+        return true;
     }
 }

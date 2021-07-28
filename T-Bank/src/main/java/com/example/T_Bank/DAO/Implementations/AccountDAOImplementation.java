@@ -10,7 +10,6 @@ public class AccountDAOImplementation implements AccountDAO {
 
     public AccountDAOImplementation(Connection connection){
         this.connection = connection;
-//        sfeisebi
     }
 
     @Override

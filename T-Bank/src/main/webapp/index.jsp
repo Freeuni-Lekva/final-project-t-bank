@@ -2,12 +2,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JSP - Hello World</title>
+    <title>TBank Login</title>
+    <link rel="stylesheet" href="TBank.css" />
 </head>
 <body>
-<h1><%= "Hello World!" %>
-</h1>
-<br/>
-<a href="hello-servlet">Hello Servlet</a>
+
+
+<div class="loginForm">
+        <h1 class="header"> Welcome to TBank </h1>
+        <h3 > Please Fill in Username and Password.</h3>
+        <form action="LoginServlet" method="get">
+        <label>Username: </label>
+            <label>
+                <input type="text" name="username" placeholder="Enter Username..."/>
+            </label>
+            <br>
+        <h4> ${username}</h4>
+
+        <label>Password: </label>
+            <label>
+                <input type="password" name="password" placeholder="Enter Password..."/>
+            </label>
+            <br>
+            <br>
+            <button type="submit">Login</button>
+            <br>
+            <p>New to TBank? <a href="RegisterPage.jsp">Register.</a> </p>
+        <% //RegisterServlet should be added and reference should be added to that servlet as well. %>
+    </form>
+</div>
+
+
+
+
+
+
 </body>
 </html>

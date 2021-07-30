@@ -11,7 +11,7 @@
 <div class="loginForm">
         <h1 class="header"> Welcome to TBank </h1>
         <h3 > Please Fill in Username and Password.</h3>
-        <form action="LoginServlet" method="get">
+        <form action="LoginServlet" method="post">
         <label>Username: </label>
             <label>
                 <input type="text" name="username" placeholder="Enter Username..."/>

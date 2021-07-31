@@ -46,7 +46,6 @@ public class RegisterServlet extends HttpServlet {
         } else {
             Account account = tBank.register(firstName, lastName, id, username, password, birthDate);
             if (account.isValidAccount()) {
-                tBank.login(username, password);
                 request.getRequestDispatcher("index.jsp").forward(request, response);
             } else {
                 res = account.getErrorMessage().toString();
@@ -78,7 +77,7 @@ public class RegisterServlet extends HttpServlet {
                 "        <label>ID</label><br>\n" +
                 "        <input type=\"text\" name=\"id\" placeholder=\"Enter your ID...\"><br><br>\n" +
                 "        <label>Birth Date</label><br>\n" +
-                "        <input type=\"text\" name=\"birthDate\" placeholder=\"Enter your Birth Date...\"><br><br>\n" +
+                "        <input type=\"date\" name=\"birthDate\" placeholder=\"Enter your Birth Date...\"><br><br>\n" +
                 "        <label>User Name</label><br>\n" +
                 "        <input type=\"text\" name=\"username\" placeholder=\"Enter your User Name...\"><br><br>\n" +
                 "        <label>Password</label><br>\n" +

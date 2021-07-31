@@ -24,6 +24,9 @@ public class TBankDAO {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        if(connection != null){
+            System.out.println("connection not null");
+        }
         accountDao = new AccountDAOImplementation(connection);
     }
 

@@ -16,6 +16,8 @@ public class AccountDAOImplementation implements AccountDAO {
         accounts = new ArrayList<>();
     }
 
+
+
     private Account badAccount(ErrorMessage errorMessage){
         Account badAccount = new Account(null, null, null, null,
                 null, -1, false, errorMessage);

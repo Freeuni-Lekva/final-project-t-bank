@@ -1,17 +1,22 @@
 package com.example.T_Bank.DAO;
 
 import com.example.T_Bank.DAO.Implementations.AccountDAOImplementation;
+import com.example.T_Bank.DAO.Implementations.CardDAOImplementation;
 import com.example.T_Bank.Storage.Account;
+import com.example.T_Bank.Storage.CardInfo;
+import com.example.T_Bank.Storage.CardType;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 
 public class TBankDAO {
     private BasicDataSource dataSource;
     private Connection connection;
     private AccountDAO accountDao;
+    private CardDAO cardDao;
     public TBankDAO(){
         dataSource = new BasicDataSource();
 
@@ -28,6 +33,17 @@ public class TBankDAO {
             System.out.println("connection not null");
         }
         accountDao = new AccountDAOImplementation(connection);
+        cardDao = new CardDAOImplementation(connection);
+    }
+
+    public CardInfo addCard(int accountId, CardType cardType, String cardName){
+        return null;
+    }
+    public List<CardType> getCardTypes(){
+        return null;
+    }
+    public List<CardInfo> getAccountCards(int accountId){
+        return null;
     }
 
     public Account login(String userName, String password){
@@ -39,4 +55,5 @@ public class TBankDAO {
         return accountDao.register(firstName, lastName, personalId,
                     userName, password, birthdate);
     }
+
 }

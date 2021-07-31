@@ -46,7 +46,8 @@ public class RegisterServlet extends HttpServlet {
         } else {
             Account account = tBank.register(firstName, lastName, id, username, password, birthDate);
             if (account.isValidAccount()) {
-                request.getRequestDispatcher("index.jsp").forward(request, response);
+                request.setAttribute("username",username);
+                request.getRequestDispatcher("AccountPage.jsp").forward(request, response);
             } else {
                 res = account.getErrorMessage().toString();
             }
@@ -63,12 +64,13 @@ public class RegisterServlet extends HttpServlet {
                 "\n" +
                 "<head>\n" +
                 "    <title>Register</title>\n" +
+                "    <link rel=\"stylesheet\" href=\"TBank.css\" />\n" +
                 "</head>\n" +
                 "\n" +
                 "<body>\n" +
-                "<div>\n" +
-                "    <form action=\"RegisterServlet\" method=\"post\" class=\"registrationForm\">\n" +
-                "        <H1 name=\"title\">Create New Account</H1>\n" +
+                "<div class=\"form\">\n" +
+                "    <form action=\"RegisterServlet\" method=\"post\" >\n" +
+                "        <H1 class=\"header\"name=\"title\">Create New Account</H1>\n" +
                 "        <br>\n" +
                 "        <label>First name</label><br>\n" +
                 "        <input type=\"text\" name=\"firstName\" placeholder=\"Enter your First Name...\"><br><br>\n" +
@@ -77,16 +79,16 @@ public class RegisterServlet extends HttpServlet {
                 "        <label>ID</label><br>\n" +
                 "        <input type=\"text\" name=\"id\" placeholder=\"Enter your ID...\"><br><br>\n" +
                 "        <label>Birth Date</label><br>\n" +
-                "        <input type=\"date\" name=\"birthDate\" placeholder=\"Enter your Birth Date...\"><br><br>\n" +
+                "        <input type=\"date\" name=\"birthDate\"><br><br>\n" +
                 "        <label>User Name</label><br>\n" +
                 "        <input type=\"text\" name=\"username\" placeholder=\"Enter your User Name...\"><br><br>\n" +
                 "        <label>Password</label><br>\n" +
                 "        <input type=\"password\" name=\"password\" placeholder=\"Enter your Password...\"><br><br>\n" +
                 "        <label>Confirm Password</label><br>\n" +
                 "        <input type=\"password\" name=\"repeatPassword\" placeholder=\"Confirm your Password...\"><br>\n" +
-                "        <h3 style=\"color: red\">" + errorMessage + "</h3>\n" +
+                "        <h4 style=\"color: red\">" + errorMessage + "</h4>\n" +
                 "        <button type=\"submit\">Create Account</button>\n" +
-                "        <h6>Already an user? <a href=\"index.jsp\">Log in</a></h6>\n" +
+                "        <p>Already an user? <a href=\"index.jsp\">Log in</a></p>\n" +
                 "    </form>\n" +
                 "</div>\n" +
                 "</body>\n" +

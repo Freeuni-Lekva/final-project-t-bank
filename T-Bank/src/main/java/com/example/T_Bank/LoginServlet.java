@@ -21,14 +21,13 @@ public class LoginServlet extends HttpServlet {
         TBankDAO tBankDAO= (TBankDAO) context.getAttribute("TBankDAO");
         String username=request.getParameter("username");
         String password=request.getParameter("password");
-        String errorMessage="Username " + username + " doesn't exist.";
         Account account=tBankDAO.login(username,password);
         if(account.isValidAccount()) {
             request.setAttribute("firstName",account.getFirstName());
             request.setAttribute("username",username);
             request.getRequestDispatcher("AccountPage.jsp").forward(request,response);
         } else {
-            request.setAttribute("username",errorMessage);
+            request.setAttribute("username",account.getErrorMessage());
             request.getRequestDispatcher("index.jsp").forward(request,response);
         }
         //else another jsp pops up.

@@ -5,12 +5,13 @@
 
 <head>
     <title>Register</title>
+    <link rel="stylesheet" href="TBank.css"/>
 </head>
 
 <body>
-<div>
-    <form action="RegisterServlet" method="post" class="registrationForm">
-        <H1 name="title">Create New Account</H1>
+<div class="form">
+    <form action="RegisterServlet" method="post">
+        <H1 class="header" name="title">Create New Account</H1>
         <br>
         <label>First name</label><br>
         <input type="text" name="firstName" placeholder="Enter your First Name..."><br><br>
@@ -26,9 +27,9 @@
         <input type="password" name="password" placeholder="Enter your Password..."><br><br>
         <label>Confirm Password</label><br>
         <input type="password" name="repeatPassword" placeholder="Confirm your Password..."><br>
-        <h3 style="color: red">${errorMessage}</h3>
+        <h4 style="color: red">${errorMessage}</h4>
         <button type="submit">Create Account</button>
-        <h6>Already an user? <a href="index.jsp">Log in</a></h6>
+        <p>Already an user? <a href="index.jsp">Log in</a></p>
     </form>
 </div>
 </body>

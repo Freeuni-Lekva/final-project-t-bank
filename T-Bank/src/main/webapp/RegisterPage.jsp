@@ -19,7 +19,7 @@
         <label>ID</label><br>
         <input type="text" name="id" placeholder="Enter your ID..."><br><br>
         <label>Birth Date</label><br>
-        <input type="date" name="birthDate" placeholder="Enter your Birth Date..."><br><br>
+        <input type="date" name="birthDate"><br><br>
         <label>User Name</label><br>
         <input type="text" name="username" placeholder="Enter your User Name..."><br><br>
         <label>Password</label><br>

@@ -8,9 +8,15 @@ public class Tester {
     @Test
     public void testSimple(){
         TBankDAO dao = new TBankDAO();
-        Account natenaAccount = dao.register("natena", "natenadze", "00700700700",
-                    "nateasfafna007", "zaza-testlia", "");
-        System.out.println(natenaAccount);
+//        Account takoAccount = dao.register("tako", "tristanichi", "00000000001",
+//                "tjz", "cimaka", null);
+//        System.out.println(takoAccount);
+        Account bandziTako = dao.register("tako", "tristanichi", "00000000001",
+                "tjz", "cimaka", null);
+        System.out.println(bandziTako);
+        Account ufroBandziTako = dao.register("tako", "tristanichi", "00000000001",
+                "tjz-001", "cimaka", null);
+        System.out.println(ufroBandziTako);
 
     }
 }

@@ -58,33 +58,40 @@ public class AccountDAOImplementation implements AccountDAO {
         return badAccount(ErrorMessage.AccountNotValid);
     }
 
+    private boolean checkCountOf(String checkColumnName, String checkValue){
+        String checkQuery = "select count(*) from accounts where " + checkColumnName +
+                " = ?";
+        try {
+            PreparedStatement stm = connection.prepareStatement(checkQuery);
+            stm.setString(1, checkValue);
+            ResultSet resultSet = stm.executeQuery();
+            resultSet.next();
+            if(resultSet.getInt(1) > 0){
+                return false;
+            }
+            return true;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return false;
+    }
+
     @Override
     public Account register(String firstName, String lastName, String personalId,
                             String userName, String password, String birthdate) {
 
-        String userNameQuery = "select count(*) from accounts where user_name = ?";
+        if(!checkCountOf("user_name", userName)){
+            return badAccount(ErrorMessage.UserNameAlreadyExists);
+        }
+        if(!checkCountOf("personal_id", personalId)){
+            return badAccount(ErrorMessage.PersonalIdAlreadyExists);
+        }
+        String registerQuery = "insert into accounts " +
+                " (first_name, last_name, personal_id," +
+                " user_name, user_password, birth_date) " +
+                "values ( ?, ?, ?, ?, ?, ?)";
         try {
-            PreparedStatement stm = connection.prepareStatement(userNameQuery);
-            stm.setString(1, userName);
-            ResultSet rs = stm.executeQuery();
-            rs.next();
-            if(rs.getInt(1) > 0){
-                return badAccount(ErrorMessage.UserNameAlreadyExists);
-            }
-
-            String personalIdQuery = "select count(*) from accounts where personal_id = ?";
-            stm = connection.prepareStatement(personalIdQuery);
-            stm.setString(1, personalId);
-            rs = stm.executeQuery();
-            rs.next();
-            if(rs.getInt(1) > 0){
-                return badAccount(ErrorMessage.PersonalIdAlreadyExists);
-            }
-
-            String registerQuery = "insert into accounts " +
-                    " (first_name, last_name, personal_id," +
-                    " user_name, user_password, birth_date) " +
-                    "values ( ?, ?, ?, ?, ?, ?)";
+            PreparedStatement stm = connection.prepareStatement(registerQuery);
             stm = connection.prepareStatement(registerQuery);
             stm.setString(1, firstName);
             stm.setString(2, lastName);

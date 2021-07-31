@@ -1,0 +1,79 @@
+body {
+    background-image: url(https://newtonfoxbds.com/wp-content/uploads/2019/04/money-background.jpg);
+    background-size: auto;
+
+}
+
+p {
+    font-family:sans-serif;
+    font-weight:bold;
+    font-size:16px;
+    margin-bottom:5px;
+}
+
+h1 {
+    text-align:center;
+
+}
+
+h3 {
+    font-family: sans-serif;
+
+}
+
+h4 {
+    color:red;
+    font-family: sans-serif;
+}
+
+label {
+    margin:2px;
+    font-family: sans-serif;
+    font-size:15px;
+    font-weight: bold;
+}
+
+.loginForm {
+
+    background: sandybrown;
+    max-width:400px;
+    padding:20px;
+    border-radius:15px;
+    margin: 50px auto auto;
+
+}
+
+input {
+
+    padding:5px;
+    width:384px;
+    margin-top:5px;
+    border-radius:5px;
+    font-weight: bold;
+
+
+}
+
+button {
+    padding:10px;
+    margin-top:10px;
+    width:400px;
+    background-color: cornflowerblue;
+    font-family: Impact, Helvetica;
+    font-size:25px;
+    border-radius:10px;
+}
+
+button:hover {
+    font-size:30px;
+    border:2px solid;
+    box-shadow:0 10px 20px;
+}
+
+
+
+.header {
+    font-family: Impact, Helvetica;
+    font-size:40px;
+
+}

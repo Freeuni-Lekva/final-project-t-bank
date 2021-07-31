@@ -24,13 +24,12 @@ CREATE TABLE card_types(
                            primary key(card_type_id)
 );
 
-INSERT INTO card_types	(card_type, card_desc, card_limit)
-values('MasterCard', 'standard card', 20000);
-INSERT INTO card_types	(card_type, card_desc, card_limit)
-values('VISA', '', 50000);
-INSERT INTO card_types	(card_type, card_desc, card_limit)
-values('AMEX', 'Super Rich Card', 1000000);
-
+INSERT INTO card_types	(card_type_id, card_type, card_desc, card_limit)
+values(1, 'MasterCard', 'standard card', 20000);
+INSERT INTO card_types	(card_type_id, card_type, card_desc, card_limit)
+values(2, 'VISA', '', 50000);
+INSERT INTO card_types	(card_type_id, card_type, card_desc, card_limit)
+values(3, 'AMEX', 'Super Rich Card', 1000000);
 
 CREATE TABLE account_cards(
                               account_card_id int auto_increment,
@@ -44,4 +43,5 @@ CREATE TABLE account_cards(
                               foreign key(account_id) references accounts(account_id),
                               foreign key(card_type_id) references card_types(card_type_id)
 );
+
 

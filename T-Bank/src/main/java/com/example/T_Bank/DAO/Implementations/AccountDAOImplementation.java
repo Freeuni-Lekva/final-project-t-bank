@@ -92,6 +92,7 @@ public class AccountDAOImplementation implements AccountDAO {
                 " (first_name, last_name, personal_id," +
                 " user_name, user_password, birth_date) " +
                 "values ( ?, ?, ?, ?, ?, ?)";
+
         try {
             PreparedStatement stm = connection.prepareStatement(registerQuery);
             stm = connection.prepareStatement(registerQuery);
@@ -102,10 +103,32 @@ public class AccountDAOImplementation implements AccountDAO {
             stm.setString(5, password);
             stm.setString(6, null);
             stm.execute();
-            return login(userName, password);
+            Account registeredAccount = login(userName, password);
+            addStandardCard(registeredAccount);
+            return registeredAccount;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return badAccount(ErrorMessage.UserNameAlreadyExists);
     }
+
+    private void addStandardCard(Account registeredAccount){
+        String standardCardQuery = "insert into account_cards " +
+                "(account_id, card_type_id, card_name, gel_balance, usd_balance, euro_balance) " +
+                " values(?, ?, ?, ?, ?, ?)";
+
+        try {
+            PreparedStatement stm = connection.prepareStatement(standardCardQuery);
+            stm.setInt(1, registeredAccount.getAccountId());
+            stm.setInt(2, 1);
+            stm.setString(3, "Standard Card");
+            stm.setInt(4, 0);
+            stm.setInt(5, 0);
+            stm.setInt(6, 0);
+            stm.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
 }

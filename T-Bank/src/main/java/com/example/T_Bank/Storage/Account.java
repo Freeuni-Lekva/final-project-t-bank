@@ -87,4 +87,12 @@ public class Account {
     public void setAccountId(int accountId) {
         this.accountId = accountId;
     }
+
+    public String toString(){
+        if(errorMessage == ErrorMessage.NoErrorMessage){
+            return firstName + " " + lastName + " " + accountId;
+        }
+        return "" + errorMessage;
+
+    }
 }

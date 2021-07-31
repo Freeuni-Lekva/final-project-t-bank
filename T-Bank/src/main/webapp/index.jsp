@@ -8,7 +8,7 @@
 <body>
 
 
-<div class="loginForm">
+<div class="form">
         <h1 class="header"> Welcome to TBank </h1>
         <h3 > Please Fill in Username and Password.</h3>
         <form action="LoginServlet" method="post">

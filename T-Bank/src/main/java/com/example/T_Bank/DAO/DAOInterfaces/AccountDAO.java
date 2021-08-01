@@ -1,4 +1,4 @@
-package com.example.T_Bank.DAO;
+package com.example.T_Bank.DAO.DAOInterfaces;
 
 
 import com.example.T_Bank.Storage.Account;

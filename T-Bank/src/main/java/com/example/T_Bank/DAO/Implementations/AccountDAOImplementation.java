@@ -1,12 +1,11 @@
 package com.example.T_Bank.DAO.Implementations;
 
-import com.example.T_Bank.DAO.AccountDAO;
+import com.example.T_Bank.DAO.DAOInterfaces.AccountDAO;
 import com.example.T_Bank.Storage.Account;
 import com.example.T_Bank.Storage.ErrorMessage;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Set;
 
 public class AccountDAOImplementation implements AccountDAO {
     private Connection connection;

@@ -1,5 +1,7 @@
 package com.example.T_Bank.DAO;
 
+import com.example.T_Bank.DAO.DAOInterfaces.AccountDAO;
+import com.example.T_Bank.DAO.DAOInterfaces.CardDAO;
 import com.example.T_Bank.DAO.Implementations.AccountDAOImplementation;
 import com.example.T_Bank.DAO.Implementations.CardDAOImplementation;
 import com.example.T_Bank.Storage.Account;
@@ -28,9 +30,6 @@ public class TBankDAO {
             connection = dataSource.getConnection();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-        }
-        if(connection != null){
-            System.out.println("connection not null");
         }
         accountDao = new AccountDAOImplementation(connection);
         cardDao = new CardDAOImplementation(connection);

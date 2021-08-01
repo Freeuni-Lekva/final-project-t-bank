@@ -1,7 +1,8 @@
 package com.example.T_Bank.Storage;
 
 public class CardInfo {
-    private String cardType;
+    private CardType cardType;
+    private int cardTypeId;
     private String cardName;
     private int accountId;
     private double gelBalance;
@@ -11,10 +12,11 @@ public class CardInfo {
     private boolean isValidCard;
     private CardErrorMessage errorMessage;
 
-    public CardInfo(int accountCardId, String cardType, String cardName, int accountId,
-                    double gelBalance, double usdBalance, double euroBalance, boolean isValidCard,
-                    CardErrorMessage errorMessage) {
+    public CardInfo(int accountCardId, int accountId, int cardTypeId, String cardName,
+                    int gelBalance, int usdBalance, int euroBalance, boolean isValidCard,
+                    CardErrorMessage errorMessage, CardType cardType) {
         this.cardType = cardType;
+        this.cardTypeId = cardTypeId;
         this.cardName = cardName;
         this.accountId = accountId;
         this.gelBalance = gelBalance;
@@ -25,7 +27,24 @@ public class CardInfo {
         this.errorMessage = errorMessage;
     }
 
-    public String getCardType() {
+
+    public int getCardTypeId() {
+        return cardTypeId;
+    }
+
+    public int getAccountCardId() {
+        return accountCardId;
+    }
+
+    public boolean isValidCard() {
+        return isValidCard;
+    }
+
+    public CardErrorMessage getErrorMessage() {
+        return errorMessage;
+    }
+
+    public CardType getCardType() {
         return cardType;
     }
 

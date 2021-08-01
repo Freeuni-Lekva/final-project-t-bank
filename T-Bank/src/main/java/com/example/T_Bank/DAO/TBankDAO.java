@@ -37,13 +37,13 @@ public class TBankDAO {
     }
 
     public CardInfo addCard(int accountId, CardType cardType, String cardName){
-        return null;
+        return cardDao.addCard(accountId, cardType, cardName);
     }
     public List<CardType> getCardTypes(){
-        return null;
+        return cardDao.getCardTypes();
     }
     public List<CardInfo> getAccountCards(int accountId){
-        return null;
+        return cardDao.getAccountCards(accountId);
     }
 
     public Account login(String userName, String password){

@@ -112,18 +112,24 @@ public class AccountDAOImplementation implements AccountDAO {
     }
 
     private void addStandardCard(Account registeredAccount){
+        String tmp = "" + registeredAccount.getAccountId();
+        while(tmp.length() < 5){
+            tmp = "0" + tmp;
+        }
+        String cardIdentifier = "TB" + "MTSC" + tmp;
         String standardCardQuery = "insert into account_cards " +
-                "(account_id, card_type_id, card_name, gel_balance, usd_balance, euro_balance) " +
-                " values(?, ?, ?, ?, ?, ?)";
+                "(account_id, card_identifier, card_type_id, card_name, gel_balance, usd_balance, euro_balance) " +
+                " values(?, ?, ?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement stm = connection.prepareStatement(standardCardQuery);
             stm.setInt(1, registeredAccount.getAccountId());
-            stm.setInt(2, 1);
-            stm.setString(3, "Standard Card");
-            stm.setInt(4, 0);
+            stm.setString(2, cardIdentifier);
+            stm.setInt(3, 1);
+            stm.setString(4, "Standard Card");
             stm.setInt(5, 0);
             stm.setInt(6, 0);
+            stm.setInt(7, 0);
             stm.execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();

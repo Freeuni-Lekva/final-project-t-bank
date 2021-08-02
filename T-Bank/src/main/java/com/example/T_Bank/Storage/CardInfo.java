@@ -11,8 +11,9 @@ public class CardInfo {
     private int accountCardId;
     private boolean isValidCard;
     private CardErrorMessage errorMessage;
+    private String cardIdentifier;
 
-    public CardInfo(int accountCardId, int accountId, int cardTypeId, String cardName,
+    public CardInfo(int accountCardId, String cardIdentifier, int accountId, int cardTypeId, String cardName,
                     int gelBalance, int usdBalance, int euroBalance, boolean isValidCard,
                     CardErrorMessage errorMessage, CardType cardType) {
         this.cardType = cardType;
@@ -25,8 +26,12 @@ public class CardInfo {
         this.accountCardId = accountCardId;
         this.isValidCard = isValidCard;
         this.errorMessage = errorMessage;
+        this.cardIdentifier = cardIdentifier;
     }
 
+    public String getCardIdentifier() {
+        return cardIdentifier;
+    }
 
     public int getCardTypeId() {
         return cardTypeId;

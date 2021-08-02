@@ -37,7 +37,7 @@ values(3, 'AMEX', 'AMEX','Super Rich Card', 1000000);
 
 CREATE TABLE account_cards(
                               account_card_id int auto_increment,
-                              card_idenfier char(4),
+                              card_identifier char(11),
                               account_id int,
                               card_type_id int,
                               card_name varchar(30),

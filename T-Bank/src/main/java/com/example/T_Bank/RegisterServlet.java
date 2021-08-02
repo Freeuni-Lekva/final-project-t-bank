@@ -18,6 +18,7 @@ public class RegisterServlet extends HttpServlet {
     private String username;
     private String password;
     private String repeat;
+    private ServletContext context;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -26,7 +27,7 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ServletContext context = getServletContext();
+        context = getServletContext();
         TBankDAO tBank = (TBankDAO) context.getAttribute("TBankDAO");
 
         getCredentials(request);
@@ -46,7 +47,8 @@ public class RegisterServlet extends HttpServlet {
         } else {
             Account account = tBank.register(firstName, lastName, id, username, password, birthDate);
             if (account.isValidAccount()) {
-                request.setAttribute("username",username);
+                context.setAttribute("Account", account);
+                request.setAttribute("username", username);
                 request.getRequestDispatcher("AccountPage.jsp").forward(request, response);
             } else {
                 res = account.getErrorMessage().toString();

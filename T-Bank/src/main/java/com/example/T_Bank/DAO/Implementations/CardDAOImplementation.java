@@ -39,20 +39,28 @@ public class CardDAOImplementation implements CardDAO {
             List<String> cardNames = getCardNames(rs);
             long count = cardNames.stream().filter(c -> c.equals(cardName)).count();
             if(count > 0){
-                return new CardInfo(-1, -1,  -1, null,
+                return new CardInfo(-1, null, -1,  -1, null,
                         0, 0, 0, false,
                         CardErrorMessage.CardWithSimilarNameAlreadyExists, null);
             }
-            String addCardQuery = "insert into account_cards (account_id, card_type_id, card_name," +
+            String tmp = "";
+            tmp += accountId;
+            while(tmp.length() < 5){
+                tmp = "0" + tmp;
+            }
+            String cardIdentifier = "TB" + cardType.getCardPrefix() + tmp;
+            String addCardQuery = "insert into account_cards (account_id, card_identifier, " +
+                    "card_type_id, card_name," +
                     "gel_balance, usd_balance, euro_balance)" +
-                    " values(?, ?, ?, ?, ?, ?)";
+                    " values(?, ?, ?, ?, ?, ?, ?)";
             stm = connection.prepareStatement(addCardQuery);
             stm.setInt(1, accountId);
-            stm.setInt(2, cardType.getCardTypeId());
-            stm.setString(3, cardName);
-            stm.setInt(4, 0);
+            stm.setString(2, cardIdentifier);
+            stm.setInt(3, cardType.getCardTypeId());
+            stm.setString(4, cardName);
             stm.setInt(5, 0);
             stm.setInt(6, 0);
+            stm.setInt(7, 0);
             stm.executeUpdate();
             String getPrimaryKey = "select account_card_id from account_cards" +
                     " where account_id = ? and card_name = ?";
@@ -62,7 +70,7 @@ public class CardDAOImplementation implements CardDAO {
             rs = stm.executeQuery();
             rs.next();
             int accountCardId = rs.getInt(1);
-            card = new CardInfo(accountCardId, accountId, cardType.getCardTypeId(), cardName, 0, 0,
+            card = new CardInfo(accountCardId, cardIdentifier, accountId, cardType.getCardTypeId(), cardName, 0, 0,
                     0, true, CardErrorMessage.NoErrorMessage, cardType);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -74,8 +82,9 @@ public class CardDAOImplementation implements CardDAO {
     private CardType getCardFromResultSet(ResultSet rs){
         CardType card = null;
         try {
-            card =  new CardType(rs.getInt(1), rs.getString(2), rs.getInt(4),
-                    rs.getString(3));
+            card =  new CardType(rs.getInt(1), rs.getString(2),
+                    rs.getString(3), rs.getInt(5),
+                    rs.getString(4));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -102,15 +111,16 @@ public class CardDAOImplementation implements CardDAO {
         CardInfo cardInfo = null;
         try {
             int accountCardId = rs.getInt(1);
-            int accountId = rs.getInt(2);
-            int cardTypeId = rs.getInt(3);
-            String cardName = rs.getString(4);
-            int gelBalance = rs.getInt(5);
-            int usdBalance = rs.getInt(6);
-            int euroBalance = rs.getInt(7);
+            String cardIdentifier = rs.getString(2);
+            int accountId = rs.getInt(3);
+            int cardTypeId = rs.getInt(4);
+            String cardName = rs.getString(5);
+            int gelBalance = rs.getInt(6);
+            int usdBalance = rs.getInt(7);
+            int euroBalance = rs.getInt(8);
             CardType cardType = getCardTypes().stream()
                     .filter(c -> c.getCardTypeId() == cardTypeId).findFirst().get();
-            cardInfo = new CardInfo(accountCardId, accountId, cardTypeId, cardName,
+            cardInfo = new CardInfo(accountCardId, cardIdentifier, accountId, cardTypeId, cardName,
                     gelBalance, usdBalance, euroBalance, true, CardErrorMessage.NoErrorMessage,
                     cardType);
         } catch (SQLException throwables) {

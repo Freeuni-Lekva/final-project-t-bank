@@ -12,6 +12,9 @@ public class Tester {
     @Test
     public void testSimple(){
         TBankDAO dao = new TBankDAO();
-
+        dao.register("koba", "p", "011", "kobakoba", "kobakoba",
+                null);
+        List<CardType>cardTypes = dao.getCardTypes();
+        dao.addCard(1, cardTypes.get(0), "rame");
     }
 }

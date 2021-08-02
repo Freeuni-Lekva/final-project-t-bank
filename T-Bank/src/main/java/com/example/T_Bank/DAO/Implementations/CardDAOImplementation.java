@@ -43,19 +43,14 @@ public class CardDAOImplementation implements CardDAO {
                         0, 0, 0, false,
                         CardErrorMessage.CardWithSimilarNameAlreadyExists, null);
             }
-            String tmp = "";
-            tmp += accountId;
-            while(tmp.length() < 5){
-                tmp = "0" + tmp;
-            }
-            String cardIdentifier = "TB" + cardType.getCardPrefix() + tmp;
+
             String addCardQuery = "insert into account_cards (account_id, card_identifier, " +
                     "card_type_id, card_name," +
                     "gel_balance, usd_balance, euro_balance)" +
                     " values(?, ?, ?, ?, ?, ?, ?)";
             stm = connection.prepareStatement(addCardQuery);
             stm.setInt(1, accountId);
-            stm.setString(2, cardIdentifier);
+            stm.setString(2, null);
             stm.setInt(3, cardType.getCardTypeId());
             stm.setString(4, cardName);
             stm.setInt(5, 0);
@@ -70,6 +65,25 @@ public class CardDAOImplementation implements CardDAO {
             rs = stm.executeQuery();
             rs.next();
             int accountCardId = rs.getInt(1);
+
+            String query = "update account_cards " +
+                    "set card_identifier = ? " +
+                    "where account_card_id = ?";
+
+            String tmp = "";
+            tmp += accountCardId;
+            while(tmp.length() < 5){
+                tmp = "0" + tmp;
+            }
+            String cardIdentifier = "TB" + cardType.getCardPrefix() + tmp;
+
+            stm = connection.prepareStatement(query);
+            stm.setString(1, cardIdentifier);
+            stm.setInt(2, accountCardId);
+            System.out.println(stm);
+            stm.executeUpdate();
+
+
             card = new CardInfo(accountCardId, cardIdentifier, accountId, cardType.getCardTypeId(), cardName, 0, 0,
                     0, true, CardErrorMessage.NoErrorMessage, cardType);
         } catch (SQLException throwables) {

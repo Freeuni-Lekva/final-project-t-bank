@@ -42,6 +42,8 @@ public class RegisterServlet extends HttpServlet {
             res = "Password must be at least 8 characters long!";
         } else if (!password.equals(repeat)) {
             res = "Passwords don't match!";
+        } else if (id.length() > 11) {
+            res = "ID cant be longer than 11 chars";
         } else if (fileIsEmpty()) {
             res = "Please fill in all the fields";
         } else {

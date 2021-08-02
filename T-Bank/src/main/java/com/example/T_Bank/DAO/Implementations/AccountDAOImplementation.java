@@ -10,20 +10,20 @@ import java.util.ArrayList;
 public class AccountDAOImplementation implements AccountDAO {
     private Connection connection;
     ArrayList<Account> accounts;
-    public AccountDAOImplementation(Connection connection){
+
+    public AccountDAOImplementation(Connection connection) {
         this.connection = connection;
         accounts = new ArrayList<>();
     }
 
 
-
-    private Account badAccount(ErrorMessage errorMessage){
+    private Account badAccount(ErrorMessage errorMessage) {
         Account badAccount = new Account(null, null, null, null,
                 null, -1, false, errorMessage);
         return badAccount;
     }
 
-    private Account accountFromResultSet(ResultSet rs){
+    private Account accountFromResultSet(ResultSet rs) {
         Account found = null;
         try {
             int accountId = rs.getInt("account_id");
@@ -50,7 +50,7 @@ public class AccountDAOImplementation implements AccountDAO {
             stm.setString(1, userName);
             stm.setString(2, password);
             ResultSet rs = stm.executeQuery();
-            if(!rs.next())
+            if (!rs.next())
                 return badAccount(ErrorMessage.AccountNotValid);
             return accountFromResultSet(rs);
         } catch (SQLException throwables) {
@@ -59,7 +59,7 @@ public class AccountDAOImplementation implements AccountDAO {
         return badAccount(ErrorMessage.AccountNotValid);
     }
 
-    private boolean checkCountOf(String checkColumnName, String checkValue){
+    private boolean checkCountOf(String checkColumnName, String checkValue) {
         String checkQuery = "select count(*) from accounts where " + checkColumnName +
                 " = ?";
         try {
@@ -67,7 +67,7 @@ public class AccountDAOImplementation implements AccountDAO {
             stm.setString(1, checkValue);
             ResultSet resultSet = stm.executeQuery();
             resultSet.next();
-            if(resultSet.getInt(1) > 0){
+            if (resultSet.getInt(1) > 0) {
                 return false;
             }
             return true;
@@ -81,10 +81,10 @@ public class AccountDAOImplementation implements AccountDAO {
     public Account register(String firstName, String lastName, String personalId,
                             String userName, String password, String birthdate) {
 
-        if(!checkCountOf("user_name", userName)){
+        if (!checkCountOf("user_name", userName)) {
             return badAccount(ErrorMessage.UserNameAlreadyExists);
         }
-        if(!checkCountOf("personal_id", personalId)){
+        if (!checkCountOf("personal_id", personalId)) {
             return badAccount(ErrorMessage.PersonalIdAlreadyExists);
         }
         String registerQuery = "insert into accounts " +
@@ -111,9 +111,9 @@ public class AccountDAOImplementation implements AccountDAO {
         return badAccount(ErrorMessage.UserNameAlreadyExists);
     }
 
-    private void addStandardCard(Account registeredAccount){
+    private void addStandardCard(Account registeredAccount) {
         String tmp = "" + registeredAccount.getAccountId();
-        while(tmp.length() < 5){
+        while (tmp.length() < 5) {
             tmp = "0" + tmp;
         }
         String cardIdentifier = "TB" + "MTSC" + tmp;

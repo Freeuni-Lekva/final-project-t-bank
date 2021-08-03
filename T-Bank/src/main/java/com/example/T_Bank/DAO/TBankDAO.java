@@ -22,12 +22,16 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
 
     @Override
     public ArrayList<Currency> getCurrencies() {
-        return null;
+        ArrayList<Currency> currencies = new ArrayList<>();
+        currencies.add(new Currency("GEL", 1, 1, 1));
+        currencies.add(new Currency("USD", 2, 3.1, 3.01));
+        currencies.add(new Currency("EURO", 3, 3.5, 3.6));
+        return currencies;
     }
 
     @Override
     public double getExchangeValue(int amount, Currency fromCurrency, Currency toCurrency) {
-        return 0;
+        return amount;
     }
 
     @Override

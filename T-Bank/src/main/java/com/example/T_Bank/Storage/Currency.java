@@ -1,13 +1,13 @@
 package com.example.T_Bank.Storage;
 
 public class Currency {
-    String currencyName;
-    String currencyId;
+    private String currencyName;
+    private int currencyId;
     private double call;
     private double bid;
 
 
-    public Currency(String currencyName, String currencyId, double call, double bid) {
+    public Currency(String currencyName, int currencyId, double call, double bid) {
         this.currencyName = currencyName;
         this.currencyId = currencyId;
         this.call = call;
@@ -26,7 +26,7 @@ public class Currency {
         return currencyName;
     }
 
-    public String getCurrencyId() {
+    public int getCurrencyId() {
         return currencyId;
     }
 }

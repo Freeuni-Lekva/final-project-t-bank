@@ -43,6 +43,9 @@ public class CardCreationServlet extends HttpServlet {
         if (cardName.length() == 0) {
             request.setAttribute("errorMessage", "Card name can't be empty");
             request.getRequestDispatcher("CardCreationPage.jsp").forward(request, response);
+        } else if (cardName.length() > 30) {
+            request.setAttribute("errorMessage", "Card name can't be longer than 30 chars");
+            request.getRequestDispatcher("CardCreationPage.jsp").forward(request, response);
         } else if (cardInfo.isValidCard()) {
             request.setAttribute("successMessage", "Card added Successfully");
             request.getRequestDispatcher("CardCreationPage.jsp").forward(request, response);

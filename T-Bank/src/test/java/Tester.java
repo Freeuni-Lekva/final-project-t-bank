@@ -10,11 +10,17 @@ import java.util.List;
 public class Tester {
 
     @Test
-    public void testSimple(){
+    public void testSimple() {
         TBankDAO dao = new TBankDAO();
-        dao.register("koba", "p", "011", "kobakoba", "kobakoba",
-                null);
-        List<CardType>cardTypes = dao.getCardTypes();
-        dao.addCard(1, cardTypes.get(0), "rame");
+        String test = "test";
+        List<CardType> cardTypes = dao.getCardTypes();
+        for(int i = 0; i < 10; i++){
+            String tmp = test + i;
+            dao.register(tmp, tmp, tmp, tmp, tmp, tmp);
+            dao.addCard(i + 1, cardTypes.get(i % 2 + 1), tmp + i);
+        }
+
+
     }
+
 }

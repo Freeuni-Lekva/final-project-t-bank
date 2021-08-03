@@ -1,5 +1,5 @@
 package com.example.T_Bank.Storage;
 
 public enum TransferError {
-    personalIdDoesNotExist, accountNumberDoesNotExist, notEnoughAmount, similarCurrenciesError
+    personalIdDoesNotExist, accountNumberDoesNotExist, notEnoughAmount, similarCurrenciesError, noErrorMessage
 }

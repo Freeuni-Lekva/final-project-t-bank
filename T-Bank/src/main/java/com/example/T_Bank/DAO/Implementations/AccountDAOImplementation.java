@@ -112,11 +112,6 @@ public class AccountDAOImplementation implements AccountDAO {
     }
 
     private void addStandardCard(Account registeredAccount){
-        String tmp = "" + registeredAccount.getAccountId();
-        while(tmp.length() < 5){
-            tmp = "0" + tmp;
-        }
-        String cardIdentifier = "TB" + "MTSC" + tmp;
         String standardCardQuery = "insert into account_cards " +
                 "(account_id, card_identifier, card_type_id, card_name, gel_balance, usd_balance, euro_balance) " +
                 " values(?, ?, ?, ?, ?, ?, ?)";
@@ -124,13 +119,31 @@ public class AccountDAOImplementation implements AccountDAO {
         try {
             PreparedStatement stm = connection.prepareStatement(standardCardQuery);
             stm.setInt(1, registeredAccount.getAccountId());
-            stm.setString(2, cardIdentifier);
+            stm.setString(2, null);
             stm.setInt(3, 1);
             stm.setString(4, "Standard Card");
             stm.setInt(5, 0);
             stm.setInt(6, 0);
             stm.setInt(7, 0);
             stm.execute();
+            String tmpQuery = "select account_card_id from account_cards where account_id = ? ";
+            stm = connection.prepareStatement(tmpQuery);
+            stm.setInt(1, registeredAccount.getAccountId());
+            ResultSet rs = stm.executeQuery();
+            rs.next();
+            int a = rs.getInt(1);
+            String tmp = "" + a;
+            while(tmp.length() < 5){
+                tmp = "0" + tmp;
+            }
+            String cardIdentifier = "TB" + "MTSC" + tmp;
+            String updateQuery = "update account_cards " +
+                    "set card_identifier = ? " +
+                    "where account_id = ?";
+            stm = connection.prepareStatement(updateQuery);
+            stm.setString(1, cardIdentifier);
+            stm.setInt(2, registeredAccount.getAccountId());
+            stm.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

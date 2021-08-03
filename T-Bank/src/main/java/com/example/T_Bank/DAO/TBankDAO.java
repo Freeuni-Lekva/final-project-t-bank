@@ -2,24 +2,51 @@ package com.example.T_Bank.DAO;
 
 import com.example.T_Bank.DAO.DAOInterfaces.AccountDAO;
 import com.example.T_Bank.DAO.DAOInterfaces.CardDAO;
+import com.example.T_Bank.DAO.DAOInterfaces.CurrencyDAO;
+import com.example.T_Bank.DAO.DAOInterfaces.TransactionsDAO;
 import com.example.T_Bank.DAO.Implementations.AccountDAOImplementation;
 import com.example.T_Bank.DAO.Implementations.CardDAOImplementation;
-import com.example.T_Bank.Storage.Account;
-import com.example.T_Bank.Storage.CardInfo;
-import com.example.T_Bank.Storage.CardType;
+import com.example.T_Bank.Storage.*;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 
-public class TBankDAO {
+public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyDAO {
     private BasicDataSource dataSource;
     private Connection connection;
     private AccountDAO accountDao;
+
+    @Override
+    public ArrayList<Currency> getCurrencies() {
+        return null;
+    }
+
+    @Override
+    public double getExchangeValue(int amount, Currency fromCurrency, Currency toCurrency) {
+        return 0;
+    }
+
+    @Override
+    public TransferError currencyExchange(String accountNumber, int amountNumber, Currency fromCurrency, Currency toCurrency) {
+        return null;
+    }
+
+    @Override
+    public TransferError transferMoney(String fromAccountNumber, String toAccountNumber, int amount, Currency fromCurrency, Currency toCurrency) {
+        return null;
+    }
+
+    @Override
+    public AccountNumbersList getAccountNumbers(String personalNumber) {
+        return null;
+    }
+
     private CardDAO cardDao;
-    public TBankDAO(){
+    public TBankDAO() {
         dataSource = new BasicDataSource();
 
         dataSource.setUrl("jdbc:mysql://localhost:3306/" + DatabaseConstants.databaseName);

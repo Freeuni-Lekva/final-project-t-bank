@@ -22,7 +22,14 @@ public class CardsListServlet extends HttpServlet {
         int accountId = account.getAccountId();
 
         List<CardInfo> cardInfos = tBank.getAccountCards(accountId);
+        Double GEL = tBank.getAccountCards(accountId).stream().map(CardInfo::getGelBalance).reduce((a, b) -> a + b).get();
+        Double USD = tBank.getAccountCards(accountId).stream().map(CardInfo::getUsdBalance).reduce((a, b) -> a + b).get();
+        Double EUR = tBank.getAccountCards(accountId).stream().map(CardInfo::getEuroBalance).reduce((a, b) -> a + b).get();
+
         request.setAttribute("cards", cardInfos);
+        request.setAttribute("GELsum", GEL);
+        request.setAttribute("USDsum", USD);
+        request.setAttribute("EURsum", EUR);
 
         request.getRequestDispatcher("CardsListPage.jsp").forward(request, response);
     }

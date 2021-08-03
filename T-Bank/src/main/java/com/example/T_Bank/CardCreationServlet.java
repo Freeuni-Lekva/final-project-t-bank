@@ -40,7 +40,11 @@ public class CardCreationServlet extends HttpServlet {
         String cardName = request.getParameter("cardName");
         int accountId = account.getAccountId();
         CardInfo cardInfo = tBank.addCard(accountId, cardType, cardName);
-        if (cardInfo.isValidCard()) {
+        if (cardName.length() == 0) {
+            request.setAttribute("errorMessage", "Card name can't be empty");
+            request.getRequestDispatcher("CardCreationPage.jsp").forward(request, response);
+        } else if (cardInfo.isValidCard()) {
+            request.setAttribute("successMessage", "Card added Successfully");
             request.getRequestDispatcher("CardCreationPage.jsp").forward(request, response);
         } else {
             request.setAttribute("errorMessage", cardInfo.getErrorMessage());

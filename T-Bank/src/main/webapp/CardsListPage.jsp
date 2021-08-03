@@ -13,6 +13,11 @@
 </head>
 <body>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<div style="text-align: center">
+    <div style="font-size: xx-large">Total amount: ${GELsum} GEL</div>
+    <span style="margin-right: 10px">${USDsum} USD</span>
+    <span>${EURsum} EUR</span>
+</div>
 
 <c:forEach items="${cards}" var="card" varStatus="loop">
     <div class="card">

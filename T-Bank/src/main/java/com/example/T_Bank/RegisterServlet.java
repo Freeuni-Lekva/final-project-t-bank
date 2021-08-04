@@ -53,6 +53,7 @@ public class RegisterServlet extends HttpServlet {
             if (account.isValidAccount()) {
                 Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
                 sessions.put(request.getSession().getId(), account);
+                request.setAttribute("username", account.getUserName());
                 request.getRequestDispatcher("HomePage.jsp").forward(request, response);
             } else {
                 res = account.getErrorMessage().toString();

@@ -1,5 +1,6 @@
 package com.example.T_Bank.DAO.Implementations;
 
+import com.example.T_Bank.DAO.DAOInterfaces.CurrencyDAO;
 import com.example.T_Bank.DAO.DAOInterfaces.TransactionsDAO;
 import com.example.T_Bank.Storage.*;
 
@@ -11,11 +12,102 @@ import java.util.ArrayList;
 
 public class TransactionsDAOImplementation implements TransactionsDAO {
     private Connection connection;
-    public TransactionsDAOImplementation(Connection connection){
+    private CurrencyDAO currencyDAO;
+    public TransactionsDAOImplementation(Connection connection, CurrencyDAO currencyDAO){
         this.connection = connection;
+        this.currencyDAO = currencyDAO;
     }
+
+    public boolean accountNumberExists(String accountNumber){
+        String checkQuery = "select count(*) from account_cards where card_identifier = ?";
+        try {
+            PreparedStatement stm = connection.prepareStatement(checkQuery);
+            stm.setString(1, accountNumber);
+            ResultSet rs = stm.executeQuery();
+            rs.next();
+            int count = rs.getInt(1);
+            if(count == 1){
+                return true;
+            }
+            return false;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return false;
+    }
+
+    private String getCurrencyName(Currency fromCurrency){
+        if(fromCurrency.getCurrencyName().equals("GEL")){
+            return "gel_balance";
+        }
+        if(fromCurrency.getCurrencyName().equals("USD")){
+            return "usd_balance";
+        }
+        if(fromCurrency.getCurrencyName().equals("EURO")){
+            return "euro_balance";
+        }
+        return "gel_balance";
+    }
+
+    private int getAmount(String fromAccountNumber, String currencyQueryName){
+        String query = "select " + currencyQueryName + " from account_cards where card_identifier = ?";
+        try {
+            PreparedStatement stm = connection.prepareStatement(query);
+            stm.setString(1, fromAccountNumber);
+            ResultSet rs = stm.executeQuery();
+            rs.next();
+            int amount = rs.getInt(1);
+            return amount;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return 0;
+    }
+
     @Override
-    public TransferError transferMoney(String fromAccountNumber, String toAccountNumber, int amount, Currency fromCurrency, Currency toCurrency) {
+    public TransferError transferMoney(String fromAccountNumber, String toAccountNumber,
+                                       int amount, Currency fromCurrency, Currency toCurrency) {
+        if(!accountNumberExists(fromAccountNumber)){
+            return TransferError.accountNumberDoesNotExist;
+        }
+        if(!accountNumberExists(toAccountNumber)){
+            return TransferError.accountNumberDoesNotExist;
+        }
+        String currencyQueryName = getCurrencyName(fromCurrency);
+        int amountOnAccount = getAmount(fromAccountNumber, currencyQueryName);
+        if(amountOnAccount < amount){
+            return TransferError.notEnoughAmount;
+        }
+        String firstPart = "update account_cards set ";
+        String secondPart = " = ? where card_identifier = ?";
+
+        try {
+            String minusQuery = firstPart + currencyQueryName + secondPart;
+            PreparedStatement stm = connection.prepareStatement(minusQuery);
+            stm.setInt(1, amountOnAccount - amount);
+            stm.setString(2, fromAccountNumber);
+            stm.executeUpdate();
+
+            currencyQueryName = getCurrencyName(toCurrency);
+            amountOnAccount = getAmount(toAccountNumber, currencyQueryName);
+            int amountToTransfer = (int)currencyDAO.getExchangeValue(amount, fromCurrency, toCurrency);
+
+            String plusQuery = firstPart + currencyQueryName + secondPart;
+            stm = connection.prepareStatement(plusQuery);
+
+
+
+            stm.setInt(1, amountToTransfer + amountOnAccount);
+            stm.setString(2, toAccountNumber);
+            stm.executeUpdate();
+            return TransferError.noErrorMessage;
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+
         return null;
     }
 

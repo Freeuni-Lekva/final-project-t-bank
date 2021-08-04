@@ -41,7 +41,7 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
         accountDao = new AccountDAOImplementation(connection);
         cardDao = new CardDAOImplementation(connection);
         currencyDAO = new CurrencyDAOImplementation(connection);
-        transactionsDAO = new TransactionsDAOImplementation(connection);
+        transactionsDAO = new TransactionsDAOImplementation(connection, currencyDAO);
     }
 
     public CardInfo addCard(int accountId, CardType cardType, String cardName){

@@ -9,6 +9,10 @@
     float: left;
 }
 
+.balance {
+    text-align: center;
+}
+
 .clear {
     clear: both;
 }

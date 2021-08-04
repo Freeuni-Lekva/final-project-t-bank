@@ -15,7 +15,7 @@
 <body>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div>
-    <div class="navigation" style="float: left; height: 200%">
+    <div class="navigation">
         <ul>
             <li><a href="AccountServlet">Account Information </a></li>
             <li><a href="CardCreationServlet">Add or Remove a Card</a></li>
@@ -27,11 +27,11 @@
         <p class="note">Welcome to TBank</p>
     </div>
 
-    <div>
-        <div style="text-align: center">
-            <div style="font-size: xx-large">Total amount: ${GELsum} GEL</div>
-            <span style="margin-right: 10px">${USDsum} USD</span>
-            <span>${EURsum} EUR</span>
+    <div style="margin-left: 340px">
+        <div class="balance">
+            <div id="GELTotal" style="font-size: xx-large; font-weight: bold">Total amount: ${GELsum} GEL</div>
+            <span style="margin-right: 10px; font-weight: bold">${USDsum} USD</span>
+            <span style="font-weight: bold">${EURsum} EUR</span>
         </div>
 
         <c:forEach items="${cards}" var="card" varStatus="loop">

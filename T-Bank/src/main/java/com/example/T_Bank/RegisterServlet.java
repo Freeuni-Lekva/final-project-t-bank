@@ -8,6 +8,8 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 @WebServlet(name = "RegisterServlet", value = "/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
@@ -44,14 +46,14 @@ public class RegisterServlet extends HttpServlet {
             res = "Passwords don't match!";
         } else if (id.length() > 11) {
             res = "ID cant be longer than 11 chars";
-        } else if (fileIsEmpty()) {
+        } else if (fieldsAreEmpty()) {
             res = "Please fill in all the fields";
         } else {
             Account account = tBank.register(firstName, lastName, id, username, password, birthDate);
             if (account.isValidAccount()) {
-                context.setAttribute("Account", account);
-                request.setAttribute("username", username);
-                request.getRequestDispatcher("AccountPage.jsp").forward(request, response);
+                Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
+                sessions.put(request.getSession().getId(), account);
+                request.getRequestDispatcher("HomePage.jsp").forward(request, response);
             } else {
                 res = account.getErrorMessage().toString();
             }
@@ -110,7 +112,7 @@ public class RegisterServlet extends HttpServlet {
         repeat = request.getParameter("repeatPassword");
     }
 
-    private boolean fileIsEmpty() {
+    private boolean fieldsAreEmpty() {
         if (firstName.length() == 0) {
             return true;
         }

@@ -11,7 +11,9 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @WebServlet(name = "CardCreationServlet", value = "/CardCreationServlet")
@@ -31,7 +33,9 @@ public class CardCreationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletContext context = getServletContext();
         TBankDAO tBank = (TBankDAO) context.getAttribute("TBankDAO");
-        Account account = (Account) context.getAttribute("Account");
+
+        Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
+        Account account = sessions.get(request.getSession().getId());
 
         List<CardType> types = tBank.getCardTypes();
         request.setAttribute("cardTypes", types);

@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="TBank.css"/>
     <link rel="stylesheet" href="HomePage.css">
 </head>
-<body>
+<body style="background-color: sandybrown">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <div class="navigation">

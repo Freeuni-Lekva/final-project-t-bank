@@ -10,10 +10,23 @@
 <head>
     <title>Create new Card</title>
     <link rel="stylesheet" href="TBank.css"/>
+    <link rel="stylesheet" href="HomePage.css">
 </head>
 <body>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<div class="navigation">
+    <ul>
+        <li><a href="AccountServlet">Account Information </a></li>
+        <li><a class="accountInfoTag" href="CardCreationServlet">Add or Remove a Card</a></li>
+        <li><a href="CardsListServlet">View All Cards</a></li>
+        <li>Crowd Funding</li>
+        <li>Deposits and Loans</li>
+        <li>Money Transfers</li>
+    </ul>
+    <p class="note">Welcome to TBank</p>
+</div>
+
 <div class="form">
     <h1 class="header">Add New Card</h1>
     <form action="CardCreationServlet" method="post">

@@ -17,10 +17,11 @@
   <ul>
     <br>
     <li> <a class="accountInfoTag" href="AccountServlet">Account Information </a> </li>
-    <li>Add or Remove a Card</li>
-    <li>Crowd Funding</li>
-    <li>Deposits and Loans</li>
-    <li>Money Transfers</li>
+      <li><a href="CardCreationServlet">Add or Remove a Card</a></li>
+      <li><a href="CardsListServlet">View All Cards</a></li>
+      <li>Crowd Funding</li>
+      <li>Deposits and Loans</li>
+      <li>Money Transfers</li>
   </ul>
   <p class="note">Welcome to TBank</p>
 </div>

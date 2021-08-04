@@ -81,6 +81,7 @@ public class CardDAOImplementation implements CardDAO {
             stm = connection.prepareStatement(query);
             stm.setString(1, cardIdentifier);
             stm.setInt(2, accountCardId);
+//            System.out.println(stm);
             stm.executeUpdate();
 
 

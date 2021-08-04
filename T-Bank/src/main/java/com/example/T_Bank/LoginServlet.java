@@ -23,10 +23,9 @@ public class LoginServlet extends HttpServlet {
         String password=request.getParameter("password");
         Account account=tBankDAO.login(username,password);
         if(account.isValidAccount()) {
-            context.setAttribute("Account", account);
-            request.setAttribute("firstName",account.getFirstName());
+            context.setAttribute("Account",account);
             request.setAttribute("username",username);
-            request.getRequestDispatcher("AccountPage.jsp").forward(request,response);
+            request.getRequestDispatcher("HomePage.jsp").forward(request,response);
         } else {
             request.setAttribute("username",account.getErrorMessage());
             request.getRequestDispatcher("index.jsp").forward(request,response);

@@ -8,6 +8,8 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 @WebServlet(name = "RegisterServlet", value = "/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
@@ -18,6 +20,7 @@ public class RegisterServlet extends HttpServlet {
     private String username;
     private String password;
     private String repeat;
+    private ServletContext context;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -26,7 +29,7 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ServletContext context = getServletContext();
+        context = getServletContext();
         TBankDAO tBank = (TBankDAO) context.getAttribute("TBankDAO");
 
         getCredentials(request);
@@ -41,15 +44,16 @@ public class RegisterServlet extends HttpServlet {
             res = "Password must be at least 8 characters long!";
         } else if (!password.equals(repeat)) {
             res = "Passwords don't match!";
-        } else if (fileIsEmpty()) {
+        } else if (id.length() > 11) {
+            res = "ID cant be longer than 11 chars";
+        } else if (fieldsAreEmpty()) {
             res = "Please fill in all the fields";
         } else {
-            System.out.println(username);
             Account account = tBank.register(firstName, lastName, id, username, password, birthDate);
             if (account.isValidAccount()) {
-                ServletContext context=request.getServletContext();
-                context.setAttribute("Account",account);
-                request.setAttribute("username",username);
+                Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
+                sessions.put(request.getSession().getId(), account);
+                request.setAttribute("username", account.getUserName());
                 request.getRequestDispatcher("HomePage.jsp").forward(request, response);
             } else {
                 res = account.getErrorMessage().toString();
@@ -109,7 +113,7 @@ public class RegisterServlet extends HttpServlet {
         repeat = request.getParameter("repeatPassword");
     }
 
-    private boolean fileIsEmpty() {
+    private boolean fieldsAreEmpty() {
         if (firstName.length() == 0) {
             return true;
         }

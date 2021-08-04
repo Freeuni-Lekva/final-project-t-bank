@@ -7,6 +7,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @WebServlet(name = "LoginServlet", value = "/LoginServlet")
 public class LoginServlet extends HttpServlet {
@@ -23,7 +25,8 @@ public class LoginServlet extends HttpServlet {
         String password=request.getParameter("password");
         Account account=tBankDAO.login(username,password);
         if(account.isValidAccount()) {
-            context.setAttribute("Account",account);
+            Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
+            sessions.put(request.getSession().getId(), account);
             request.setAttribute("username",username);
             request.getRequestDispatcher("HomePage.jsp").forward(request,response);
         } else {

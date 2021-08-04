@@ -11,14 +11,15 @@ import java.util.List;
 
 public class CardDAOImplementation implements CardDAO {
     private Connection connection;
-    public CardDAOImplementation(Connection connection){
+
+    public CardDAOImplementation(Connection connection) {
         this.connection = connection;
     }
 
-    private List<String> getCardNames(ResultSet rs){
+    private List<String> getCardNames(ResultSet rs) {
         List<String> cardNames = new ArrayList<>();
         try {
-            while(rs.next()){
+            while (rs.next()) {
                 String name = rs.getString(1);
                 cardNames.add(name);
             }
@@ -38,8 +39,8 @@ public class CardDAOImplementation implements CardDAO {
             ResultSet rs = stm.executeQuery();
             List<String> cardNames = getCardNames(rs);
             long count = cardNames.stream().filter(c -> c.equals(cardName)).count();
-            if(count > 0){
-                return new CardInfo(-1, null, -1,  -1, null,
+            if (count > 0) {
+                return new CardInfo(-1, null, -1, -1, null,
                         0, 0, 0, false,
                         CardErrorMessage.CardWithSimilarNameAlreadyExists, null);
             }
@@ -72,7 +73,7 @@ public class CardDAOImplementation implements CardDAO {
 
             String tmp = "";
             tmp += accountCardId;
-            while(tmp.length() < 5){
+            while (tmp.length() < 5) {
                 tmp = "0" + tmp;
             }
             String cardIdentifier = "TB" + cardType.getCardPrefix() + tmp;
@@ -93,10 +94,10 @@ public class CardDAOImplementation implements CardDAO {
     }
 
 
-    private CardType getCardFromResultSet(ResultSet rs){
+    private CardType getCardFromResultSet(ResultSet rs) {
         CardType card = null;
         try {
-            card =  new CardType(rs.getInt(1), rs.getString(2),
+            card = new CardType(rs.getInt(1), rs.getString(2),
                     rs.getString(3), rs.getInt(5),
                     rs.getString(4));
         } catch (SQLException throwables) {
@@ -104,6 +105,7 @@ public class CardDAOImplementation implements CardDAO {
         }
         return card;
     }
+
     @Override
     public List<CardType> getCardTypes() {
         String cardTypesQuery = "select * from card_types";
@@ -111,7 +113,7 @@ public class CardDAOImplementation implements CardDAO {
         try {
             Statement stm = connection.createStatement();
             ResultSet resultSet = stm.executeQuery(cardTypesQuery);
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 cardTypes.add(getCardFromResultSet(resultSet));
             }
         } catch (SQLException throwables) {
@@ -121,7 +123,7 @@ public class CardDAOImplementation implements CardDAO {
         return cardTypes;
     }
 
-    private CardInfo getCardInfoFromResultSet(ResultSet rs){
+    private CardInfo getCardInfoFromResultSet(ResultSet rs) {
         CardInfo cardInfo = null;
         try {
             int accountCardId = rs.getInt(1);
@@ -151,7 +153,7 @@ public class CardDAOImplementation implements CardDAO {
             PreparedStatement stm = connection.prepareStatement(accountCardsQuery);
             stm.setInt(1, accountId);
             ResultSet rs = stm.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 cardInfos.add(getCardInfoFromResultSet(rs));
             }
         } catch (SQLException throwables) {

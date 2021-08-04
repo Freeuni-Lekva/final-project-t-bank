@@ -7,13 +7,17 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
 @WebServlet(name = "AccountServlet", value = "/AccountServlet")
 public class AccountServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletContext context=getServletContext();
-        Account account= (Account) context.getAttribute("Account");
+
+        Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
+        Account account = sessions.get(request.getSession().getId());
+
         request.setAttribute("FirstName",account.getFirstName());
         request.setAttribute("LastName",account.getLastName());
         request.setAttribute("UserName",account.getUserName());

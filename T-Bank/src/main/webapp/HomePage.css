@@ -1,0 +1,73 @@
+.navigation {
+    background-color: deepskyblue;
+    width:300px;
+    height:100%;
+    border-radius:20px;
+
+}
+
+li {
+    margin-bottom:50px;
+    font-family: Times New Roman, serif;
+    font-weight:bold;
+    padding:10px;
+
+}
+
+li:hover {
+    font-size:20px;
+
+}
+
+a {
+    text-decoration:none;
+    color:black;
+}
+
+a:hover {
+    text-decoration:none;
+    color:black;
+}
+
+.note {
+    margin-top:380px;
+    font-weight:bold;
+    font-style:italic;
+    margin-left:20px;
+}
+
+body {
+    display:flex;
+
+    background-size: auto;
+    background-color: sandybrown;
+}
+
+.container {
+    text-align:center;
+    width:100%;
+}
+
+.containerAccountInfo {
+    margin-top:100px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+th, td {
+
+    font-size:20px;
+    padding:10px;
+    font-family: Sylfaen, serif;
+    text-align:center;
+    border:4px solid;
+}
+
+.accountInfoTag {
+    font-size:20px;
+    background-color: sandybrown;
+    padding:8px;
+    border: 2px solid;
+    border-radius:5px;
+}
+

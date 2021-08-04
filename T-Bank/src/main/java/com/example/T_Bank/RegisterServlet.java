@@ -44,10 +44,13 @@ public class RegisterServlet extends HttpServlet {
         } else if (fileIsEmpty()) {
             res = "Please fill in all the fields";
         } else {
+            System.out.println(username);
             Account account = tBank.register(firstName, lastName, id, username, password, birthDate);
             if (account.isValidAccount()) {
+                ServletContext context=request.getServletContext();
+                context.setAttribute("Account",account);
                 request.setAttribute("username",username);
-                request.getRequestDispatcher("AccountPage.jsp").forward(request, response);
+                request.getRequestDispatcher("HomePage.jsp").forward(request, response);
             } else {
                 res = account.getErrorMessage().toString();
             }

@@ -66,20 +66,16 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
 
     @Override
     public ArrayList<Currency> getCurrencies() {
-        ArrayList<Currency> currencies = new ArrayList<>();
-        currencies.add(new Currency("GEL", 1, 1, 1));
-        currencies.add(new Currency("USD", 2, 3.1, 3.01));
-        currencies.add(new Currency("EURO", 3, 3.5, 3.6));
-        return currencies;
+        return currencyDAO.getCurrencies();
     }
 
     @Override
-    public double getExchangeValue(int amount, Currency fromCurrency, Currency toCurrency) {
+    public double getExchangeValue(double amount, Currency fromCurrency, Currency toCurrency) {
         return currencyDAO.getExchangeValue(amount, fromCurrency, toCurrency);
     }
 
     @Override
-    public TransferError currencyExchange(String accountNumber, int amountNumber, Currency fromCurrency, Currency toCurrency) {
+    public TransferError currencyExchange(String accountNumber, double amountNumber, Currency fromCurrency, Currency toCurrency) {
         return currencyDAO.currencyExchange(accountNumber, amountNumber, fromCurrency, toCurrency);
     }
 

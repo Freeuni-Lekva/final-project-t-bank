@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public interface CurrencyDAO {
     public ArrayList<Currency> getCurrencies();
-    public double getExchangeValue(int amount, Currency fromCurrency, Currency toCurrency);
-    public TransferError currencyExchange(String accountNumber, int amountNumber,
+    public double getExchangeValue(double amount, Currency fromCurrency, Currency toCurrency);
+    public TransferError currencyExchange(String accountNumber, double amountNumber,
                                           Currency fromCurrency, Currency toCurrency);
 
 }

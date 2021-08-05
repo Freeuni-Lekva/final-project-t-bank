@@ -4,6 +4,7 @@ t_bank_db;
 DROP TABLE IF EXISTS account_cards;
 DROP TABLE IF EXISTS card_types;
 DROP TABLE IF EXISTS accounts;
+DROP TABLE IF EXISTS currency_exchange;
 
 CREATE TABLE accounts
 (
@@ -30,13 +31,13 @@ CREATE TABLE card_types
 
 INSERT INTO card_types (card_type_id, card_type, card_prefix,
                         card_desc, card_limit)
-values (1, ''MasterCard'', ''MTSC'', ''standard card'', 20000);
+values (1, 'MasterCard', 'MTSC', 'standard card', 20000);
 INSERT INTO card_types (card_type_id, card_type, card_prefix,
                         card_desc, card_limit)
-values (2, ''VISA'', ''VISA'', '''', 50000);
+values (2, 'VISA', 'VISA', '', 50000);
 INSERT INTO card_types (card_type_id, card_type, card_prefix,
                         card_desc, card_limit)
-values (3, ''AMEX'', ''AMEX'', ''Super Rich Card'', 1000000);
+values (3, 'AMEX', 'AMEX', 'Super Rich Card', 1000000);
 
 CREATE TABLE account_cards
 (
@@ -53,5 +54,28 @@ CREATE TABLE account_cards
     foreign key (card_type_id) references card_types (card_type_id),
     unique (card_identifier)
 );
+
+CREATE TABLE currency_exchange
+(
+    currency_id int auto_increment,
+    currency_name 	varchar(50),
+    call_price      double,
+    bid_price    	double,
+    primary key (currency_id),
+    unique (currency_name)
+);
+
+INSERT INTO currency_exchange (currency_id, currency_name, call_price,
+                               bid_price)
+values (1, 'GEL', 1, 1);
+INSERT INTO currency_exchange (currency_id, currency_name, call_price,
+                               bid_price)
+values (2, 'USD', 3.13, 3.01);
+INSERT INTO currency_exchange (currency_id, currency_name, call_price,
+                               bid_price)
+values (3, 'EURO', 4.22, 4.08);
+
+
+
 
 

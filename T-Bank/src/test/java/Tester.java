@@ -32,7 +32,7 @@ public class Tester {
         System.out.println(dao.getExchangeValue(500, curr.get(0), curr.get(2)));*/
 
         /*dao.currencyExchange("TBMTSC00001", 100, curr.get(1), curr.get(0));*/
-        System.out.println(dao.currencyExchange("TBMTSC00002", 308, curr.get(2), curr.get(0)));
+        System.out.println(dao.currencyExchange("TBMTSC00002", 100, curr.get(1), curr.get(2)));
 
     }
 

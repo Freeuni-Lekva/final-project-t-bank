@@ -132,45 +132,27 @@ public class CurrencyDAOImplementation implements CurrencyDAO {
         String sendingBalance = fromCurrency.getCurrencyName().toLowerCase() + "_balance";
         String receivingBalance = toCurrency.getCurrencyName().toLowerCase() + "_balance";
 
-        String updateBalanceQuery0 = "update account_cards set ";
-        String updateBalanceQuery1 = " = ? where card_identifier = ?";
-
-        String updateSendingBalanceQuery = updateBalanceQuery0 + sendingBalance + updateBalanceQuery1;
-        String updateReceivingBalanceQuery = updateBalanceQuery0 + receivingBalance + updateBalanceQuery1;
+        String updateSendingBalanceQuery = updateBalanceQuery(sendingBalance);
+        String updateReceivingBalanceQuery = updateBalanceQuery(receivingBalance);
 
         String selectSendingBalanceQuery = "select " + sendingBalance + " from account_cards where card_identifier = ?";
-        String selectReceivingBalanceQuery = "select " + receivingBalance + " from account_cards where card_identifier = ?";
-
         try {
             PreparedStatement selectSendingBalanceStm = connection.prepareStatement(selectSendingBalanceQuery);
-            PreparedStatement selectReceivingBalanceStm = connection.prepareStatement(selectReceivingBalanceQuery);
-
             selectSendingBalanceStm.setString(1, accountNumber);
-            selectReceivingBalanceStm.setString(1, accountNumber);
 
             ResultSet sendingBalanceAmounts = selectSendingBalanceStm.executeQuery();
-            ResultSet receivingBalanceAmounts = selectReceivingBalanceStm.executeQuery();
-
             sendingBalanceAmounts.next();
             double sendingBalanceAmount = sendingBalanceAmounts.getInt(1);
-            if (sendingBalanceAmount < amountNumber) {
 
+            if (sendingBalanceAmount < amountNumber) {
                 return TransferError.notEnoughAmount;
             }
-            double updatedSendingBalanceAmount = sendingBalanceAmount - amountNumber;
-
-            receivingBalanceAmounts.next();
-            double receivingBalanceAmount = receivingBalanceAmounts.getInt(1);
-            double updatedReceivingBalanceAmount = receivingBalanceAmount + exchangedAmount;
 
             PreparedStatement updateSendingBalanceStm = connection.prepareStatement(updateSendingBalanceQuery);
             PreparedStatement updateReceivingBalanceStm = connection.prepareStatement(updateReceivingBalanceQuery);
 
-            updateSendingBalanceStm.setDouble(1, updatedSendingBalanceAmount);
-            updateSendingBalanceStm.setString(2, accountNumber);
-
-            updateReceivingBalanceStm.setDouble(1, updatedReceivingBalanceAmount);
-            updateReceivingBalanceStm.setString(2, accountNumber);
+            setValues(updateReceivingBalanceStm, exchangedAmount, accountNumber, false);
+            setValues(updateSendingBalanceStm, amountNumber, accountNumber, true);
 
             updateReceivingBalanceStm.executeUpdate();
             updateSendingBalanceStm.executeUpdate();
@@ -178,5 +160,26 @@ public class CurrencyDAOImplementation implements CurrencyDAO {
             throwables.printStackTrace();
         }
         return TransferError.noErrorMessage;
+    }
+
+    private void setValues(PreparedStatement stm, double amount, String accountNumber, boolean g) {
+        try {
+            stm.setString(2, accountNumber);
+            if (isSending) {
+                stm.setDouble(1, -amount);
+            } else {
+                stm.setDouble(1, amount);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
+    }
+
+    private String updateBalanceQuery (String balance) {
+        String updateBalanceQuery0 = "update account_cards set ";
+        String updateBalanceQuery1 = " + ? where card_identifier = ?";
+
+        String updateBalanceQuery = updateBalanceQuery0 + balance + " = " + balance + updateBalanceQuery1;
+        return updateBalanceQuery;
+    }
 }

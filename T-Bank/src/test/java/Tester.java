@@ -11,20 +11,28 @@ public class Tester {
     @Test
     public void testSimple() {
         TBankDAO dao = new TBankDAO();
-//        String test = "test";
-//        List<CardType> cardTypes = dao.getCardTypes();
-//        for(int i = 0; i < 10; i++){
-//            String tmp = test + i;
-//            dao.register(tmp, tmp, tmp, tmp, tmp, tmp);
-//            dao.addCard(i + 1, cardTypes.get(i % 2 + 1), tmp + i);
-//        }
-//        AccountNumbersList list = dao.getAccountNumbers("test120");
-//        System.out.println(list.getErrorMessage());
-        List<Currency> currencies = dao.getCurrencies();
-        TransferError error = dao.transferMoney("TBMTSC00001",
-                "TBMTSC00003", 100,
-                currencies.get(0), currencies.get(2));
-        System.out.println(error);
+
+/*
+        dao.register("tako", "Jincharadze", "10010010022", "tjzze", "password", null);
+*/
+
+
+/*
+        dao.register("koba", "cudipaikidze", "11111111111", "kobaa", "pass", null);
+*/
+
+        ArrayList<Currency> curr = dao.getCurrencies();
+        /*curr.stream().forEach(s -> System.out.println(s.getCurrencyName()));*/
+
+
+
+        /*System.out.println(dao.getExchangeValue(100, curr.get(0), curr.get(1)));
+        System.out.println(dao.getExchangeValue(200, curr.get(1), curr.get(2)));
+        System.out.println(dao.getExchangeValue(300, curr.get(1), curr.get(0)));
+        System.out.println(dao.getExchangeValue(500, curr.get(0), curr.get(2)));*/
+
+        /*dao.currencyExchange("TBMTSC00001", 100, curr.get(1), curr.get(0));*/
+        System.out.println(dao.currencyExchange("TBMTSC00002", 308, curr.get(2), curr.get(0)));
 
     }
 

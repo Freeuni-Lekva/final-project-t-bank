@@ -162,7 +162,7 @@ public class CurrencyDAOImplementation implements CurrencyDAO {
         return TransferError.noErrorMessage;
     }
 
-    private void setValues(PreparedStatement stm, double amount, String accountNumber, boolean g) {
+    private void setValues(PreparedStatement stm, double amount, String accountNumber, boolean isSending) {
         try {
             stm.setString(2, accountNumber);
             if (isSending) {

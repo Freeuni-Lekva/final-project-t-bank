@@ -80,7 +80,7 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
     }
 
     @Override
-    public TransferError transferMoney(String fromAccountNumber, String toAccountNumber, int amount, Currency fromCurrency, Currency toCurrency) {
+    public TransferError transferMoney(String fromAccountNumber, String toAccountNumber, double amount, Currency fromCurrency, Currency toCurrency) {
         return transactionsDAO.transferMoney(fromAccountNumber, toAccountNumber, amount, fromCurrency, toCurrency);
     }
 

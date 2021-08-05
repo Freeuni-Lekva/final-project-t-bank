@@ -50,14 +50,14 @@ public class TransactionsDAOImplementation implements TransactionsDAO {
         return "gel_balance";
     }
 
-    private int getAmount(String fromAccountNumber, String currencyQueryName){
+    private double getAmount(String fromAccountNumber, String currencyQueryName){
         String query = "select " + currencyQueryName + " from account_cards where card_identifier = ?";
         try {
             PreparedStatement stm = connection.prepareStatement(query);
             stm.setString(1, fromAccountNumber);
             ResultSet rs = stm.executeQuery();
             rs.next();
-            int amount = rs.getInt(1);
+            double amount = rs.getDouble(1);
             return amount;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -67,7 +67,7 @@ public class TransactionsDAOImplementation implements TransactionsDAO {
 
     @Override
     public TransferError transferMoney(String fromAccountNumber, String toAccountNumber,
-                                       int amount, Currency fromCurrency, Currency toCurrency) {
+                                       double amount, Currency fromCurrency, Currency toCurrency) {
         if(!accountNumberExists(fromAccountNumber)){
             return TransferError.accountNumberDoesNotExist;
         }
@@ -75,7 +75,7 @@ public class TransactionsDAOImplementation implements TransactionsDAO {
             return TransferError.accountNumberDoesNotExist;
         }
         String currencyQueryName = getCurrencyName(fromCurrency);
-        int amountOnAccount = getAmount(fromAccountNumber, currencyQueryName);
+        double amountOnAccount = getAmount(fromAccountNumber, currencyQueryName);
         if(amountOnAccount < amount){
             return TransferError.notEnoughAmount;
         }
@@ -85,20 +85,20 @@ public class TransactionsDAOImplementation implements TransactionsDAO {
         try {
             String minusQuery = firstPart + currencyQueryName + secondPart;
             PreparedStatement stm = connection.prepareStatement(minusQuery);
-            stm.setInt(1, amountOnAccount - amount);
+            stm.setDouble(1, amountOnAccount - amount);
             stm.setString(2, fromAccountNumber);
             stm.executeUpdate();
 
             currencyQueryName = getCurrencyName(toCurrency);
             amountOnAccount = getAmount(toAccountNumber, currencyQueryName);
-            int amountToTransfer = (int)currencyDAO.getExchangeValue(amount, fromCurrency, toCurrency);
+            double amountToTransfer = currencyDAO.getExchangeValue(amount, fromCurrency, toCurrency);
 
             String plusQuery = firstPart + currencyQueryName + secondPart;
             stm = connection.prepareStatement(plusQuery);
 
 
 
-            stm.setInt(1, amountToTransfer + amountOnAccount);
+            stm.setDouble(1, amountToTransfer + amountOnAccount);
             stm.setString(2, toAccountNumber);
             stm.executeUpdate();
             return TransferError.noErrorMessage;

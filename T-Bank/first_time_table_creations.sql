@@ -1,5 +1,4 @@
-use
-t_bank_db;
+use t_bank_db;
 
 DROP TABLE IF EXISTS account_cards;
 DROP TABLE IF EXISTS card_types;
@@ -46,9 +45,9 @@ CREATE TABLE account_cards
     account_id      int,
     card_type_id    int,
     card_name       varchar(30),
-    gel_balance     int,
-    usd_balance     int,
-    euro_balance    int,
+    gel_balance     double,
+    usd_balance     double,
+    euro_balance    double,
     primary key (account_card_id),
     foreign key (account_id) references accounts (account_id),
     foreign key (card_type_id) references card_types (card_type_id),

@@ -8,6 +8,6 @@ import java.util.ArrayList;
 
 public interface TransactionsDAO {
     public TransferError transferMoney(String fromAccountNumber, String toAccountNumber,
-                                       int amount, Currency fromCurrency, Currency toCurrency);
+                                       double amount, Currency fromCurrency, Currency toCurrency);
     public AccountNumbersList getAccountNumbers(String personalNumber);
 }

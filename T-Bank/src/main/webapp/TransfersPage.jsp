@@ -36,17 +36,6 @@
             document.getElementById("IBANForm").style.visibility = 'visible';
         }
     }
-
-    function update() {
-        var check = document.querySelector('input[name="transferType"]');
-        if (check.value === 0) {
-            document.getElementById("IDForm").style.visibility = 'visible';
-            document.getElementById("IBANForm").style.visibility = 'hidden';
-        } else {
-            document.getElementById("IDForm").style.visibility = 'hidden';
-            document.getElementById("IBANForm").style.visibility = 'visible';
-        }
-    }
 </script>
 
 <div style="margin-left: 340px">

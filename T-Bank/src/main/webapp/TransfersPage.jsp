@@ -7,7 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<head>
+<head onload="update()">
     <title>Transfers</title>
     <link rel="stylesheet" href="HomePage.css">
 </head>
@@ -36,6 +36,17 @@
             document.getElementById("IBANForm").style.visibility = 'visible';
         }
     }
+
+    function update() {
+        var check = document.querySelector('input[name="transferType"]');
+        if (check.value === 0) {
+            document.getElementById("IDForm").style.visibility = 'visible';
+            document.getElementById("IBANForm").style.visibility = 'hidden';
+        } else {
+            document.getElementById("IDForm").style.visibility = 'hidden';
+            document.getElementById("IBANForm").style.visibility = 'visible';
+        }
+    }
 </script>
 
 <div style="margin-left: 340px">
@@ -57,7 +68,9 @@
             <h4>${errorMessage}</h4>
             <button type="submit">Check ID</button>
             <br><br>
+        </form>
 
+        <form action="TransfersServlet" method="post">
             <label>Receiver IBAN</label><br>
             <select style="width: 95%" name="receiverDropdown">
                 <c:forEach items="${receiverAccounts}" var="account" varStatus="loop1">
@@ -77,24 +90,24 @@
             </select><br><br>
 
             <label>Amount</label><br>
-            <input type="text" name="amount" placeholder="00.00"><br><br>
+            <input type="number" step="0.01" name="amount" value="00.00"><br><br>
 
             <label for="fromCurrency">From:</label>
+
             <select name="fromCurrency" id="fromCurrency">
-                <option value="GEL">GEL</option>
-                <option value="USD">USD</option>
-                <option value="EURO">EUR</option>
+                <option value="0">GEL</option>
+                <option value="1">USD</option>
+                <option value="2">EUR</option>
             </select>
 
             <label for="toCurrency">To:</label>
             <select name="toCurrency" id="toCurrency">
-                <option value="GEL">GEL</option>
-                <option value="USD">USD</option>
-                <option value="EURO">EUR</option>
+                <option value="0">GEL</option>
+                <option value="1">USD</option>
+                <option value="2">EUR</option>
             </select>
-        </form>
 
-        <form action="TransfersServlet" method="post">
+            <h4>${transferError}</h4>
             <button type="submit">Transfer</button>
         </form>
     </div>

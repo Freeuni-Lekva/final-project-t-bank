@@ -22,6 +22,7 @@
       <li>Crowd Funding</li>
       <li>Deposits and Loans</li>
       <li><a href="TransfersServlet">Transfer by ID</a></li>
+      <li><a href="IBANTransfersServlet">Transfer by IBAN</a></li>
   </ul>
   <p class="note">Welcome to TBank</p>
 </div>

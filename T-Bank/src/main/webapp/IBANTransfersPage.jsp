@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: naten
-  Date: 8/6/2021
-  Time: 20:21
+  Date: 8/7/2021
+  Time: 15:18
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -21,31 +21,16 @@
         <li><a href="CardsListServlet">View All Cards</a></li>
         <li>Crowd Funding</li>
         <li>Deposits and Loans</li>
-        <li><a class="accountInfoTag" href="TransfersServlet">Transfer by ID</a></li>
-        <li><a href="IBANTransfersServlet">Transfer by IBAN</a></li>
+        <li><a href="TransfersServlet">Transfer by ID</a></li>
+        <li><a class="accountInfoTag" href="IBANTransfersServlet">Transfer by IBAN</a></li>
     </ul>
     <p class="note">Welcome to TBank</p>
 </div>
 
 <div style="margin-left: 340px">
-    <form action="TransfersServlet" method="get">
-        <label>Receiver ID</label><br>
-        <input type="text" name="receiverID" placeholder="Enter Receiver ID" value="${receiverID}"><br>
-
-        <h4>${errorMessage}</h4>
-        <button type="submit">Check ID</button>
-        <br>
-    </form>
-
-    <form action="TransfersServlet" method="post">
+    <form action="IBANTransfersServlet" method="post">
         <label>Receiver IBAN</label><br>
-        <select style="width: 95%" name="receiverDropdown">
-            <c:forEach items="${receiverAccounts}" var="account" varStatus="loop1">
-                <option value="${loop1.index}">
-                        ${account}
-                </option>
-            </c:forEach>
-        </select><br><br>
+        <input type="text" name="receiverIBAN" placeholder="Enter Receiver IBAN" value="${receiverIBAN}"><br>
 
         <label>Sender IBAN</label><br>
         <select style="width: 95%" name="senderDropdown">

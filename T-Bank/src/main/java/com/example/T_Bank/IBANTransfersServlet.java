@@ -1,7 +1,10 @@
 package com.example.T_Bank;
 
 import com.example.T_Bank.DAO.TBankDAO;
-import com.example.T_Bank.Storage.*;
+import com.example.T_Bank.Storage.Account;
+import com.example.T_Bank.Storage.AccountNumbersList;
+import com.example.T_Bank.Storage.Currency;
+import com.example.T_Bank.Storage.TransferError;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -10,10 +13,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet(name = "TransfersServlet", value = "/TransfersServlet")
-public class TransfersServlet extends HttpServlet {
-    private String receiverID = "";
-
+@WebServlet(name = "IBANTransfersServlet", value = "/IBANTransfersServlet")
+public class IBANTransfersServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletContext context = getServletContext();
@@ -22,20 +23,10 @@ public class TransfersServlet extends HttpServlet {
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
 
-        receiverID = request.getParameter("receiverID");
-        AccountNumbersList receiverList = tBank.getAccountNumbers(receiverID);
         AccountNumbersList senderList = tBank.getAccountNumbers(account.getPersonalId());
         request.setAttribute("senderAccounts", senderList.getAccountNumbers());
 
-        if (receiverList.isValid() || receiverID == null) {
-            List<String> accountCards = receiverList.getAccountNumbers();
-            request.setAttribute("receiverAccounts", accountCards);
-            request.setAttribute("receiverID", receiverID);
-            request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
-        } else {
-            request.setAttribute("errorMessage", receiverList.getErrorMessage());
-            request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
-        }
+        request.getRequestDispatcher("IBANTransfersPage.jsp").forward(request, response);
     }
 
     @Override
@@ -45,16 +36,16 @@ public class TransfersServlet extends HttpServlet {
 
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
-        List<String> receiverList = tBank.getAccountNumbers(receiverID).getAccountNumbers();
         List<String> senderList = tBank.getAccountNumbers(account.getPersonalId()).getAccountNumbers();
         request.setAttribute("senderAccounts", senderList);
+        String receiverIBAN = request.getParameter("receiverIBAN");
 
-        if (receiverID == null || receiverID.equals("")) {
+        if (receiverIBAN == null || receiverIBAN.equals("")) {
             request.setAttribute("transferError", "Target account cant be empty!");
-            request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
+            request.getRequestDispatcher("IBANTransfersPage.jsp").forward(request, response);
         } else {
             String fromAccountNumber = senderList.get(Integer.parseInt(request.getParameter("senderDropdown")));
-            String toAccountNumber = receiverList.get(Integer.parseInt(request.getParameter("receiverDropdown")));
+            String toAccountNumber = request.getParameter("receiverIBAN");
             double amount = 0.0;
             if (!request.getParameter("amount").equals("")) {
                 amount = Double.parseDouble((request.getParameter("amount")));
@@ -68,7 +59,7 @@ public class TransfersServlet extends HttpServlet {
             } else {
                 request.setAttribute("transferError", "Transfer Successful!");
             }
-            request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
+            request.getRequestDispatcher("IBANTransfersPage.jsp").forward(request, response);
         }
     }
 }

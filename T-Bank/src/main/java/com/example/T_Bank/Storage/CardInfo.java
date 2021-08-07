@@ -14,7 +14,7 @@ public class CardInfo {
     private String cardIdentifier;
 
     public CardInfo(int accountCardId, String cardIdentifier, int accountId, int cardTypeId, String cardName,
-                    int gelBalance, int usdBalance, int euroBalance, boolean isValidCard,
+                    double gelBalance, double usdBalance, double euroBalance, boolean isValidCard,
                     CardErrorMessage errorMessage, CardType cardType) {
         this.cardType = cardType;
         this.cardTypeId = cardTypeId;

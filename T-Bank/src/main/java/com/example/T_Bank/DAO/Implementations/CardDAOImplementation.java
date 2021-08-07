@@ -131,9 +131,9 @@ public class CardDAOImplementation implements CardDAO {
             int accountId = rs.getInt(3);
             int cardTypeId = rs.getInt(4);
             String cardName = rs.getString(5);
-            int gelBalance = rs.getInt(6);
-            int usdBalance = rs.getInt(7);
-            int euroBalance = rs.getInt(8);
+            double gelBalance = rs.getDouble(6);
+            double usdBalance = rs.getDouble(7);
+            double euroBalance = rs.getDouble(8);
             CardType cardType = getCardTypes().stream()
                     .filter(c -> c.getCardTypeId() == cardTypeId).findFirst().get();
             cardInfo = new CardInfo(accountCardId, cardIdentifier, accountId, cardTypeId, cardName,

@@ -1,13 +1,7 @@
 package com.example.T_Bank.DAO;
 
-import com.example.T_Bank.DAO.DAOInterfaces.AccountDAO;
-import com.example.T_Bank.DAO.DAOInterfaces.CardDAO;
-import com.example.T_Bank.DAO.DAOInterfaces.CurrencyDAO;
-import com.example.T_Bank.DAO.DAOInterfaces.TransactionsDAO;
-import com.example.T_Bank.DAO.Implementations.AccountDAOImplementation;
-import com.example.T_Bank.DAO.Implementations.CardDAOImplementation;
-import com.example.T_Bank.DAO.Implementations.CurrencyDAOImplementation;
-import com.example.T_Bank.DAO.Implementations.TransactionsDAOImplementation;
+import com.example.T_Bank.DAO.DAOInterfaces.*;
+import com.example.T_Bank.DAO.Implementations.*;
 import com.example.T_Bank.Storage.*;
 import org.apache.commons.dbcp2.BasicDataSource;
 
@@ -17,13 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyDAO {
+public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyDAO, CrowdFundingEventDAO {
     private BasicDataSource dataSource;
     private Connection connection;
     private AccountDAO accountDao;
     private TransactionsDAO transactionsDAO;
     private CurrencyDAO currencyDAO;
-
+    private CrowdFundingEventDAO crowdFundingEventDAO;
 
     private CardDAO cardDao;
     public TBankDAO() {
@@ -42,6 +36,7 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
         cardDao = new CardDAOImplementation(connection);
         currencyDAO = new CurrencyDAOImplementation(connection);
         transactionsDAO = new TransactionsDAOImplementation(connection, currencyDAO);
+        crowdFundingEventDAO = new CrowdFundingEventDAOImplementation(connection);
     }
 
     public CardInfo addCard(int accountId, CardType cardType, String cardName){
@@ -89,4 +84,29 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
         return transactionsDAO.getAccountNumbers(personalNumber);
     }
 
+    @Override
+    public EventError createCrowdFundingEvent(String eventName, int accountId, String cardIdentifier, String description, double targetMoney) {
+        return crowdFundingEventDAO.createCrowdFundingEvent(eventName, accountId, cardIdentifier,
+                description, targetMoney);
+    }
+
+    @Override
+    public EventError deleteCrowdFundingEvent(int eventId) {
+        return crowdFundingEventDAO.deleteCrowdFundingEvent(eventId);
+    }
+
+    @Override
+    public EventError changeEventTarget(int eventId, double changedTarget) {
+        return crowdFundingEventDAO.changeEventTarget(eventId, changedTarget);
+    }
+
+    @Override
+    public ArrayList<EventError> getPublicCrowdFundingEvents() {
+        return crowdFundingEventDAO.getPublicCrowdFundingEvents();
+    }
+
+    @Override
+    public ArrayList<EventError> getSpecificEvents(String personalNumber) {
+        return crowdFundingEventDAO.getSpecificEvents(personalNumber);
+    }
 }

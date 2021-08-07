@@ -1,9 +1,14 @@
 use t_bank_db;
 
+DROP TABLE IF EXISTS crowd_funding_events;
+DROP TABLE IF EXISTS account_logs;
 DROP TABLE IF EXISTS account_cards;
 DROP TABLE IF EXISTS card_types;
 DROP TABLE IF EXISTS accounts;
 DROP TABLE IF EXISTS currency_exchange;
+DROP TABLE IF EXISTS transaction_types;
+DROP TABLE IF EXISTS testing_seeds;
+
 
 CREATE TABLE accounts
 (
@@ -75,6 +80,61 @@ INSERT INTO currency_exchange (currency_id, currency_name, call_price,
 values (3, 'EURO', 4.22, 4.08);
 
 
+CREATE TABLE transaction_types
+(transaction_type_id int auto_increment,
+ transaction_type_name varchar(100),
+ transaction_type_desc varchar(100),
+ primary key (transaction_type_id));
 
+INSERT INTO transaction_types(transaction_type_id,
+                              transaction_type_name,
+                              transaction_type_desc)
+values(1, 'transfer', 'between different accounts, or
+								same ones');
+INSERT INTO transaction_types(transaction_type_id,
+                              transaction_type_name,
+                              transaction_type_desc)
+values(2, 'currency_exchange', 'between different accounts, or
+								same ones');
+
+
+CREATE TABLE account_logs (
+                              account_log_id int auto_increment,
+                              sender_account_id int,
+                              receiver_account_id int,
+                              sender_card_identifier char(11),
+                              receiver_card_identifier char(11),
+                              transaction_type_id int,
+                              log_date date,
+                              primary key(account_log_id),
+                              foreign key (sender_card_identifier)
+                                  references account_cards(card_identifier),
+                              foreign key (receiver_card_identifier)
+                                  references account_cards(card_identifier),
+                              foreign key (sender_account_id)
+                                  references accounts(account_id),
+                              foreign key (receiver_account_id)
+                                  references accounts(account_id)
+);
+
+CREATE TABLE testing_seeds(
+                              test_seed int auto_increment,
+                              primary key(test_seed)
+);
+
+CREATE TABLE crowd_funding_events(
+                                     event_id int auto_increment,
+                                     event_name varchar(100),
+                                     account_id int,
+                                     card_identifier char(11),
+                                     event_desc varchar(400),
+                                     target double,
+                                     done double,
+                                     active_event boolean,
+                                     primary key (event_id),
+                                     foreign key(account_id) references accounts(account_id),
+                                     foreign key(card_identifier)
+                                         references account_cards(card_identifier)
+);
 
 

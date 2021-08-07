@@ -20,7 +20,7 @@
         <li><a href="CardsListServlet">View All Cards</a></li>
         <li>Crowd Funding</li>
         <li>Deposits and Loans</li>
-        <li><a href="TransfersServlet">Money Transfers</a></li>
+        <li><a href="TransfersServlet">Transfer by ID</a></li>
     </ul>
     <p class="note">Welcome to TBank</p>
 </div>

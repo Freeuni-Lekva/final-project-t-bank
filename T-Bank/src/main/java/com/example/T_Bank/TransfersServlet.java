@@ -54,7 +54,10 @@ public class TransfersServlet extends HttpServlet {
         } else {
             String fromAccountNumber = senderList.get(Integer.parseInt(request.getParameter("senderDropdown")));
             String toAccountNumber = receiverList.get(Integer.parseInt(request.getParameter("receiverDropdown")));
-            double amount = Double.parseDouble((request.getParameter("amount")));
+            double amount = 0.0;
+            if (!request.getParameter("amount").equals("")) {
+                amount = Double.parseDouble((request.getParameter("amount")));
+            }
             Currency fromCurrency = tBank.getCurrencies().get(Integer.parseInt(request.getParameter("fromCurrency")));
             Currency toCurrency = tBank.getCurrencies().get(Integer.parseInt(request.getParameter("toCurrency")));
 

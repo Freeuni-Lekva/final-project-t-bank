@@ -9,6 +9,7 @@
 <html>
 <head onload="update()">
     <title>Transfers</title>
+    <link rel="stylesheet" href="TBank.css">
     <link rel="stylesheet" href="HomePage.css">
 </head>
 <body>
@@ -27,7 +28,8 @@
     <p class="note">Welcome to TBank</p>
 </div>
 
-<div style="margin-left: 340px">
+<div class="form">
+    <h1 class="header">Transfer Money</h1>
     <form action="TransfersServlet" method="get">
         <label>Receiver ID</label><br>
         <input type="text" name="receiverID" placeholder="Enter Receiver ID" value="${receiverID}"><br>
@@ -75,6 +77,7 @@
         </select>
 
         <h4>${transferError}</h4>
+        <h3>${transferSuccess}</h3>
         <button type="submit">Transfer</button>
     </form>
 </div>

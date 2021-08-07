@@ -9,6 +9,7 @@
 <html>
 <head onload="update()">
     <title>Transfers</title>
+    <link rel="stylesheet" href="TBank.css">
     <link rel="stylesheet" href="HomePage.css">
 </head>
 <body>
@@ -27,10 +28,11 @@
     <p class="note">Welcome to TBank</p>
 </div>
 
-<div style="margin-left: 340px">
+<div class="form">
+    <h1 class="header">Transfer Money</h1>
     <form action="IBANTransfersServlet" method="post">
         <label>Receiver IBAN</label><br>
-        <input type="text" name="receiverIBAN" placeholder="Enter Receiver IBAN" value="${receiverIBAN}"><br>
+        <input type="text" name="receiverIBAN" placeholder="Enter Receiver IBAN" value="${receiverIBAN}"><br><br>
 
         <label>Sender IBAN</label><br>
         <select style="width: 95%" name="senderDropdown">

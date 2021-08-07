@@ -48,13 +48,14 @@ public class TransfersServlet extends HttpServlet {
         List<String> receiverList = tBank.getAccountNumbers(receiverID).getAccountNumbers();
         List<String> senderList = tBank.getAccountNumbers(account.getPersonalId()).getAccountNumbers();
         request.setAttribute("senderAccounts", senderList);
+        String toAccount = request.getParameter("receiverDropdown");
 
-        if (receiverID == null || receiverID.equals("")) {
+        if (receiverID == null || receiverID.equals("") || toAccount == null || toAccount.equals("")) {
             request.setAttribute("transferError", "Target account cant be empty!");
             request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
         } else {
             String fromAccountNumber = senderList.get(Integer.parseInt(request.getParameter("senderDropdown")));
-            String toAccountNumber = receiverList.get(Integer.parseInt(request.getParameter("receiverDropdown")));
+            String toAccountNumber = receiverList.get(Integer.parseInt(toAccount));
             double amount = 0.0;
             if (!request.getParameter("amount").equals("")) {
                 amount = Double.parseDouble((request.getParameter("amount")));
@@ -66,7 +67,7 @@ public class TransfersServlet extends HttpServlet {
             if (transferError != TransferError.noErrorMessage) {
                 request.setAttribute("transferError", transferError);
             } else {
-                request.setAttribute("transferError", "Transfer Successful!");
+                request.setAttribute("transferSuccess", "Transfer Successful!");
             }
             request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
         }

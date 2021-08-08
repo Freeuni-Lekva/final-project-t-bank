@@ -1,5 +1,6 @@
 package com.example.T_Bank.DAO.DAOInterfaces;
 
+import com.example.T_Bank.Storage.Currency;
 import com.example.T_Bank.Storage.EventError;
 
 import java.util.ArrayList;

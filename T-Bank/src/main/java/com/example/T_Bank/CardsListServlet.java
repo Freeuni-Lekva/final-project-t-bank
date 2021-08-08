@@ -8,7 +8,9 @@ import com.example.T_Bank.Storage.CardType;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
+import javax.smartcardio.Card;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,11 +26,21 @@ public class CardsListServlet extends HttpServlet {
         int accountId = account.getAccountId();
 
         List<CardInfo> cardInfos = tBank.getAccountCards(accountId);
-        Double GEL = cardInfos.stream().map(CardInfo::getGelBalance).reduce((a, b) -> a + b).get();
-        Double USD = cardInfos.stream().map(CardInfo::getUsdBalance).reduce((a, b) -> a + b).get();
-        Double EUR = cardInfos.stream().map(CardInfo::getEuroBalance).reduce((a, b) -> a + b).get();
+        List<CardInfo> rounded = new ArrayList<>();
+        for (CardInfo card : cardInfos) {
+            Double gel = Math.round(card.getGelBalance() * 100.0) / 100.0;
+            Double usd = Math.round(card.getUsdBalance() * 100.0) / 100.0;
+            Double eur = Math.round(card.getEuroBalance() * 100.0) / 100.0;
+            CardInfo round = new CardInfo(card.getAccountCardId(), card.getCardIdentifier(), card.getAccountId(), card.getCardTypeId(), card.getCardName(),
+                    gel, usd, eur, card.isValidCard(), card.getErrorMessage(), card.getCardType());
+            rounded.add(round);
+        }
 
-        request.setAttribute("cards", cardInfos);
+        Double GEL = Math.round(cardInfos.stream().map(CardInfo::getGelBalance).reduce((a, b) -> a + b).get() * 100.0) / 100.0;
+        Double USD = Math.round(cardInfos.stream().map(CardInfo::getUsdBalance).reduce((a, b) -> a + b).get() * 100.0) / 100.0;
+        Double EUR = Math.round(cardInfos.stream().map(CardInfo::getEuroBalance).reduce((a, b) -> a + b).get() * 100.0) / 100.0;
+
+        request.setAttribute("cards", rounded);
         request.setAttribute("GELsum", GEL);
         request.setAttribute("USDsum", USD);
         request.setAttribute("EURsum", EUR);

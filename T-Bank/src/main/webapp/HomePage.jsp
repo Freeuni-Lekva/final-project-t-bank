@@ -18,6 +18,7 @@
         <li><a href="AccountServlet">Account Information </a></li>
         <li><a href="CardCreationServlet">Add or Remove a Card</a></li>
         <li><a href="CardsListServlet">View All Cards</a></li>
+        <li><a href="CurrencyServlet">Currency Exchange</a></li>
         <li>Crowd Funding</li>
         <li>Deposits and Loans</li>
         <li>Money Transfers</li>

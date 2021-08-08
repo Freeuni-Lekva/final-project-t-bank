@@ -3,7 +3,6 @@ package com.example.T_Bank.DAO.Implementations;
 import com.example.T_Bank.DAO.DAOInterfaces.CrowdFundingEventDAO;
 import com.example.T_Bank.Storage.EventError;
 
-import javax.xml.transform.Result;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -42,8 +41,8 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
             String insertQuery = "insert into crowd_funding_events (event_name, account_id, card_identifier," +
                     " event_desc, target, done, active_event)" +
                     " values(?, ?, ?, ?, ?, ?, ?) ";
-            stm = connection.prepareStatement(insertQuery);
 
+            stm = connection.prepareStatement(insertQuery);
             stm.setString(1, eventName);
             stm.setInt(2, accountId);
             stm.setString(3, cardIdentifier);
@@ -51,8 +50,8 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
             stm.setDouble(5, targetMoney);
             stm.setDouble(6, 0);
             stm.setBoolean(7, true);
-
             stm.executeUpdate();
+
             return EventError.noErrorMessage;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -79,11 +78,11 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
             String deleteQuery = "update crowd_funding_events " +
                     "set active_event = false " +
                     "where event_id = ?";
+
             stm = connection.prepareStatement(deleteQuery);
-
             stm.setInt(1, eventId);
-
             stm.executeUpdate();
+
             return EventError.noErrorMessage;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -94,7 +93,63 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
 
     @Override
     public EventError changeEventTarget(int eventId, double changedTarget) {
-        return null;
+        String checkQuery = "select count(*) from crowd_funding_events where event_id = ? and " +
+                "active_event = true";
+
+        try {
+            PreparedStatement stm = connection.prepareStatement(checkQuery);
+            stm.setInt(1, eventId);
+            ResultSet rs = stm.executeQuery();
+            rs.next();
+            int count = rs.getInt(1);
+
+            if (count == 0) {
+                return EventError.noEventFound;
+            }
+
+            String changeStatement = "update crowd_funding_events " +
+                    "set target = ? " +
+                    "where event_id = ?";
+
+            stm = connection.prepareStatement(changeStatement);
+            stm.setDouble(1, changedTarget);
+            stm.setInt(2, eventId);
+            stm.executeUpdate();
+
+            checkQuery = "select done from crowd_funding_events " +
+                    "where event_id = ? and active_event = true";
+
+            stm = connection.prepareStatement(checkQuery);
+            stm.setInt(1, eventId);
+            rs = stm.executeQuery();
+            rs.next();
+            double done = rs.getDouble(1);
+
+            if (done > changedTarget) {
+                closeEvent(eventId);
+            }
+
+            return EventError.noErrorMessage;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return EventError.noEventFound;
+    }
+
+    private void closeEvent(int eventId) {
+        String closeQuery = "update crowd_funding_events " +
+                "set active_event = false " +
+                "where event_id = ?";
+
+        try {
+            PreparedStatement stm = connection.prepareStatement(closeQuery);
+
+            stm.setInt(1, eventId);
+            stm.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     @Override

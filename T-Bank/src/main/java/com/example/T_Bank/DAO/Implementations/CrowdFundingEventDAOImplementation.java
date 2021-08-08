@@ -38,6 +38,10 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
                 }
             }
 
+            if(targetMoney <= 0){
+                return EventError.targetMoneyLessThanZero;
+            }
+
             String insertQuery = "insert into crowd_funding_events (event_name, account_id, card_identifier," +
                     " event_desc, target, done, active_event)" +
                     " values(?, ?, ?, ?, ?, ?, ?) ";

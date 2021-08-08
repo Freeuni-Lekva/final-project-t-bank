@@ -20,6 +20,7 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
     private CrowdFundingEventDAO crowdFundingEventDAO;
 
     private CardDAO cardDao;
+
     public TBankDAO() {
         dataSource = new BasicDataSource();
 
@@ -39,24 +40,26 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
         crowdFundingEventDAO = new CrowdFundingEventDAOImplementation(connection);
     }
 
-    public CardInfo addCard(int accountId, CardType cardType, String cardName){
+    public CardInfo addCard(int accountId, CardType cardType, String cardName) {
         return cardDao.addCard(accountId, cardType, cardName);
     }
-    public List<CardType> getCardTypes(){
+
+    public List<CardType> getCardTypes() {
         return cardDao.getCardTypes();
     }
-    public List<CardInfo> getAccountCards(int accountId){
+
+    public List<CardInfo> getAccountCards(int accountId) {
         return cardDao.getAccountCards(accountId);
     }
 
-    public Account login(String userName, String password){
+    public Account login(String userName, String password) {
         return accountDao.login(userName, password);
     }
 
     public Account register(String firstName, String lastName, String personalId,
-                            String userName, String password, String birthdate){
+                            String userName, String password, String birthdate) {
         return accountDao.register(firstName, lastName, personalId,
-                    userName, password, birthdate);
+                userName, password, birthdate);
     }
 
     @Override

@@ -131,10 +131,13 @@ CREATE TABLE crowd_funding_events(
                                      target double,
                                      done double,
                                      active_event boolean,
+                                     currency_id int,
                                      primary key (event_id),
                                      foreign key(account_id) references accounts(account_id),
                                      foreign key(card_identifier)
-                                         references account_cards(card_identifier)
+                                         references account_cards(card_identifier),
+                                     foreign key(currency_id)
+                                         references currency_exchange(currency_id)
 );
 
 

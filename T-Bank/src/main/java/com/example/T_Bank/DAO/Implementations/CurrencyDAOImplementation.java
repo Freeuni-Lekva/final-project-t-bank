@@ -144,6 +144,7 @@ public class CurrencyDAOImplementation implements CurrencyDAO {
             sendingBalanceAmounts.next();
             double sendingBalanceAmount = sendingBalanceAmounts.getInt(1);
 
+
             if (sendingBalanceAmount < amountNumber) {
                 return TransferError.notEnoughAmount;
             }

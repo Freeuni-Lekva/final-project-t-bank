@@ -43,10 +43,7 @@ body {
     background-color: sandybrown;
 }
 
-.container {
-    text-align:center;
-    width:100%;
-}
+
 
 .containerAccountInfo {
     margin-top:100px;
@@ -70,4 +67,15 @@ th, td {
     border: 2px solid;
     border-radius:5px;
 }
+
+.container {
+    text-align:center;
+    width:100%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+
+
+
 

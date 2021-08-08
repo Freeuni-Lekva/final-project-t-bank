@@ -85,9 +85,11 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
     }
 
     @Override
-    public EventError createCrowdFundingEvent(String eventName, int accountId, String cardIdentifier, String description, double targetMoney) {
+    public EventError createCrowdFundingEvent(String eventName, int accountId,
+                                              String cardIdentifier, String description,
+                                              double targetMoney, Currency currency) {
         return crowdFundingEventDAO.createCrowdFundingEvent(eventName, accountId, cardIdentifier,
-                description, targetMoney);
+                description, targetMoney, currency);
     }
 
     @Override

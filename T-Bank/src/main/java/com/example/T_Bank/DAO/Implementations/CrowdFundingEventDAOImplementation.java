@@ -1,6 +1,7 @@
 package com.example.T_Bank.DAO.Implementations;
 
 import com.example.T_Bank.DAO.DAOInterfaces.CrowdFundingEventDAO;
+import com.example.T_Bank.Storage.Currency;
 import com.example.T_Bank.Storage.EventError;
 
 import javax.naming.ldap.PagedResultsControl;
@@ -19,8 +20,11 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
     }
 
     @Override
-    public EventError createCrowdFundingEvent(String eventName, int accountId, String cardIdentifier, String description, double targetMoney) {
-        String query = "select event_name from crowd_funding_events where account_id = ? and active_event = true";
+    public EventError createCrowdFundingEvent(String eventName, int accountId,
+                                              String cardIdentifier, String description,
+                                              double targetMoney, Currency currency) {
+        String query = "select event_name from crowd_funding_events where account_id = ? " +
+                "and active_event = true";
 
         try {
             PreparedStatement stm = connection.prepareStatement(query);
@@ -45,7 +49,7 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
 
             String insertQuery = "insert into crowd_funding_events (event_name, account_id, card_identifier," +
                     " event_desc, target, done, active_event)" +
-                    " values(?, ?, ?, ?, ?, ?, ?) ";
+                    " values(?, ?, ?, ?, ?, ?, ?, ?) ";
 
             stm = connection.prepareStatement(insertQuery);
             stm.setString(1, eventName);
@@ -55,6 +59,7 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
             stm.setDouble(5, targetMoney);
             stm.setDouble(6, 0);
             stm.setBoolean(7, true);
+            stm.setInt(8, currency.getCurrencyId());
             stm.executeUpdate();
 
             return EventError.noErrorMessage;

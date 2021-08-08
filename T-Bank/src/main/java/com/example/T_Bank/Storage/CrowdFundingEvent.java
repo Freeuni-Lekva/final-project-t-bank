@@ -9,10 +9,11 @@ public class CrowdFundingEvent {
     private double target;
     private double done;
     private boolean isActive;
+    private Currency currency;
 
     public CrowdFundingEvent(int eventId, String eventName, int accountId,
                              String cardIdentifier, String description,
-                             double target, double done, boolean isActive) {
+                             double target, double done, boolean isActive, Currency currency) {
         this.eventId = eventId;
         this.eventName = eventName;
         this.accountId = accountId;
@@ -21,6 +22,11 @@ public class CrowdFundingEvent {
         this.target = target;
         this.done = done;
         this.isActive = isActive;
+        this.currency = currency;
+    }
+
+    public Currency getCurrency() {
+        return currency;
     }
 
     public int getEventId() {

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public interface CrowdFundingEventDAO {
     public EventError createCrowdFundingEvent(String eventName, int accountId, String cardIdentifier,
-                                              String description, double targetMoney);
+                                              String description, double targetMoney, Currency currency);
     public EventError deleteCrowdFundingEvent(int eventId);
     public EventError changeEventTarget(int eventId, double changedTarget);
     public ArrayList<EventError> getPublicCrowdFundingEvents();

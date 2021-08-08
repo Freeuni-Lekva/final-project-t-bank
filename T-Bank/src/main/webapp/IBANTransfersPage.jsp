@@ -62,6 +62,7 @@
         </select>
 
         <h4>${transferError}</h4>
+        <h3>${transferSuccess}</h3>
         <button type="submit">Transfer</button>
     </form>
 </div>

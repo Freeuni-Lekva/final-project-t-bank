@@ -50,14 +50,18 @@ public class IBANTransfersServlet extends HttpServlet {
             if (!request.getParameter("amount").equals("")) {
                 amount = Double.parseDouble((request.getParameter("amount")));
             }
-            Currency fromCurrency = tBank.getCurrencies().get(Integer.parseInt(request.getParameter("fromCurrency")));
-            Currency toCurrency = tBank.getCurrencies().get(Integer.parseInt(request.getParameter("toCurrency")));
-
-            TransferError transferError = tBank.transferMoney(fromAccountNumber, toAccountNumber, amount, fromCurrency, toCurrency);
-            if (transferError != TransferError.noErrorMessage) {
-                request.setAttribute("transferError", transferError);
+            if (amount <= 0) {
+                request.setAttribute("transferError", "Amount should be more than 0");
             } else {
-                request.setAttribute("transferError", "Transfer Successful!");
+                Currency fromCurrency = tBank.getCurrencies().get(Integer.parseInt(request.getParameter("fromCurrency")));
+                Currency toCurrency = tBank.getCurrencies().get(Integer.parseInt(request.getParameter("toCurrency")));
+
+                TransferError transferError = tBank.transferMoney(fromAccountNumber, toAccountNumber, amount, fromCurrency, toCurrency);
+                if (transferError != TransferError.noErrorMessage) {
+                    request.setAttribute("transferError", transferError);
+                } else {
+                    request.setAttribute("transferSuccess", "Transfer Successful!");
+                }
             }
             request.getRequestDispatcher("IBANTransfersPage.jsp").forward(request, response);
         }

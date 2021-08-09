@@ -243,15 +243,15 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
             }
 
             if (count == 0) {
-                EventList currEvent = new EventList(null, EventError.noEventFound);
+                EventList currEvent = new EventList(null, EventError.noEventFound, false);
                 return currEvent;
             }
-            EventList currEvent = new EventList(allEvents, EventError.noErrorMessage);
+            EventList currEvent = new EventList(allEvents, EventError.noErrorMessage, true);
             return currEvent;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        EventList currEvent = new EventList(null, EventError.noEventFound);
+        EventList currEvent = new EventList(null, EventError.noEventFound, false);
         return currEvent;
     }
 
@@ -280,16 +280,16 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
             }
 
             if (count == 0) {
-                EventList currEvent = new EventList(null, EventError.noAccountFound);
+                EventList currEvent = new EventList(null, EventError.noAccountFound, false);
                 return currEvent;
             }
 
-            EventList currEvent = new EventList(allEvents, EventError.noErrorMessage);
+            EventList currEvent = new EventList(allEvents, EventError.noErrorMessage, true);
             return currEvent;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        EventList currEvent = new EventList(null, EventError.noAccountFound);
+        EventList currEvent = new EventList(null, EventError.noAccountFound, false);
         return currEvent;
     }
 }

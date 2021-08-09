@@ -12,7 +12,6 @@ public class Tester {
     public void testSimple() {
         TBankDAO dao = new TBankDAO();
 
-
     }
 
 }

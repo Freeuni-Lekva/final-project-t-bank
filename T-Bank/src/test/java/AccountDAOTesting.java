@@ -56,7 +56,6 @@ public class AccountDAOTesting {
     public void simpleLoginRegister(){
         TBankDAO dao = new TBankDAO();
         int testingSeed = getLastSeed();
-        System.out.println(testingSeed);
         String test = "test";
         String firstName = test + testingSeed;
         String lastName = test + testingSeed;
@@ -104,5 +103,30 @@ public class AccountDAOTesting {
         Assert.assertEquals(newAccount.getUserName(), loginedAccount.getUserName());
         Assert.assertEquals(newAccount.getLastName(), loginedAccount.getLastName());
         Assert.assertEquals(newAccount.getPersonalId(), loginedAccount.getPersonalId());
+    }
+
+
+    @Test
+    public void loginRegisterTest(){
+        TBankDAO dao = new TBankDAO();
+        int testingSeed = getLastSeed();
+        String firstName = "f-----";
+        String lastName  = "l----";
+        String personalId = "p-id--";
+        String userName = "us---";
+        String password = "ps----";
+        for(int i = 0; i < 10; i++){
+            dao.register(firstName + testingSeed + i,lastName + testingSeed + i,
+                    personalId + testingSeed + i, userName + testingSeed + i,
+                    password + testingSeed + i, null);
+        }
+
+        for(int i = 0; i < 10; i++){
+            Account account = dao.login(userName + testingSeed + i, password + testingSeed + i);
+            Assert.assertTrue(account.isValidAccount());
+            Assert.assertEquals(account.getErrorMessage(), ErrorMessage.NoErrorMessage);
+            Assert.assertEquals(account.getFirstName(), firstName + testingSeed + i);
+        }
+
     }
 }

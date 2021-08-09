@@ -48,7 +48,7 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
             }
 
             String insertQuery = "insert into crowd_funding_events (event_name, account_id, card_identifier," +
-                    " event_desc, target, done, active_event)" +
+                    " event_desc, target, done, active_event, currency_id)" +
                     " values(?, ?, ?, ?, ?, ?, ?, ?) ";
 
             stm = connection.prepareStatement(insertQuery);

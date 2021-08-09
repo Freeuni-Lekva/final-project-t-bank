@@ -106,12 +106,12 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
     }
 
     @Override
-    public ArrayList<EventError> getPublicCrowdFundingEvents() {
+    public ArrayList<CrowdFundingEvent> getPublicCrowdFundingEvents() {
         return crowdFundingEventDAO.getPublicCrowdFundingEvents();
     }
 
     @Override
-    public ArrayList<EventError> getSpecificEvents(String personalNumber) {
+    public EventList getSpecificEvents(String personalNumber) {
         return crowdFundingEventDAO.getSpecificEvents(personalNumber);
     }
 }

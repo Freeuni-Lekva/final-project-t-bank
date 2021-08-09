@@ -1,8 +1,8 @@
 package com.example.T_Bank.DAO.Implementations;
 
 import com.example.T_Bank.DAO.DAOInterfaces.CrowdFundingEventDAO;
+import com.example.T_Bank.Storage.*;
 import com.example.T_Bank.Storage.Currency;
-import com.example.T_Bank.Storage.EventError;
 
 import javax.naming.ldap.PagedResultsControl;
 import java.sql.Connection;
@@ -43,7 +43,7 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
                 }
             }
 
-            if(targetMoney <= 0){
+            if (targetMoney <= 0) {
                 return EventError.targetMoneyLessThanZero;
             }
 
@@ -162,13 +162,134 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
         }
     }
 
-    @Override
-    public ArrayList<EventError> getPublicCrowdFundingEvents() {
+    private Currency findSpecificCurrency(int currency_id) {
+        String checkQuery = "select * from currency_exchange where currency_id = ?";
+        try {
+            PreparedStatement checkStm = connection.prepareStatement(checkQuery);
+            checkStm.setInt(1, currency_id);
+            ResultSet availableCurrency = checkStm.executeQuery();
+
+            availableCurrency.next();
+            Currency curr = new Currency(availableCurrency.getString("currency_name"),
+                    availableCurrency.getInt("currency_id"),
+                    availableCurrency.getDouble("call_price"),
+                    availableCurrency.getDouble("bid_price"));
+            return curr;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         return null;
     }
 
     @Override
-    public ArrayList<EventError> getSpecificEvents(String personalNumber) {
-        return null;
+    public ArrayList<CrowdFundingEvent> getPublicCrowdFundingEvents() {
+        ArrayList<CrowdFundingEvent> allEvents = new ArrayList<>();
+
+        String checkQuery = "select * from crowd_funding_events";
+        try {
+            PreparedStatement checkStm = connection.prepareStatement(checkQuery);
+            ResultSet availableEvents = checkStm.executeQuery();
+
+            while (availableEvents.next()) {
+                int event_id = availableEvents.getInt("event_id");
+                String event_name = availableEvents.getString("event_name");
+                int account_id = availableEvents.getInt("account_id");
+                String card_identifier = availableEvents.getString("card_identifier");
+                String event_desc = availableEvents.getString("event_desc");
+                double target = availableEvents.getDouble("target");
+                double done = availableEvents.getDouble("done");
+                boolean active_event = availableEvents.getBoolean("active_event");
+                int currency_id = availableEvents.getInt("currency_id");
+
+                Currency curr = findSpecificCurrency(currency_id);
+                CrowdFundingEvent event = new CrowdFundingEvent(event_id, event_name, account_id, card_identifier, event_desc, target,
+                        done, active_event, curr);
+                allEvents.add(event);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return allEvents;
+    }
+
+    private EventList findAllEvents(int accountId) {
+        ArrayList<CrowdFundingEvent> allEvents = new ArrayList<>();
+
+        String checkQuery = "select * from crowd_funding_events where account_id = ?";
+
+        try {
+            PreparedStatement checkStm = connection.prepareStatement(checkQuery);
+            checkStm.setInt(1, accountId);
+            ResultSet availableEvents = checkStm.executeQuery();
+
+            int count = 0;
+
+            while (availableEvents.next()) {
+                count++;
+                int event_id = availableEvents.getInt("event_id");
+                String event_name = availableEvents.getString("event_name");
+                int account_id = availableEvents.getInt("account_id");
+                String card_identifier = availableEvents.getString("card_identifier");
+                String event_desc = availableEvents.getString("event_desc");
+                double target = availableEvents.getDouble("target");
+                double done = availableEvents.getDouble("done");
+                boolean active_event = availableEvents.getBoolean("active_event");
+                int currency_id = availableEvents.getInt("currency_id");
+
+                Currency curr = findSpecificCurrency(currency_id);
+                CrowdFundingEvent event = new CrowdFundingEvent(event_id, event_name, account_id, card_identifier, event_desc, target,
+                        done, active_event, curr);
+                allEvents.add(event);
+            }
+
+            if (count == 0) {
+                EventList currEvent = new EventList(null, EventError.noEventFound);
+                return currEvent;
+            }
+            EventList currEvent = new EventList(allEvents, EventError.noErrorMessage);
+            return currEvent;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        EventList currEvent = new EventList(null, EventError.noEventFound);
+        return currEvent;
+    }
+
+        @Override
+    public EventList getSpecificEvents(String personalNumber) {
+        ArrayList<CrowdFundingEvent> allEvents = new ArrayList<>();
+
+        String checkQuery = "select * from accounts where personal_id = ?";
+
+        try {
+            PreparedStatement checkStm = connection.prepareStatement(checkQuery);
+            checkStm.setString(1, personalNumber);
+            ResultSet availableAccounts = checkStm.executeQuery();
+
+            int count = 0;
+
+            while (availableAccounts.next()) {
+                count++;
+                int accountId = availableAccounts.getInt("account_id");
+                EventList getSpecificEvents = findAllEvents(accountId);
+
+                ArrayList<CrowdFundingEvent> currEvents = getSpecificEvents.getAllEvents();
+                for (int i = 0; i < currEvents.size(); i++) {
+                    allEvents.add(currEvents.get(i));
+                }
+            }
+
+            if (count == 0) {
+                EventList currEvent = new EventList(null, EventError.noAccountFound);
+                return currEvent;
+            }
+
+            EventList currEvent = new EventList(allEvents, EventError.noErrorMessage);
+            return currEvent;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        EventList currEvent = new EventList(null, EventError.noAccountFound);
+        return currEvent;
     }
 }

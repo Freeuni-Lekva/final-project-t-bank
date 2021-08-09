@@ -37,7 +37,7 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
         cardDao = new CardDAOImplementation(connection);
         currencyDAO = new CurrencyDAOImplementation(connection);
         transactionsDAO = new TransactionsDAOImplementation(connection, currencyDAO);
-        crowdFundingEventDAO = new CrowdFundingEventDAOImplementation(connection);
+        crowdFundingEventDAO = new CrowdFundingEventDAOImplementation(connection, currencyDAO);
     }
 
     public CardInfo addCard(int accountId, CardType cardType, String cardName) {
@@ -113,5 +113,10 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
     @Override
     public EventList getSpecificEvents(String personalNumber) {
         return crowdFundingEventDAO.getSpecificEvents(personalNumber);
+    }
+
+    @Override
+    public EventError sendFunds(int eventId, String fromCardIdentifier, double amount, Currency fromCurrency) {
+        return crowdFundingEventDAO.sendFunds(eventId, fromCardIdentifier, amount, fromCurrency);
     }
 }

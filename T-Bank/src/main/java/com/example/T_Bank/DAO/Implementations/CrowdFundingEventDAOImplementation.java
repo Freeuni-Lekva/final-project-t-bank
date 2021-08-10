@@ -1,6 +1,8 @@
 package com.example.T_Bank.DAO.Implementations;
 
 import com.example.T_Bank.DAO.DAOInterfaces.CrowdFundingEventDAO;
+import com.example.T_Bank.DAO.DAOInterfaces.CurrencyDAO;
+import com.example.T_Bank.DAO.TBankDAO;
 import com.example.T_Bank.Storage.*;
 import com.example.T_Bank.Storage.Currency;
 
@@ -11,12 +13,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO {
+    private CurrencyDAO currency;
     private Connection connection;
 
-    public CrowdFundingEventDAOImplementation(Connection connection) {
+    public CrowdFundingEventDAOImplementation(Connection connection, CurrencyDAO currencyDAO) {
         this.connection = connection;
+        this.currency = currencyDAO;
     }
 
     @Override
@@ -255,7 +260,7 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
         return currEvent;
     }
 
-        @Override
+    @Override
     public EventList getSpecificEvents(String personalNumber) {
         ArrayList<CrowdFundingEvent> allEvents = new ArrayList<>();
 
@@ -291,5 +296,92 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
         }
         EventList currEvent = new EventList(null, EventError.noAccountFound, false);
         return currEvent;
+    }
+
+    public EventError sendFunds(int eventId, String fromCardIdentifier, double amount, Currency fromCurrency) {
+        ArrayList<CrowdFundingEvent> allEvents = new ArrayList<>();
+
+        String checkEventQuery = "select * from crowd_funding_events where event_id = ?";
+        String checkCardQuery = "select * from account_cards where card_identifier = ?";
+
+        String specificCurrencyBalance = fromCurrency.getCurrencyName().toLowerCase() + "_balance";
+
+        try {
+            PreparedStatement checkEventStm = connection.prepareStatement(checkEventQuery);
+            PreparedStatement checkCardStm = connection.prepareStatement(checkCardQuery);
+            checkEventStm.setInt(1, eventId);
+            checkCardStm.setString(1,fromCardIdentifier);
+
+            ResultSet specificEvent = checkEventStm.executeQuery();
+            ResultSet specificCard = checkCardStm.executeQuery();
+
+            int count = 0;
+
+            while (specificEvent.next()) {
+                if (!specificEvent.getBoolean("active_event")) {
+                    return EventError.eventNotActive;
+                }
+                count ++;
+                if (!specificCard.next()) {
+                    return EventError.noCardFound;
+                }
+
+                double amountOnCard = specificCard.getDouble(specificCurrencyBalance);
+
+                if (amountOnCard < amount) {
+                    return EventError.notEnoughAmount;
+                }
+
+                int eventCurrency = specificEvent.getInt("currency_id");
+                double eventDoneAmount = specificEvent.getDouble("done");
+                double eventTargetAmount = specificEvent.getDouble("target");
+
+                String checkQuery = "select * from currency_exchange where currency_id = ? ";
+                double value;
+
+                try {
+                    PreparedStatement checkStm = connection.prepareStatement(checkQuery);
+                    checkStm.setInt(1, eventCurrency);
+                    ResultSet result = checkStm.executeQuery();
+                    result.next();
+                    Currency toCurrency = new Currency(result.getString("currency_name"),
+                                                result.getInt("currency_id"),
+                                                result.getDouble("call_price"),
+                                                result.getDouble("bid_price"));
+
+                    value = currency.getExchangeValue(amount, fromCurrency, toCurrency);
+
+                    String updateQuery = "Update crowd_funding_events set done = ? where event_id = ?";
+                    String updateCardQuery0 = "Update account_cards set ";
+                    String updateCardQuery1 = " = ? where card_identifier = ?";
+                    String updateCardQuery = updateCardQuery0 + specificCurrencyBalance + updateCardQuery1;
+                    try {
+                        PreparedStatement updateStm = connection.prepareStatement(updateQuery);
+                        PreparedStatement updateCardStm = connection.prepareStatement(updateCardQuery);
+                        updateStm.setDouble(1, eventDoneAmount + value);
+                        updateStm.setInt(2, eventId);
+                        updateCardStm.setDouble(1, amountOnCard - amount);
+                        updateCardStm.setString(2, fromCardIdentifier);
+                        updateCardStm.executeUpdate();
+                        updateStm.executeUpdate();
+                        if (eventTargetAmount <= eventDoneAmount + value) {
+                            closeEvent(eventId);
+                        }
+                        return EventError.noErrorMessage;
+                    }  catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+            if (count == 0) {
+                return EventError.noEventFound;
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return null;
     }
 }

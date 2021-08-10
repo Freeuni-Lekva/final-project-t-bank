@@ -10,9 +10,9 @@
 <head>
     <title>Events</title>
     <link rel="stylesheet" href="HomePage.css">
-    <link rel="stylesheet" href="Cards.css"/>
+    <link rel="stylesheet" href="Events.css"/>
 </head>
-<body>
+<body style="background-color: sandybrown">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <script>
@@ -52,18 +52,20 @@
 
     <div style="margin-left: 340px">
         <c:forEach items="${events}" var="event" varStatus="loop">
-            <div class="card">
+            <div class="event">
                 <h1>${event.eventName}</h1>
                 <h2>${event.target} ${event.currency.currencyName}</h2>
-                <p style=" word-wrap: normal; height: 140px ">${event.description}</p>
+                <p class="description" style=" word-wrap: normal; height: 140px ">${event.description}</p>
                 <h2>${event.cardIdentifier}</h2>
-                <button onclick="copyID(${event.eventId}); copyName(this);" value="${event.eventName}">Fund</button>
+                <button class="defaultButton" onclick="copyID(${event.eventId}); copyName(this);"
+                        value="${event.eventName}">Fund
+                </button>
             </div>
         </c:forEach>
     </div>
 </div>
 
-<div style=" position: fixed; margin-left: 1540px">
+<div style=" position: fixed; margin-left: 1540px" class="form">
     <form action="EventsListServlet" method="post">
         <h1>Fund an Event</h1>
 
@@ -89,8 +91,8 @@
             <option value="2">EUR</option>
         </select>
 
-        <h2 >${transferSuccess}</h2>
-        <h4 style="color: red">${transferError}</h4>
+        <h2>${transferSuccess}</h2>
+        <h4>${transferError}</h4>
         <button type="submit">Transfer</button>
     </form>
 </div>

@@ -50,13 +50,19 @@ public class EventsListServlet extends HttpServlet {
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
 
-        ArrayList<CrowdFundingEvent> events = tBank.getPublicCrowdFundingEvents();
+        List<CrowdFundingEvent> events = tBank.getPublicCrowdFundingEvents().stream().filter(crowdFundingEvent -> crowdFundingEvent.isActive()).collect(Collectors.toList());
         request.setAttribute("events", events);
 
         AccountNumbersList senderList = tBank.getAccountNumbers(account.getPersonalId());
         request.setAttribute("senderAccounts", senderList.getAccountNumbers());
 
-        int eventId = Integer.parseInt(request.getParameter("eventID"));
+        String id = request.getParameter("eventID");
+        if (id.equals("") || id == null) {
+            request.setAttribute("transferError", "Please Choose an Event");
+            request.getRequestDispatcher("EventsListPage.jsp").forward(request, response);
+            return;
+        }
+        int eventId = Integer.parseInt(id);
         String fromAccount = senderList.getAccountNumbers().get(Integer.parseInt(request.getParameter("senderDropdown")));
         Currency currency = tBank.getCurrencies().get(Integer.parseInt(request.getParameter("fromCurrency")));
         double amount = 0.0;
@@ -74,6 +80,7 @@ public class EventsListServlet extends HttpServlet {
                 request.setAttribute("transferError", error);
             }
         }
+
 
         request.getRequestDispatcher("EventsListPage.jsp").forward(request, response);
     }

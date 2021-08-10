@@ -1,17 +1,16 @@
 package com.example.T_Bank;
 
 import com.example.T_Bank.DAO.TBankDAO;
-import com.example.T_Bank.Storage.Account;
-import com.example.T_Bank.Storage.AccountNumbersList;
-import com.example.T_Bank.Storage.CrowdFundingEvent;
-import com.example.T_Bank.Storage.EventList;
+import com.example.T_Bank.Storage.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "EventsListServlet", value = "/EventsListServlet")
 public class EventsListServlet extends HttpServlet {
@@ -29,12 +28,12 @@ public class EventsListServlet extends HttpServlet {
         String searchedID = request.getParameter("searchBar");
 
         if (searchedID == null || searchedID.equals("")) {
-            ArrayList<CrowdFundingEvent> events = tBank.getPublicCrowdFundingEvents();
+            List<CrowdFundingEvent> events = tBank.getPublicCrowdFundingEvents().stream().filter(crowdFundingEvent -> crowdFundingEvent.isActive()).collect(Collectors.toList());
             request.setAttribute("events", events);
         } else {
             EventList events = tBank.getSpecificEvents(searchedID);
             if (events.isValid()) {
-                request.setAttribute("events", events.getAllEvents());
+                request.setAttribute("events", events.getAllEvents().stream().filter(crowdFundingEvent -> crowdFundingEvent.isActive()).collect(Collectors.toList()));
             } else {
                 request.setAttribute("eventError", events.getErrorMessage());
             }
@@ -56,6 +55,25 @@ public class EventsListServlet extends HttpServlet {
 
         AccountNumbersList senderList = tBank.getAccountNumbers(account.getPersonalId());
         request.setAttribute("senderAccounts", senderList.getAccountNumbers());
+
+        int eventId = Integer.parseInt(request.getParameter("eventID"));
+        String fromAccount = senderList.getAccountNumbers().get(Integer.parseInt(request.getParameter("senderDropdown")));
+        Currency currency = tBank.getCurrencies().get(Integer.parseInt(request.getParameter("fromCurrency")));
+        double amount = 0.0;
+        if (!request.getParameter("amount").equals("")) {
+            amount = Double.parseDouble((request.getParameter("amount")));
+        }
+
+        if (amount <= 0) {
+            request.setAttribute("transferError", "Amount should be more than 0");
+        } else {
+            EventError error = tBank.sendFunds(eventId, fromAccount, amount, currency);
+            if (error.equals(EventError.noErrorMessage)) {
+                request.setAttribute("transferSuccess", "Funding Successful");
+            } else {
+                request.setAttribute("transferError", error);
+            }
+        }
 
         request.getRequestDispatcher("EventsListPage.jsp").forward(request, response);
     }

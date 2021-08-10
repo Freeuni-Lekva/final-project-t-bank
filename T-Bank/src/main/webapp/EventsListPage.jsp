@@ -89,6 +89,8 @@
             <option value="2">EUR</option>
         </select>
 
+        <h2 >${transferSuccess}</h2>
+        <h4 style="color: red">${transferError}</h4>
         <button type="submit">Transfer</button>
     </form>
 </div>

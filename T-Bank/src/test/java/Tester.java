@@ -24,11 +24,15 @@ public class Tester {
 
      /*  tbank.changeEventTarget(2,200);*/
 
-
+/*
        ArrayList<CrowdFundingEvent> event = tbank.getPublicCrowdFundingEvents();
        for (int i = 0; i < event.size(); i++) {
            System.out.println(event.get(i).getEventName());
-       }
+       }*/
+
+        Currency curr = tbank.getCurrencies().get(0);
+        System.out.println(tbank.sendFunds(3, "TBMTSC00001", 4500, curr));
+
     }
 
 }

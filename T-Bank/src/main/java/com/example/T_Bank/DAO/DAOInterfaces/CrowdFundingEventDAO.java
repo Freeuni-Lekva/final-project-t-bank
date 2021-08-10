@@ -14,4 +14,5 @@ public interface CrowdFundingEventDAO {
     public EventError changeEventTarget(int eventId, double changedTarget);
     public ArrayList<CrowdFundingEvent> getPublicCrowdFundingEvents();
     public EventList getSpecificEvents(String personalNumber);
+    public EventError sendFunds(int eventId, String fromCardIdentifier, double amount, Currency fromCurrency);
 }

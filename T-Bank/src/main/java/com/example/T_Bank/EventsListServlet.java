@@ -4,6 +4,7 @@ import com.example.T_Bank.DAO.TBankDAO;
 import com.example.T_Bank.Storage.Account;
 import com.example.T_Bank.Storage.AccountNumbersList;
 import com.example.T_Bank.Storage.CrowdFundingEvent;
+import com.example.T_Bank.Storage.EventList;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -22,11 +23,22 @@ public class EventsListServlet extends HttpServlet {
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
 
-        ArrayList<CrowdFundingEvent> events = tBank.getPublicCrowdFundingEvents();
-        request.setAttribute("events", events);
-
         AccountNumbersList senderList = tBank.getAccountNumbers(account.getPersonalId());
         request.setAttribute("senderAccounts", senderList.getAccountNumbers());
+
+        String searchedID = request.getParameter("searchBar");
+
+        if (searchedID == null || searchedID.equals("")) {
+            ArrayList<CrowdFundingEvent> events = tBank.getPublicCrowdFundingEvents();
+            request.setAttribute("events", events);
+        } else {
+            EventList events = tBank.getSpecificEvents(searchedID);
+            if (events.isValid()) {
+                request.setAttribute("events", events.getAllEvents());
+            } else {
+                request.setAttribute("eventError", events.getErrorMessage());
+            }
+        }
 
         request.getRequestDispatcher("EventsListPage.jsp").forward(request, response);
     }

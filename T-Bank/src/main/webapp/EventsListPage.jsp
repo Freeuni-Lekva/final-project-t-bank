@@ -21,7 +21,7 @@
     }
 
     function copyName(name) {
-        document.getElementById("eventName").value = name.value;
+        document.getElementById("eventName").innerHTML = name.value;
     }
 </script>
 
@@ -41,6 +41,15 @@
 </div>
 
 <div style="width: 80%">
+    <div style="margin-left: 340px; text-align: center;">
+        <form action="EventsListServlet" method="get">
+            <input type="text" name="searchBar" placeholder="Enter personal ID...">
+            <button type="submit">Search</button>
+            <br>
+            <h4 style="color: red">${eventError}</h4>
+        </form>
+    </div>
+
     <div style="margin-left: 340px">
         <c:forEach items="${events}" var="event" varStatus="loop">
             <div class="card">
@@ -59,8 +68,8 @@
         <h1>Fund an Event</h1>
 
         <input style="visibility: hidden" type="text" id="eventID" name="eventID"><br>
-        <label>Event Name</label><br>
-        <input type="text" id="eventName" name="eventName" placeholder="Enter Event Name"><br><br>
+        <label>Funding Event : </label>
+        <label type="text" id="eventName" name="eventName" placeholder="Enter Event Name"></label><br><br>
 
         <label>Sender IBAN</label><br>
         <select style="width: 95%" name="senderDropdown">

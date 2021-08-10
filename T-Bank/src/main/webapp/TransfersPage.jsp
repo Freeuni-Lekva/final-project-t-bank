@@ -20,10 +20,12 @@
         <li><a href="AccountServlet">Account Information </a></li>
         <li><a href="CardCreationServlet">Add or Remove a Card</a></li>
         <li><a href="CardsListServlet">View All Cards</a></li>
+        <li><a href="CurrencyServlet">Currency Exchange</a></li>
         <li>Crowd Funding</li>
         <li>Deposits and Loans</li>
         <li><a class="accountInfoTag" href="TransfersServlet">Transfer by ID</a></li>
         <li><a href="IBANTransfersServlet">Transfer by IBAN</a></li>
+        <li><a style="border:2px solid; color:red" href="LogoutServlet">Log Out</a></li>
     </ul>
     <p class="note">Welcome to TBank</p>
 </div>

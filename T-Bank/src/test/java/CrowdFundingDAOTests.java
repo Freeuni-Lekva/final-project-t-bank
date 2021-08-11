@@ -1,11 +1,14 @@
 import com.example.T_Bank.DAO.DatabaseConstants;
 import com.example.T_Bank.DAO.TBankDAO;
+import com.example.T_Bank.Storage.CrowdFundingEvent;
 import com.example.T_Bank.Storage.EventError;
+import com.example.T_Bank.Storage.EventList;
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.testng.Assert;
+import org.testng.annotations.*;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,6 +20,9 @@ public class CrowdFundingDAOTests {
     private static Set<Integer> tmpEventIDs = new HashSet<>();
     private TBankDAO tBank = new TBankDAO();
     private static int lastTestID;
+    private static String personalID;
+    private static String cardID;
+    private static int eventID;
 
     @BeforeClass
     public static void setup() throws SQLException {
@@ -69,6 +75,7 @@ public class CrowdFundingDAOTests {
         for (int i : tmpAccIDs) {
             statement.setInt(1, i);
             statement.setString(2, "CardID" + i);
+            cardID = "CardID" + i;
 
             statement.executeUpdate();
         }
@@ -103,6 +110,9 @@ public class CrowdFundingDAOTests {
             statement.setString(1, "testName" + i);
             statement.setString(2, "testSurname" + i);
             statement.setString(3, "testID" + i);
+            if (personalID == null) {
+                personalID = "testID" + i;
+            }
             statement.setString(4, "testUsername" + i);
             statement.setString(5, "testPass" + i);
             statement.setString(6, null);
@@ -121,7 +131,7 @@ public class CrowdFundingDAOTests {
         connection = dataSource.getConnection();
     }
 
-    @Test
+    @Test(priority = 1)
     public void testCreateCrowdFundingEvent() {
         EventError eventError = tBank.createCrowdFundingEvent("e" + lastTestID, tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
                 "description", 100, tBank.getCurrencies().get(0));
@@ -135,31 +145,49 @@ public class CrowdFundingDAOTests {
         eventError = tBank.createCrowdFundingEvent("e" + lastTestID, tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
                 "description", 100, tBank.getCurrencies().get(0));
         Assert.assertEquals(EventError.sameEventNameOnThisAccount, eventError);
+
+//        eventError = tBank.createCrowdFundingEvent("e" + (lastTestID + 1), tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
+//                "description", 100, tBank.getCurrencies().get(0));
+//        tmpEventIDs.add(lastTestID + 1);
+//        Assert.assertEquals(EventError.noErrorMessage, eventError);
     }
 
-    @Test
+    @Test(priority = 6)
     public void testDeleteCrowdFundingEvent() {
-
+//        eventID++;
+        EventError eventError = tBank.deleteCrowdFundingEvent(tmpEventIDs.iterator().next());
+        Assert.assertEquals(EventError.noErrorMessage, eventError);
     }
 
-    @Test
+    @Test(priority = 2)
     public void testChangeEventTarget() {
-
+//        eventID = tmpEventIDs.iterator().next();
+//        System.out.println(eventID);
+        EventError eventError = tBank.changeEventTarget(tmpEventIDs.iterator().next(), 300);
+        Assert.assertEquals(EventError.noErrorMessage, eventError);
+//        eventError = tBank.changeEventTarget(tmpEventIDs.iterator().next(), 0);
+//        System.out.println(eventError);
     }
 
-    @Test
+    @Test(priority = 3)
     public void testGetPublicCrowdFundingEvents() {
-
+        ArrayList<CrowdFundingEvent> events = tBank.getPublicCrowdFundingEvents();
+        Assert.assertFalse(events.isEmpty());
     }
 
-    @Test
+    @Test(priority = 4)
     public void testGetSpecificEvents() {
+        ArrayList<CrowdFundingEvent> events = tBank.getSpecificEvents(personalID).getAllEvents();
+        Assert.assertFalse(events.isEmpty());
 
+        events = tBank.getSpecificEvents("none").getAllEvents();
+        Assert.assertNull(events);
     }
 
-    @Test
+    @Test(priority = 5)
     public void testSendFunds() {
-
+        EventError eventError = tBank.sendFunds(tmpEventIDs.iterator().next(), cardID, 1, tBank.getCurrencies().get(0));
+        Assert.assertEquals(EventError.noErrorMessage, eventError);
     }
 
     @AfterClass

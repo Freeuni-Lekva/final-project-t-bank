@@ -13,6 +13,10 @@ public class EventList {
         this.isValid = isValid;
     }
 
+    public boolean isValid() {
+        return isValid;
+    }
+
     public EventError getErrorMessage() {
         return errorMessage;
     }

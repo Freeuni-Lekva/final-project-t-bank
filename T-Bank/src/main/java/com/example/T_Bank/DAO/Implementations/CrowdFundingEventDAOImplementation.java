@@ -279,8 +279,10 @@ public class CrowdFundingEventDAOImplementation implements CrowdFundingEventDAO 
                 EventList getSpecificEvents = findAllEvents(accountId);
 
                 ArrayList<CrowdFundingEvent> currEvents = getSpecificEvents.getAllEvents();
-                for (int i = 0; i < currEvents.size(); i++) {
-                    allEvents.add(currEvents.get(i));
+                if (currEvents != null) {
+                    for (int i = 0; i < currEvents.size(); i++) {
+                        allEvents.add(currEvents.get(i));
+                    }
                 }
             }
 

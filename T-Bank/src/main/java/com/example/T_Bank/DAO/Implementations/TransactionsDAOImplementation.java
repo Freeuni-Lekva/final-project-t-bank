@@ -101,6 +101,7 @@ public class TransactionsDAOImplementation implements TransactionsDAO {
             stm.setDouble(1, amountToTransfer + amountOnAccount);
             stm.setString(2, toAccountNumber);
             stm.executeUpdate();
+
             return TransferError.noErrorMessage;
 
         } catch (SQLException throwables) {

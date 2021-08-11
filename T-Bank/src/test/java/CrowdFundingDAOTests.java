@@ -2,7 +2,6 @@ import com.example.T_Bank.DAO.DatabaseConstants;
 import com.example.T_Bank.DAO.TBankDAO;
 import com.example.T_Bank.Storage.CrowdFundingEvent;
 import com.example.T_Bank.Storage.EventError;
-import com.example.T_Bank.Storage.EventList;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.testng.Assert;
 import org.testng.annotations.*;
@@ -22,7 +21,6 @@ public class CrowdFundingDAOTests {
     private static int lastTestID;
     private static String personalID;
     private static String cardID;
-    private static int eventID;
 
     @BeforeClass
     public static void setup() throws SQLException {
@@ -145,28 +143,18 @@ public class CrowdFundingDAOTests {
         eventError = tBank.createCrowdFundingEvent("e" + lastTestID, tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
                 "description", 100, tBank.getCurrencies().get(0));
         Assert.assertEquals(EventError.sameEventNameOnThisAccount, eventError);
-
-//        eventError = tBank.createCrowdFundingEvent("e" + (lastTestID + 1), tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
-//                "description", 100, tBank.getCurrencies().get(0));
-//        tmpEventIDs.add(lastTestID + 1);
-//        Assert.assertEquals(EventError.noErrorMessage, eventError);
     }
 
     @Test(priority = 6)
     public void testDeleteCrowdFundingEvent() {
-//        eventID++;
         EventError eventError = tBank.deleteCrowdFundingEvent(tmpEventIDs.iterator().next());
         Assert.assertEquals(EventError.noErrorMessage, eventError);
     }
 
     @Test(priority = 2)
     public void testChangeEventTarget() {
-//        eventID = tmpEventIDs.iterator().next();
-//        System.out.println(eventID);
         EventError eventError = tBank.changeEventTarget(tmpEventIDs.iterator().next(), 300);
         Assert.assertEquals(EventError.noErrorMessage, eventError);
-//        eventError = tBank.changeEventTarget(tmpEventIDs.iterator().next(), 0);
-//        System.out.println(eventError);
     }
 
     @Test(priority = 3)

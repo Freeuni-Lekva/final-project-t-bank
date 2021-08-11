@@ -21,7 +21,7 @@
         <li><a class="accountInfoTag" href="CardCreationServlet">Add or Remove a Card</a></li>
         <li><a href="CardsListServlet">View All Cards</a></li>
         <li><a href="CurrencyServlet">Currency Exchange</a></li>
-        <li>Crowd Funding</li>
+        <li><a href="CrowdFundingServlet"> Crowd Funding - My Events </a> </li>
         <li>Deposits and Loans</li>
         <li><a href="TransfersServlet">Transfer by ID</a></li>
         <li><a href="IBANTransfersServlet">Transfer by IBAN</a></li>

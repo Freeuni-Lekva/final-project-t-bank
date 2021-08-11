@@ -1,9 +1,6 @@
 import com.example.T_Bank.DAO.DatabaseConstants;
 import com.example.T_Bank.DAO.TBankDAO;
 import com.example.T_Bank.Storage.EventError;
-import com.tngtech.java.junit.dataprovider.DataProvider;
-import com.tngtech.java.junit.dataprovider.DataProviderRunner;
-import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -12,12 +9,12 @@ import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@RunWith(DataProviderRunner.class)
 public class CrowdFundingDAOTests {
     public static BasicDataSource dataSource;
     public static Connection connection;
     private static Set<Integer> tmpAccIDs;
     private static Set<Integer> tmpCardIDs;
+    private static Set<Integer> tmpEventIDs = new HashSet<>();
     private TBankDAO tBank = new TBankDAO();
     private static int lastTestID;
 
@@ -51,9 +48,7 @@ public class CrowdFundingDAOTests {
         Set<Integer> startingCards = getRows("account_cards");
         addCards();
         Set<Integer> endingCards = getRows("account_cards");
-        for (int i : startingCards) {
-            endingCards.remove(i);
-        }
+        endingCards.removeAll(startingCards);
         tmpCardIDs = endingCards;
     }
 
@@ -61,9 +56,7 @@ public class CrowdFundingDAOTests {
         Set<Integer> startingIDs = getRows("accounts");
         addAccounts(2);
         Set<Integer> endingIDs = getRows("accounts");
-        for (int i : startingIDs) {
-            endingIDs.remove(i);
-        }
+        endingIDs.removeAll(startingIDs);
         tmpAccIDs = endingIDs;
     }
 
@@ -106,7 +99,7 @@ public class CrowdFundingDAOTests {
         int startingIndex = getLastSeed();
         lastTestID = startingIndex;
 
-        for (int i = startingIndex; i <= startingIndex + max; i++) {
+        for (int i = startingIndex; i < startingIndex + max; i++) {
             statement.setString(1, "testName" + i);
             statement.setString(2, "testSurname" + i);
             statement.setString(3, "testID" + i);
@@ -130,15 +123,16 @@ public class CrowdFundingDAOTests {
 
     @Test
     public void testCreateCrowdFundingEvent() {
-        EventError eventError = tBank.createCrowdFundingEvent("e" + lastTestID, lastTestID, "CardID" + lastTestID,
+        EventError eventError = tBank.createCrowdFundingEvent("e" + lastTestID, tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
                 "description", 100, tBank.getCurrencies().get(0));
+        tmpEventIDs.add(lastTestID);
         Assert.assertEquals(EventError.noErrorMessage, eventError);
 
         eventError = tBank.createCrowdFundingEvent("evnt" + lastTestID, lastTestID, "CardID" + lastTestID,
                 "description", -1, tBank.getCurrencies().get(0));
         Assert.assertEquals(EventError.targetMoneyLessThanZero, eventError);
 
-        eventError = tBank.createCrowdFundingEvent("e" + lastTestID, lastTestID, "CardID" + lastTestID,
+        eventError = tBank.createCrowdFundingEvent("e" + lastTestID, tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
                 "description", 100, tBank.getCurrencies().get(0));
         Assert.assertEquals(EventError.sameEventNameOnThisAccount, eventError);
     }
@@ -170,13 +164,21 @@ public class CrowdFundingDAOTests {
 
     @AfterClass
     public static void cleanup() throws SQLException {
+        removeTmps("crowd_funding_event", tmpEventIDs);
         removeTmps("account_card", tmpCardIDs);
         removeTmps("account", tmpAccIDs);
     }
 
     private static void removeTmps(String table, Set<Integer> set) throws SQLException {
+        String item = "";
+        if (table.equals("crowd_funding_event")) {
+            item = "event";
+        } else {
+            item = table;
+        }
+
         for (int i : set) {
-            String removeQuery = "delete from t_bank_db." + table + "s where " + table + "_id = " + i;
+            String removeQuery = "delete from t_bank_db." + table + "s where " + item + "_id = " + i;
             Statement st = connection.createStatement();
             st.executeUpdate(removeQuery);
         }

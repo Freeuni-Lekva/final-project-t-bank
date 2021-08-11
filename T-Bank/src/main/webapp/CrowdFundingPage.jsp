@@ -12,7 +12,7 @@
 <html>
 <head>
     <title>Crowd Funding Page</title>
-    <link rel="stylesheet" href="Events.css">
+    <link rel="stylesheet" href="MyEvents.css">
     <link rel="stylesheet" href="HomePage.css">
 </head>
 <body>

@@ -65,7 +65,7 @@
     </div>
 </div>
 
-<div style=" position: fixed; margin-left: 1540px" class="form">
+<div style=" position: fixed; margin-left: 80%" class="form">
     <form action="EventsListServlet" method="post">
         <h1>Fund an Event</h1>
 

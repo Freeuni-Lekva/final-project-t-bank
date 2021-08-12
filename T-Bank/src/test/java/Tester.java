@@ -30,8 +30,16 @@ public class Tester {
            System.out.println(event.get(i).getEventName());
        }*/
 
-        Currency curr = tbank.getCurrencies().get(0);
-        System.out.println(tbank.sendFunds(3, "TBMTSC00001", 4500, curr));
+        ArrayList<Transaction> list=tbank.getAllConversions(1);
+        System.out.println(list.get(0).toString());
+        System.out.println(list.get(1).toString());
+        System.out.println(list.get(2).toString());
+        System.out.println(list.get(3).toString());
+        System.out.println(list.get(4).toString());
+        System.out.println(list.get(5).toString());
+        System.out.println(list.get(6).toString());
+        System.out.println(list.get(7).toString());
+        System.out.println(list.get(8).toString());
 
     }
 

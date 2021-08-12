@@ -159,7 +159,7 @@ public class CurrencyDAOImplementation implements CurrencyDAO {
             updateSendingBalanceStm.executeUpdate();
 
             int accountId=getAccountId(accountNumber);
-            transactionHistoryDAO.logTransaction(accountId,accountId,accountNumber,accountNumber,2,new Date(System.currentTimeMillis()),toCurrency.getCurrencyId(),amountNumber* fromCurrency.getBid()/toCurrency.getCall());
+            transactionHistoryDAO.logTransaction(accountId,accountId,accountNumber,accountNumber,2,new Date(System.currentTimeMillis()),toCurrency.getCurrencyId(),getExchangeValue(amountNumber,fromCurrency,toCurrency));
             transactionHistoryDAO.logTransaction(accountId,accountId,accountNumber,accountNumber,2,new Date(System.currentTimeMillis()),fromCurrency.getCurrencyId(),-amountNumber);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -174,7 +174,7 @@ public class CurrencyDAOImplementation implements CurrencyDAO {
             statement.setString(1,accountNumber);
             ResultSet result=statement.executeQuery();
             result.next();
-            accountId=result.getInt(3);
+            accountId=result.getInt("account_id");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

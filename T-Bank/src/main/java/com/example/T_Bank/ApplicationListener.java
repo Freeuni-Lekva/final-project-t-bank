@@ -20,6 +20,7 @@ public class ApplicationListener implements ServletContextListener, HttpSessionL
         TBankDAO tBankDAO = new TBankDAO();
         Map<String, Account> sessions = new HashMap<>();
         tBankDAO.register("Giorgi", "Urumashvili", "12341234123", "giorgiurumashvili", "1234", "2000-16-04");
+
         sce.getServletContext().setAttribute("TBankDAO", tBankDAO);
         sce.getServletContext().setAttribute("Sessions", sessions);
 

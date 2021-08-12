@@ -106,6 +106,8 @@ CREATE TABLE account_logs (
                               receiver_card_identifier char(11),
                               transaction_type_id int,
                               log_date date,
+                              currency_id int,
+                              amount double,
                               primary key(account_log_id),
                               foreign key (sender_card_identifier)
                                   references account_cards(card_identifier),
@@ -114,7 +116,10 @@ CREATE TABLE account_logs (
                               foreign key (sender_account_id)
                                   references accounts(account_id),
                               foreign key (receiver_account_id)
-                                  references accounts(account_id)
+                                  references accounts(account_id),
+                              foreign key (currency_id)
+                                  references currency_exchange(currency_id)
+
 );
 
 CREATE TABLE testing_seeds(

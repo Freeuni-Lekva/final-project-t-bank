@@ -1,23 +1,23 @@
 package com.example.T_Bank.DAO.Implementations;
 
 import com.example.T_Bank.DAO.DAOInterfaces.CurrencyDAO;
+import com.example.T_Bank.DAO.DAOInterfaces.TransactionHistoryDAO;
 import com.example.T_Bank.Storage.CardErrorMessage;
 import com.example.T_Bank.Storage.CardInfo;
 import com.example.T_Bank.Storage.Currency;
 import com.example.T_Bank.Storage.TransferError;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class CurrencyDAOImplementation implements CurrencyDAO {
     private Connection connection;
-    public CurrencyDAOImplementation(Connection connection){
+    private TransactionHistoryDAO transactionHistoryDAO;
+    public CurrencyDAOImplementation(Connection connection,TransactionHistoryDAO transactionHistoryDAO){
         this.connection = connection;
+        this.transactionHistoryDAO=transactionHistoryDAO;
     }
 
    /* @Override
@@ -157,10 +157,30 @@ public class CurrencyDAOImplementation implements CurrencyDAO {
 
             updateReceivingBalanceStm.executeUpdate();
             updateSendingBalanceStm.executeUpdate();
+
+            int accountId=getAccountId(accountNumber);
+            transactionHistoryDAO.logTransaction(accountId,accountId,accountNumber,accountNumber,2,new Date(System.currentTimeMillis()),toCurrency.getCurrencyId(),amountNumber* fromCurrency.getBid()/toCurrency.getCall());
+            transactionHistoryDAO.logTransaction(accountId,accountId,accountNumber,accountNumber,2,new Date(System.currentTimeMillis()),fromCurrency.getCurrencyId(),-amountNumber);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return TransferError.noErrorMessage;
+    }
+
+    private int getAccountId(String accountNumber) {
+        int accountId=0;
+        try {
+            PreparedStatement statement=connection.prepareStatement("select * from account_cards where card_identifier=?");
+            statement.setString(1,accountNumber);
+            ResultSet result=statement.executeQuery();
+            result.next();
+            accountId=result.getInt(3);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return accountId;
+
     }
 
 

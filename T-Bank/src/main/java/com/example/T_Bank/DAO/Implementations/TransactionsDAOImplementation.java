@@ -1,22 +1,23 @@
 package com.example.T_Bank.DAO.Implementations;
 
 import com.example.T_Bank.DAO.DAOInterfaces.CurrencyDAO;
+import com.example.T_Bank.DAO.DAOInterfaces.TransactionHistoryDAO;
 import com.example.T_Bank.DAO.DAOInterfaces.TransactionsDAO;
 import com.example.T_Bank.Storage.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class TransactionsDAOImplementation implements TransactionsDAO {
     private Connection connection;
     private CurrencyDAO currencyDAO;
-    public TransactionsDAOImplementation(Connection connection, CurrencyDAO currencyDAO){
+    private TransactionHistoryDAO transactionHistoryDAO;
+    public TransactionsDAOImplementation(Connection connection, CurrencyDAO currencyDAO, TransactionHistoryDAO transactionHistoryDAO){
         this.connection = connection;
         this.currencyDAO = currencyDAO;
+        this.transactionHistoryDAO=transactionHistoryDAO;
     }
+
 
     public boolean accountNumberExists(String accountNumber){
         String checkQuery = "select count(*) from account_cards where card_identifier = ?";
@@ -35,6 +36,22 @@ public class TransactionsDAOImplementation implements TransactionsDAO {
         }
 
         return false;
+    }
+
+    private int getAccountId(String accountNumber) {
+        int accountId=0;
+        try {
+            PreparedStatement statement=connection.prepareStatement("select * from account_cards where card_identifier=?");
+            statement.setString(1,accountNumber);
+            ResultSet result=statement.executeQuery();
+            result.next();
+            accountId=result.getInt(3);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return accountId;
+
     }
 
     private String getCurrencyName(Currency fromCurrency){
@@ -102,6 +119,8 @@ public class TransactionsDAOImplementation implements TransactionsDAO {
             stm.setString(2, toAccountNumber);
             stm.executeUpdate();
 
+
+            transactionHistoryDAO.logTransaction(getAccountId(fromAccountNumber),getAccountId(toAccountNumber),fromAccountNumber,toAccountNumber,1,new Date(System.currentTimeMillis()),fromCurrency.getCurrencyId(),amount);
             return TransferError.noErrorMessage;
 
         } catch (SQLException throwables) {

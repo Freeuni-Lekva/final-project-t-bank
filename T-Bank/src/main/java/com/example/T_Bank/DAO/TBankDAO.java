@@ -8,16 +8,18 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
-public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyDAO, CrowdFundingEventDAO {
+public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyDAO, CrowdFundingEventDAO,TransactionHistoryDAO {
     private BasicDataSource dataSource;
     private Connection connection;
     private AccountDAO accountDao;
     private TransactionsDAO transactionsDAO;
     private CurrencyDAO currencyDAO;
     private CrowdFundingEventDAO crowdFundingEventDAO;
+    private TransactionHistoryDAO transactionHistoryDAO;
 
     private CardDAO cardDao;
 
@@ -33,11 +35,13 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        transactionHistoryDAO=new TransactionHistoryDAOImplementation(connection);
         accountDao = new AccountDAOImplementation(connection);
         cardDao = new CardDAOImplementation(connection);
-        currencyDAO = new CurrencyDAOImplementation(connection);
-        transactionsDAO = new TransactionsDAOImplementation(connection, currencyDAO);
+        currencyDAO = new CurrencyDAOImplementation(connection,transactionHistoryDAO);
+        transactionsDAO = new TransactionsDAOImplementation(connection, currencyDAO,transactionHistoryDAO);
         crowdFundingEventDAO = new CrowdFundingEventDAOImplementation(connection, currencyDAO);
+
     }
 
     public CardInfo addCard(int accountId, CardType cardType, String cardName) {
@@ -118,5 +122,36 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
     @Override
     public EventError sendFunds(int eventId, String fromCardIdentifier, double amount, Currency fromCurrency) {
         return crowdFundingEventDAO.sendFunds(eventId, fromCardIdentifier, amount, fromCurrency);
+    }
+
+
+    @Override
+    public ArrayList<Transaction> getAllTransactions(int accountId) {
+        return transactionHistoryDAO.getAllTransactions(accountId);
+    }
+
+    @Override
+    public ArrayList<Transaction> getMoneyTransfers(int accountId) {
+        return transactionHistoryDAO.getMoneyTransfers(accountId);
+    }
+
+    @Override
+    public ArrayList<Transaction> getAllIncomes(int accountId) {
+        return transactionHistoryDAO.getAllIncomes(accountId);
+    }
+
+    @Override
+    public ArrayList<Transaction> getAllExpenses(int accountId) {
+        return transactionHistoryDAO.getAllExpenses(accountId);
+    }
+
+    @Override
+    public ArrayList<Transaction> getAllConversions(int accountId) {
+        return transactionHistoryDAO.getAllConversions(accountId);
+    }
+
+    @Override
+    public Transaction logTransaction(int senderAccountId, int receiverAccountId, String senderCardIdentifier, String receiverCardIdentifier, int transactionTypeId, Date date,int currencyId, double amount) {
+        return transactionHistoryDAO.logTransaction(senderAccountId,receiverAccountId,senderCardIdentifier,receiverCardIdentifier,transactionTypeId,date,currencyId,amount);
     }
 }

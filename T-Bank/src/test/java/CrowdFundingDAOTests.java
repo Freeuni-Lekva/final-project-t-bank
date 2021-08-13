@@ -168,7 +168,13 @@ public class CrowdFundingDAOTests {
 
     @Test(priority = 1)
     public void testCreateCrowdFundingEvent() {
-        EventError eventError = crowdFundingEventDAO.createCrowdFundingEvent("e" + lastTestID, tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
+        EventError eventError = crowdFundingEventDAO.sendFunds(lastTestID, cardID, 120, tBank.getCurrencies().get(0));
+        Assert.assertEquals(eventError, EventError.noEventFound);
+
+        ArrayList<CrowdFundingEvent> events = crowdFundingEventDAO.getSpecificEvents(personalID).getAllEvents();
+        Assert.assertTrue(events.isEmpty());
+
+        eventError = crowdFundingEventDAO.createCrowdFundingEvent("e" + lastTestID, tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
                 "description", 100, tBank.getCurrencies().get(0));
         tmpEventIDs.add(lastTestID);
         Assert.assertEquals(eventError, EventError.noErrorMessage);
@@ -184,13 +190,31 @@ public class CrowdFundingDAOTests {
 
     @Test(priority = 6)
     public void testDeleteCrowdFundingEvent() {
-        EventError eventError = crowdFundingEventDAO.deleteCrowdFundingEvent(tmpEventIDs.iterator().next());
+        lastTestID++;
+        crowdFundingEventDAO.createCrowdFundingEvent("e" + lastTestID, tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
+                "description", 100, tBank.getCurrencies().get(0));
+        tmpEventIDs.add(lastTestID);
+
+        EventError eventError = crowdFundingEventDAO.deleteCrowdFundingEvent(lastTestID);
         Assert.assertEquals(eventError, EventError.noErrorMessage);
+        eventError = crowdFundingEventDAO.deleteCrowdFundingEvent(tmpEventIDs.iterator().next());
+        Assert.assertEquals(eventError, EventError.noEventFound);
     }
 
     @Test(priority = 2)
     public void testChangeEventTarget() {
-        EventError eventError = crowdFundingEventDAO.changeEventTarget(tmpEventIDs.iterator().next(), 300);
+        EventError eventError = crowdFundingEventDAO.changeEventTarget(1, 300);
+        Assert.assertEquals(eventError, EventError.noErrorMessage);
+        crowdFundingEventDAO.deleteCrowdFundingEvent(1);
+        eventError = crowdFundingEventDAO.changeEventTarget(1, 300);
+        Assert.assertEquals(eventError, EventError.noEventFound);
+
+        lastTestID++;
+        crowdFundingEventDAO.createCrowdFundingEvent("e" + lastTestID, tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
+                "description", 100, tBank.getCurrencies().get(0));
+        tmpEventIDs.add(lastTestID);
+        crowdFundingEventDAO.sendFunds(lastTestID, cardID, 80, tBank.getCurrencies().get(0));
+        eventError = crowdFundingEventDAO.changeEventTarget(lastTestID, 50);
         Assert.assertEquals(eventError, EventError.noErrorMessage);
     }
 
@@ -211,8 +235,24 @@ public class CrowdFundingDAOTests {
 
     @Test(priority = 5)
     public void testSendFunds() {
-        EventError eventError = crowdFundingEventDAO.sendFunds(tmpEventIDs.iterator().next(), cardID, 1, tBank.getCurrencies().get(0));
+        lastTestID++;
+        crowdFundingEventDAO.createCrowdFundingEvent("e" + lastTestID, tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
+                "description", 100, tBank.getCurrencies().get(0));
+        tmpEventIDs.add(lastTestID);
+
+        EventError eventError = crowdFundingEventDAO.sendFunds(lastTestID, cardID, 10, tBank.getCurrencies().get(0));
         Assert.assertEquals(eventError, EventError.noErrorMessage);
+
+        eventError = crowdFundingEventDAO.sendFunds(lastTestID, cardID + "none", 350, tBank.getCurrencies().get(0));
+        Assert.assertEquals(eventError, EventError.noCardFound);
+
+        eventError = crowdFundingEventDAO.sendFunds(1, cardID, 350, tBank.getCurrencies().get(0));
+        Assert.assertEquals(eventError, EventError.eventNotActive);
+
+        eventError = crowdFundingEventDAO.sendFunds(lastTestID, cardID, 350000, tBank.getCurrencies().get(0));
+        Assert.assertEquals(eventError, EventError.notEnoughAmount);
+
+        crowdFundingEventDAO.sendFunds(lastTestID, cardID, 120, tBank.getCurrencies().get(0));
     }
 }
 

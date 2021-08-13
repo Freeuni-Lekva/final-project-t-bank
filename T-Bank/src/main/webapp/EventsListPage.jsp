@@ -54,7 +54,7 @@
         <c:forEach items="${events}" var="event" varStatus="loop">
             <div class="event">
                 <h1>${event.eventName}</h1>
-                <h2>${event.target} ${event.currency.currencyName}</h2>
+                <h2 name="money">${event.target} ${event.currency.currencyName}</h2>
                 <p class="description" style=" word-wrap: normal; height: 140px ">${event.description}</p>
                 <h2>${event.cardIdentifier}</h2>
                 <button class="defaultButton" onclick="copyID(${event.eventId}); copyName(this);"

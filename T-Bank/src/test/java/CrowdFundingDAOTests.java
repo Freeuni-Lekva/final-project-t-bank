@@ -1,4 +1,6 @@
+import com.example.T_Bank.DAO.DAOInterfaces.*;
 import com.example.T_Bank.DAO.DatabaseConstants;
+import com.example.T_Bank.DAO.Implementations.*;
 import com.example.T_Bank.DAO.TBankDAO;
 import com.example.T_Bank.Storage.CrowdFundingEvent;
 import com.example.T_Bank.Storage.EventError;
@@ -23,11 +25,23 @@ public class CrowdFundingDAOTests {
     private int lastTestID;
     private String personalID;
     private String cardID;
+    private AccountDAO accountDao;
+    private TransactionsDAO transactionsDAO;
+    private CurrencyDAO currencyDAO;
+    private CrowdFundingEventDAO crowdFundingEventDAO;
+    private TransactionHistoryDAO transactionHistoryDAO;
+    private CardDAO cardDao;
 
     @BeforeClass
     public void setup() throws SQLException, FileNotFoundException {
         getConnection();
         resetDB();
+        transactionHistoryDAO = new TransactionHistoryDAOImplementation(connection);
+        accountDao = new AccountDAOImplementation(connection);
+        cardDao = new CardDAOImplementation(connection);
+        currencyDAO = new CurrencyDAOImplementation(connection, transactionHistoryDAO);
+        transactionsDAO = new TransactionsDAOImplementation(connection, currencyDAO, transactionHistoryDAO);
+        crowdFundingEventDAO = new CrowdFundingEventDAOImplementation(connection, currencyDAO);
         setupAccs();
         setupCards();
     }
@@ -154,73 +168,51 @@ public class CrowdFundingDAOTests {
 
     @Test(priority = 1)
     public void testCreateCrowdFundingEvent() {
-        EventError eventError = tBank.createCrowdFundingEvent("e" + lastTestID, tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
+        EventError eventError = crowdFundingEventDAO.createCrowdFundingEvent("e" + lastTestID, tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
                 "description", 100, tBank.getCurrencies().get(0));
         tmpEventIDs.add(lastTestID);
-        Assert.assertEquals(EventError.noErrorMessage, eventError);
+        Assert.assertEquals(eventError, EventError.noErrorMessage);
 
-        eventError = tBank.createCrowdFundingEvent("evnt" + lastTestID, lastTestID, "CardID" + lastTestID,
+        eventError = crowdFundingEventDAO.createCrowdFundingEvent("evnt" + lastTestID, lastTestID, "CardID" + lastTestID,
                 "description", -1, tBank.getCurrencies().get(0));
-        Assert.assertEquals(EventError.targetMoneyLessThanZero, eventError);
+        Assert.assertEquals(eventError, EventError.targetMoneyLessThanZero);
 
-        eventError = tBank.createCrowdFundingEvent("e" + lastTestID, tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
+        eventError = crowdFundingEventDAO.createCrowdFundingEvent("e" + lastTestID, tmpAccIDs.iterator().next(), "CardID" + tmpCardIDs.iterator().next(),
                 "description", 100, tBank.getCurrencies().get(0));
-        Assert.assertEquals(EventError.sameEventNameOnThisAccount, eventError);
+        Assert.assertEquals(eventError, EventError.sameEventNameOnThisAccount);
     }
 
     @Test(priority = 6)
     public void testDeleteCrowdFundingEvent() {
-        EventError eventError = tBank.deleteCrowdFundingEvent(tmpEventIDs.iterator().next());
-        Assert.assertEquals(EventError.noErrorMessage, eventError);
+        EventError eventError = crowdFundingEventDAO.deleteCrowdFundingEvent(tmpEventIDs.iterator().next());
+        Assert.assertEquals(eventError, EventError.noErrorMessage);
     }
 
     @Test(priority = 2)
     public void testChangeEventTarget() {
-        EventError eventError = tBank.changeEventTarget(tmpEventIDs.iterator().next(), 300);
-        Assert.assertEquals(EventError.noErrorMessage, eventError);
+        EventError eventError = crowdFundingEventDAO.changeEventTarget(tmpEventIDs.iterator().next(), 300);
+        Assert.assertEquals(eventError, EventError.noErrorMessage);
     }
 
     @Test(priority = 3)
     public void testGetPublicCrowdFundingEvents() {
-        ArrayList<CrowdFundingEvent> events = tBank.getPublicCrowdFundingEvents();
+        ArrayList<CrowdFundingEvent> events = crowdFundingEventDAO.getPublicCrowdFundingEvents();
         Assert.assertFalse(events.isEmpty());
     }
 
     @Test(priority = 4)
     public void testGetSpecificEvents() {
-        ArrayList<CrowdFundingEvent> events = tBank.getSpecificEvents(personalID).getAllEvents();
+        ArrayList<CrowdFundingEvent> events = crowdFundingEventDAO.getSpecificEvents(personalID).getAllEvents();
         Assert.assertFalse(events.isEmpty());
 
-        events = tBank.getSpecificEvents("none").getAllEvents();
+        events = crowdFundingEventDAO.getSpecificEvents("none").getAllEvents();
         Assert.assertNull(events);
     }
 
     @Test(priority = 5)
     public void testSendFunds() {
-        EventError eventError = tBank.sendFunds(tmpEventIDs.iterator().next(), cardID, 1, tBank.getCurrencies().get(0));
-        Assert.assertEquals(EventError.noErrorMessage, eventError);
-    }
-
-    @AfterClass
-    public void cleanup() throws SQLException {
-        removeTmps("crowd_funding_event", tmpEventIDs);
-        removeTmps("account_card", tmpCardIDs);
-        removeTmps("account", tmpAccIDs);
-    }
-
-    private void removeTmps(String table, Set<Integer> set) throws SQLException {
-        String item = "";
-        if (table.equals("crowd_funding_event")) {
-            item = "event";
-        } else {
-            item = table;
-        }
-
-        for (int i : set) {
-            String removeQuery = "delete from t_bank_test_db." + table + "s where " + item + "_id = " + i;
-            Statement st = connection.createStatement();
-            st.executeUpdate(removeQuery);
-        }
+        EventError eventError = crowdFundingEventDAO.sendFunds(tmpEventIDs.iterator().next(), cardID, 1, tBank.getCurrencies().get(0));
+        Assert.assertEquals(eventError, EventError.noErrorMessage);
     }
 }
 

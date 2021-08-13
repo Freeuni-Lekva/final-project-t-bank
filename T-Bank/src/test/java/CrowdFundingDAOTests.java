@@ -3,40 +3,52 @@ import com.example.T_Bank.DAO.TBankDAO;
 import com.example.T_Bank.Storage.CrowdFundingEvent;
 import com.example.T_Bank.Storage.EventError;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.ibatis.jdbc.ScriptRunner;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 public class CrowdFundingDAOTests {
-    public static BasicDataSource dataSource;
-    public static Connection connection;
-    private static Set<Integer> tmpAccIDs;
-    private static Set<Integer> tmpCardIDs;
-    private static Set<Integer> tmpEventIDs = new HashSet<>();
+    public BasicDataSource dataSource;
+    public Connection connection;
+    private Set<Integer> tmpAccIDs;
+    private Set<Integer> tmpCardIDs;
+    private Set<Integer> tmpEventIDs = new HashSet<>();
     private TBankDAO tBank = new TBankDAO();
-    private static int lastTestID;
-    private static String personalID;
-    private static String cardID;
+    private int lastTestID;
+    private String personalID;
+    private String cardID;
 
     @BeforeClass
-    public static void setup() throws SQLException {
+    public void setup() throws SQLException, FileNotFoundException {
         getConnection();
+        resetDB();
         setupAccs();
         setupCards();
     }
 
-    private static int getLastSeed() {
-        String query = "select count(*) from testing_seeds";
+    private void resetDB() throws FileNotFoundException {
+        ScriptRunner sr = new ScriptRunner(connection);
+        Reader reader = new BufferedReader(new FileReader("create_test_db.sql"));
+        sr.runScript(reader);
+    }
+
+    private int getLastSeed() {
+        String query = "select count(*) from t_bank_test_db.testing_seeds";
         try {
             PreparedStatement stm = connection.prepareStatement(query);
             ResultSet rs = stm.executeQuery();
             rs.next();
             int count = rs.getInt(1);
-            String addQuery = "insert into testing_seeds (test_seed) " +
+            String addQuery = "insert into t_bank_test_db.testing_seeds (test_seed) " +
                     "values(?)";
             stm = connection.prepareStatement(addQuery);
             stm.setInt(1, count + 1);
@@ -48,7 +60,7 @@ public class CrowdFundingDAOTests {
         return -1;
     }
 
-    private static void setupCards() throws SQLException {
+    private void setupCards() throws SQLException {
         Set<Integer> startingCards = getRows("account_cards");
         addCards();
         Set<Integer> endingCards = getRows("account_cards");
@@ -56,7 +68,7 @@ public class CrowdFundingDAOTests {
         tmpCardIDs = endingCards;
     }
 
-    private static void setupAccs() throws SQLException {
+    private void setupAccs() throws SQLException {
         Set<Integer> startingIDs = getRows("accounts");
         addAccounts(2);
         Set<Integer> endingIDs = getRows("accounts");
@@ -64,8 +76,8 @@ public class CrowdFundingDAOTests {
         tmpAccIDs = endingIDs;
     }
 
-    private static void addCards() throws SQLException {
-        String addCardQuery = "insert into t_bank_db.account_cards (account_id, card_identifier," +
+    private void addCards() throws SQLException {
+        String addCardQuery = "insert into t_bank_test_db.account_cards (account_id, card_identifier," +
                 "card_type_id, card_name," +
                 "gel_balance, usd_balance, euro_balance) values (?, ?, 1, 'testCard', 10000, 10000, 10000);";
         PreparedStatement statement = connection.prepareStatement(addCardQuery);
@@ -79,9 +91,9 @@ public class CrowdFundingDAOTests {
         }
     }
 
-    private static Set<Integer> getRows(String table) throws SQLException {
+    private Set<Integer> getRows(String table) throws SQLException {
         Set<Integer> res = new HashSet<>();
-        String getQuery = "SELECT * FROM t_bank_db." + table + ";";
+        String getQuery = "SELECT * FROM t_bank_test_db." + table + ";";
 
         Statement st = connection.createStatement();
         ResultSet rs = st.executeQuery(getQuery);
@@ -94,8 +106,8 @@ public class CrowdFundingDAOTests {
         return res;
     }
 
-    private static void addAccounts(int max) throws SQLException {
-        String registerQuery = "insert into accounts " +
+    private void addAccounts(int max) throws SQLException {
+        String registerQuery = "insert into t_bank_test_db.accounts " +
                 " (first_name, last_name, personal_id," +
                 " user_name, user_password, birth_date) " +
                 "values ( ?, ?, ?, ?, ?, ?)";
@@ -119,10 +131,10 @@ public class CrowdFundingDAOTests {
         }
     }
 
-    private static void getConnection() throws SQLException {
+    private void getConnection() throws SQLException {
         dataSource = new BasicDataSource();
 
-        dataSource.setUrl("jdbc:mysql://localhost:3306/" + DatabaseConstants.databaseName);
+        dataSource.setUrl("jdbc:mysql://localhost:3306/" + DatabaseConstants.testDBName);
         dataSource.setUsername(DatabaseConstants.databaseUsername);
         dataSource.setPassword(DatabaseConstants.databasePassword);
         connection = null;
@@ -179,13 +191,13 @@ public class CrowdFundingDAOTests {
     }
 
     @AfterClass
-    public static void cleanup() throws SQLException {
+    public void cleanup() throws SQLException {
         removeTmps("crowd_funding_event", tmpEventIDs);
         removeTmps("account_card", tmpCardIDs);
         removeTmps("account", tmpAccIDs);
     }
 
-    private static void removeTmps(String table, Set<Integer> set) throws SQLException {
+    private void removeTmps(String table, Set<Integer> set) throws SQLException {
         String item = "";
         if (table.equals("crowd_funding_event")) {
             item = "event";
@@ -194,7 +206,7 @@ public class CrowdFundingDAOTests {
         }
 
         for (int i : set) {
-            String removeQuery = "delete from t_bank_db." + table + "s where " + item + "_id = " + i;
+            String removeQuery = "delete from t_bank_test_db." + table + "s where " + item + "_id = " + i;
             Statement st = connection.createStatement();
             st.executeUpdate(removeQuery);
         }

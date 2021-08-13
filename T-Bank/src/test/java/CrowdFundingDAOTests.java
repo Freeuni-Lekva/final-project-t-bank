@@ -3,17 +3,14 @@ import com.example.T_Bank.DAO.TBankDAO;
 import com.example.T_Bank.Storage.CrowdFundingEvent;
 import com.example.T_Bank.Storage.EventError;
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.apache.ibatis.jdbc.ScriptRunner;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
 
 public class CrowdFundingDAOTests {
@@ -35,10 +32,24 @@ public class CrowdFundingDAOTests {
         setupCards();
     }
 
-    private void resetDB() throws FileNotFoundException {
-        ScriptRunner sr = new ScriptRunner(connection);
-        Reader reader = new BufferedReader(new FileReader("create_test_db.sql"));
-        sr.runScript(reader);
+    private void resetDB() throws FileNotFoundException, SQLException {
+        InputStream in = new BufferedInputStream(new FileInputStream("create_test_db.sql"));
+        Scanner scanner = new Scanner(in).useDelimiter("/\\*[\\s\\S]*?\\*/|--[^\\r\\n]*|;");
+        Statement statement = null;
+
+        try {
+            statement = connection.createStatement();
+
+            while (scanner.hasNext()) {
+                String line = scanner.next().trim();
+
+                if (!line.isEmpty())
+                    statement.execute(line);
+            }
+        } finally {
+            if (statement != null)
+                statement.close();
+        }
     }
 
     private int getLastSeed() {

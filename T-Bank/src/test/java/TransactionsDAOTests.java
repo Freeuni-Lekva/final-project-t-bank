@@ -44,21 +44,21 @@ public class TransactionsDAOTests {
 
     private void resetDB() throws FileNotFoundException, SQLException {
         InputStream in = new BufferedInputStream(new FileInputStream("create_test_db.sql"));
-        Scanner s = new Scanner(in).useDelimiter("/\\*[\\s\\S]*?\\*/|--[^\\r\\n]*|;");
-        Statement st = null;
+        Scanner scanner = new Scanner(in).useDelimiter("/\\*[\\s\\S]*?\\*/|--[^\\r\\n]*|;");
+        Statement statement = null;
 
         try {
-            st = connection.createStatement();
+            statement = connection.createStatement();
 
-            while (s.hasNext()) {
-                String line = s.next().trim();
+            while (scanner.hasNext()) {
+                String line = scanner.next().trim();
 
                 if (!line.isEmpty())
-                    st.execute(line);
+                    statement.execute(line);
             }
         } finally {
-            if (st != null)
-                st.close();
+            if (statement != null)
+                statement.close();
         }
     }
 

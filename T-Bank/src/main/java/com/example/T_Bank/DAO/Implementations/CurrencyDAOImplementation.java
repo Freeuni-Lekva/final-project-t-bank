@@ -159,8 +159,10 @@ public class CurrencyDAOImplementation implements CurrencyDAO {
             updateSendingBalanceStm.executeUpdate();
 
             int accountId=getAccountId(accountNumber);
-            transactionHistoryDAO.logTransaction(accountId,accountId,accountNumber,accountNumber,2,new Date(System.currentTimeMillis()),toCurrency.getCurrencyId(),getExchangeValue(amountNumber,fromCurrency,toCurrency));
-            transactionHistoryDAO.logTransaction(accountId,accountId,accountNumber,accountNumber,2,new Date(System.currentTimeMillis()),fromCurrency.getCurrencyId(),-amountNumber);
+            transactionHistoryDAO.logTransaction(accountId,accountId,accountNumber,accountNumber,2,
+                    new Date(System.currentTimeMillis()),toCurrency.getCurrencyId(),getExchangeValue(amountNumber,fromCurrency,toCurrency));
+            transactionHistoryDAO.logTransaction(accountId,accountId,accountNumber,accountNumber,2,
+                    new Date(System.currentTimeMillis()),fromCurrency.getCurrencyId(),-amountNumber);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

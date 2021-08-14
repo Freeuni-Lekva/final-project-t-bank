@@ -5,11 +5,12 @@ import com.example.T_Bank.DAO.Implementations.*;
 import com.example.T_Bank.Storage.*;
 import org.apache.commons.dbcp2.BasicDataSource;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 
 public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyDAO,
@@ -24,6 +25,7 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
     private LoanDAO loanDAO;
 
     private CardDAO cardDao;
+    private Timer timer;
 
     public TBankDAO() {
         dataSource = new BasicDataSource();
@@ -44,7 +46,9 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
         transactionsDAO = new TransactionsDAOImplementation(connection, currencyDAO,transactionHistoryDAO);
         crowdFundingEventDAO = new CrowdFundingEventDAOImplementation(connection, currencyDAO);
         loanDAO = new LoanDAOImplementation(connection);
-
+        timer = new Timer();
+        BankDataUpdater bankDataUpdater = new BankDataUpdater(connection);
+        timer.schedule(bankDataUpdater, new Date(), 30000);
     }
 
     public CardInfo addCard(int accountId, CardType cardType, String cardName) {
@@ -167,4 +171,6 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
     public LoanList getAllLoans(int accountId) {
         return loanDAO.getAllLoans(accountId);
     }
+
+
 }

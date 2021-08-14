@@ -107,8 +107,6 @@ CREATE TABLE account_logs (
                               receiver_card_identifier char(11),
                               transaction_type_id int,
                               log_date date,
-                              currency_id int,
-                              amount double,
                               primary key(account_log_id),
                               foreign key (sender_card_identifier)
                                   references account_cards(card_identifier),
@@ -117,10 +115,7 @@ CREATE TABLE account_logs (
                               foreign key (sender_account_id)
                                   references accounts(account_id),
                               foreign key (receiver_account_id)
-                                  references accounts(account_id),
-                              foreign key (currency_id)
-                                  references currency_exchange(currency_id)
-
+                                  references accounts(account_id)
 );
 
 CREATE TABLE testing_seeds(
@@ -155,10 +150,12 @@ CREATE TABLE account_loans(
                               periods int,
                               full_money double,
                               monthly_payment double,
-                              start_date date,
-                              last_update_date date,
-                              end_date date,
+                              start_date timestamp,
+                              last_update_date timestamp,
+                              end_date timestamp,
                               active_loan boolean,
+                              payed_amount double,
+                              to_pay_amount double,
                               primary key (account_loan_id),
                               foreign key(account_id)
                                   references accounts (account_id),

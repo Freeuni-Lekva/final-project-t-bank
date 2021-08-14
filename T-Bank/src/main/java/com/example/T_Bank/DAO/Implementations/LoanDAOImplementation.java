@@ -7,12 +7,14 @@ import com.example.T_Bank.Storage.LoanErrorMessage;
 import com.example.T_Bank.Storage.LoanList;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class LoanDAOImplementation implements LoanDAO {
     private Connection connection;
     private static final double PERCENT = 0.15;
+    private static final long MINUTES_PERIOD = 1 * 1000 * 60;
     public LoanDAOImplementation(Connection connection) {
         this.connection = connection;
     }
@@ -48,7 +50,7 @@ public class LoanDAOImplementation implements LoanDAO {
     private Loan badLoan(LoanErrorMessage errorMessage){
         return new Loan(0, 0, null, 0,
                 0, 0, 0, 0, null, null, null,
-                false, false, errorMessage);
+                false, false, errorMessage, 0, 0);
 
     }
 
@@ -79,14 +81,26 @@ public class LoanDAOImplementation implements LoanDAO {
     }
 
 
+    private double calculateFinalMoney(double startMoney, double yearCount){
+        return startMoney * Math.pow((1 + PERCENT), yearCount);
+    }
+
     private LoanErrorMessage addLoan(int accountId, String cardIdentifier, double startMoney, int periods){
         String addQuery = "insert into account_loans(account_id, card_identifier, start_money, percent, " +
-                "periods, full_money, monthly_payment, start_date, last_update_date, end_date, active_loan) " +
-                "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "periods, full_money, monthly_payment, start_date, last_update_date, end_date, active_loan, " +
+                "payed_amount, to_pay_amount) " +
+                "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
 
-            double fullMoney = startMoney * 3;
+            double yearCount = (double)periods / 12.0;
+
+            double fullMoney = calculateFinalMoney(startMoney, yearCount);
             double monthlyPayment = fullMoney / periods;
+
+            Timestamp startTime = new Timestamp(System.currentTimeMillis());
+            long current = startTime.getTime();
+            Timestamp endTime = new Timestamp(current + periods * MINUTES_PERIOD);
+
 
             PreparedStatement stm = connection.prepareStatement(addQuery);
             stm.setInt(1, accountId);
@@ -96,10 +110,12 @@ public class LoanDAOImplementation implements LoanDAO {
             stm.setInt(5, periods);
             stm.setDouble(6, fullMoney);
             stm.setDouble(7, monthlyPayment);
-            stm.setDate(8, new Date(System.currentTimeMillis()));
-            stm.setDate(9, new Date(System.currentTimeMillis()));
-            stm.setDate(10, new Date(System.currentTimeMillis()));
+            stm.setTimestamp(8, startTime);
+            stm.setTimestamp(9, startTime);
+            stm.setTimestamp(10, endTime);
             stm.setBoolean(11, true);
+            stm.setDouble(12, 0);
+            stm.setDouble(13, fullMoney);
             stm.executeUpdate();
 
             String addMoney = "update account_cards " +
@@ -126,7 +142,8 @@ public class LoanDAOImplementation implements LoanDAO {
                 loans.add(new Loan(rs.getInt(1), rs.getInt(2),  rs.getString(3),
                         rs.getDouble(4), rs.getDouble(5), rs.getInt(6),
                         rs.getDouble(7), rs.getDouble(8), rs.getDate(9),
-                        rs.getDate(10),rs.getDate(11),  rs.getBoolean(12), true, LoanErrorMessage.noErrorMessage));
+                        rs.getDate(10),rs.getDate(11),  rs.getBoolean(12),
+                        true, LoanErrorMessage.noErrorMessage, rs.getDouble(13), rs.getDouble(14)));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
@@ -156,4 +173,7 @@ public class LoanDAOImplementation implements LoanDAO {
         return new LoanList(null, false, LoanErrorMessage.accountIdNotValid);
 
     }
+
+
+
 }

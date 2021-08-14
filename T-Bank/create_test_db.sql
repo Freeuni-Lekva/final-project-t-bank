@@ -122,7 +122,6 @@ CREATE TABLE account_logs
         references accounts (account_id),
     foreign key (currency_id)
         references currency_exchange (currency_id)
-
 );
 
 CREATE TABLE testing_seeds
@@ -152,21 +151,23 @@ CREATE TABLE crowd_funding_events
 
 CREATE TABLE account_loans
 (
-    account_loan_id  INT AUTO_INCREMENT,
-    account_id       INT,
-    card_identifier  CHAR(11),
-    start_money      DOUBLE,
-    percent          DOUBLE,
-    periods          INT,
-    full_money       DOUBLE,
-    monthly_payment  DOUBLE,
-    start_date       DATE,
-    last_update_date DATE,
-    end_date         DATE,
-    active_loan      BOOLEAN,
-    PRIMARY KEY (account_loan_id),
-    FOREIGN KEY (account_id)
-        REFERENCES accounts (account_id),
-    FOREIGN KEY (card_identifier)
-        REFERENCES account_cards (card_identifier)
+    account_loan_id  int auto_increment,
+    account_id       int,
+    card_identifier  char(11),
+    start_money      double,
+    percent          double,
+    periods          int,
+    full_money       double,
+    monthly_payment  double,
+    start_date       timestamp,
+    last_update_date timestamp,
+    end_date         timestamp,
+    active_loan      boolean,
+    payed_amount     double,
+    to_pay_amount    double,
+    primary key (account_loan_id),
+    foreign key (account_id)
+        references accounts (account_id),
+    foreign key (card_identifier)
+        references account_cards (card_identifier)
 );

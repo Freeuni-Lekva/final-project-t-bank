@@ -91,11 +91,11 @@ public class Loan {
     }
 
     public double getPayedAmount() {
-        return payedAmount;
+        return Math.round(payedAmount * 100.0) / 100.0;
     }
 
     public double getToPayAmount() {
-        return toPayAmount;
+        return Math.round(toPayAmount * 100.0) / 100.0;
     }
 
     public LoanErrorMessage getErrorMessage() {
@@ -103,6 +103,6 @@ public class Loan {
     }
 
     public double getMonthlyPayment() {
-        return monthlyPayment;
+        return Math.round(monthlyPayment * 100.0) / 100.0;
     }
 }

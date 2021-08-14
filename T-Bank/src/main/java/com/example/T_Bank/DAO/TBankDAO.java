@@ -12,7 +12,8 @@ import java.util.Date;
 import java.util.List;
 
 
-public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyDAO, CrowdFundingEventDAO,TransactionHistoryDAO {
+public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyDAO,
+                                 CrowdFundingEventDAO,TransactionHistoryDAO, LoanDAO {
     private BasicDataSource dataSource;
     private Connection connection;
     private AccountDAO accountDao;
@@ -20,6 +21,7 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
     private CurrencyDAO currencyDAO;
     private CrowdFundingEventDAO crowdFundingEventDAO;
     private TransactionHistoryDAO transactionHistoryDAO;
+    private LoanDAO loanDAO;
 
     private CardDAO cardDao;
 
@@ -41,6 +43,7 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
         currencyDAO = new CurrencyDAOImplementation(connection,transactionHistoryDAO);
         transactionsDAO = new TransactionsDAOImplementation(connection, currencyDAO,transactionHistoryDAO);
         crowdFundingEventDAO = new CrowdFundingEventDAOImplementation(connection, currencyDAO);
+        loanDAO = new LoanDAOImplementation(connection);
 
     }
 
@@ -153,5 +156,15 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
     @Override
     public Transaction logTransaction(int senderAccountId, int receiverAccountId, String senderCardIdentifier, String receiverCardIdentifier, int transactionTypeId, Date date,int currencyId, double amount) {
         return transactionHistoryDAO.logTransaction(senderAccountId,receiverAccountId,senderCardIdentifier,receiverCardIdentifier,transactionTypeId,date,currencyId,amount);
+    }
+
+    @Override
+    public LoanErrorMessage takeLoan(int accountId, String cardIdentifier, double startMoney, int periods) {
+        return loanDAO.takeLoan(accountId, cardIdentifier, startMoney, periods);
+    }
+
+    @Override
+    public LoanList getAllLoans(int accountId) {
+        return loanDAO.getAllLoans(accountId);
     }
 }

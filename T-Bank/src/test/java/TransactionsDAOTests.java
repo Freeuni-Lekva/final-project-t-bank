@@ -1,4 +1,6 @@
+import com.example.T_Bank.DAO.DAOInterfaces.*;
 import com.example.T_Bank.DAO.DatabaseConstants;
+import com.example.T_Bank.DAO.Implementations.*;
 import com.example.T_Bank.DAO.TBankDAO;
 import com.example.T_Bank.Storage.AccountNumbersList;
 import com.example.T_Bank.Storage.TransferError;
@@ -6,8 +8,10 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.testng.annotations.*;
 import org.testng.asserts.SoftAssert;
 
+import java.io.*;
 import java.sql.*;
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
 
 public class TransactionsDAOTests {
@@ -19,12 +23,43 @@ public class TransactionsDAOTests {
     private static String personalID;
     private static String cardID;
     private static String lastCardID;
+    private AccountDAO accountDao;
+    private CardDAO cardDao;
+    private TransactionsDAO transactionsDAO;
+    private CurrencyDAO currencyDAO;
+    private TransactionHistoryDAO transactionHistoryDAO;
 
     @BeforeClass
-    public void setup() throws SQLException {
+    public void setup() throws SQLException, FileNotFoundException {
         getConnection();
+        resetDB();
+        transactionHistoryDAO = new TransactionHistoryDAOImplementation(connection);
+        accountDao = new AccountDAOImplementation(connection);
+        cardDao = new CardDAOImplementation(connection);
+        currencyDAO = new CurrencyDAOImplementation(connection, transactionHistoryDAO);
+        transactionsDAO = new TransactionsDAOImplementation(connection, currencyDAO, transactionHistoryDAO);
         setupAccs();
         setupCards();
+    }
+
+    private void resetDB() throws FileNotFoundException, SQLException {
+        InputStream in = new BufferedInputStream(new FileInputStream("create_test_db.sql"));
+        Scanner scanner = new Scanner(in).useDelimiter("/\\*[\\s\\S]*?\\*/|--[^\\r\\n]*|;");
+        Statement statement = null;
+
+        try {
+            statement = connection.createStatement();
+
+            while (scanner.hasNext()) {
+                String line = scanner.next().trim();
+
+                if (!line.isEmpty())
+                    statement.execute(line);
+            }
+        } finally {
+            if (statement != null)
+                statement.close();
+        }
     }
 
     private void setupCards() throws SQLException {
@@ -36,9 +71,9 @@ public class TransactionsDAOTests {
     }
 
     private void addCards() throws SQLException {
-        String addCardQuery = "insert into t_bank_db.account_cards (account_id, card_identifier," +
+        String addCardQuery = "insert into t_bank_test_db.account_cards (account_id, card_identifier," +
                 "card_type_id, card_name," +
-                "gel_balance, usd_balance, euro_balance) values (?, ?, 1, 'testCard', 10000, 10000, 10000);";
+                "gel_balance, usd_balance, euro_balance) values (?, ?, 1, 'testCard', 100000, 10000, 10000);";
         PreparedStatement statement = connection.prepareStatement(addCardQuery);
 
         for (int i : tmpAccIDs) {
@@ -55,13 +90,13 @@ public class TransactionsDAOTests {
     }
 
     private static int getLastSeed() {
-        String query = "select count(*) from testing_seeds";
+        String query = "select count(*) from t_bank_test_db.testing_seeds";
         try {
             PreparedStatement stm = connection.prepareStatement(query);
             ResultSet rs = stm.executeQuery();
             rs.next();
             int count = rs.getInt(1);
-            String addQuery = "insert into testing_seeds (test_seed) " +
+            String addQuery = "insert into t_bank_test_db.testing_seeds (test_seed) " +
                     "values(?)";
             stm = connection.prepareStatement(addQuery);
             stm.setInt(1, count + 1);
@@ -82,7 +117,7 @@ public class TransactionsDAOTests {
     }
 
     private void addAccounts(int max) throws SQLException {
-        String registerQuery = "insert into accounts " +
+        String registerQuery = "insert into t_bank_test_db.accounts " +
                 " (first_name, last_name, personal_id," +
                 " user_name, user_password, birth_date) " +
                 "values ( ?, ?, ?, ?, ?, ?)";
@@ -107,7 +142,7 @@ public class TransactionsDAOTests {
 
     private Set<Integer> getRows(String table) throws SQLException {
         Set<Integer> res = new HashSet<>();
-        String getQuery = "SELECT * FROM t_bank_db." + table + ";";
+        String getQuery = "SELECT * FROM t_bank_test_db." + table + ";";
 
         Statement st = connection.createStatement();
         ResultSet rs = st.executeQuery(getQuery);
@@ -123,7 +158,7 @@ public class TransactionsDAOTests {
     private void getConnection() throws SQLException {
         dataSource = new BasicDataSource();
 
-        dataSource.setUrl("jdbc:mysql://localhost:3306/" + DatabaseConstants.databaseName);
+        dataSource.setUrl("jdbc:mysql://localhost:3306/" + DatabaseConstants.testDBName);
         dataSource.setUsername(DatabaseConstants.databaseUsername);
         dataSource.setPassword(DatabaseConstants.databasePassword);
         connection = null;
@@ -135,20 +170,20 @@ public class TransactionsDAOTests {
         SoftAssert softAssert = new SoftAssert();
         TransferError transferError;
 
-        transferError = tBank.transferMoney("none", cardID, 100, tBank.getCurrencies().get(0), tBank.getCurrencies().get(0));
-        softAssert.assertEquals(TransferError.accountNumberDoesNotExist, transferError);
+        transferError = transactionsDAO.transferMoney("none", cardID, 100, tBank.getCurrencies().get(0), tBank.getCurrencies().get(0));
+        softAssert.assertEquals(transferError, TransferError.accountNumberDoesNotExist);
 
-        transferError = tBank.transferMoney(cardID, "none", 100, tBank.getCurrencies().get(0), tBank.getCurrencies().get(0));
-        softAssert.assertEquals(TransferError.accountNumberDoesNotExist, transferError);
+        transferError = transactionsDAO.transferMoney(cardID, "none", 100, tBank.getCurrencies().get(0), tBank.getCurrencies().get(0));
+        softAssert.assertEquals(transferError, TransferError.accountNumberDoesNotExist);
 
-        transferError = tBank.transferMoney(cardID, lastCardID, 20000, tBank.getCurrencies().get(0), tBank.getCurrencies().get(0));
-        softAssert.assertEquals(TransferError.notEnoughAmount, transferError);
+        transferError = transactionsDAO.transferMoney(cardID, lastCardID, 300000, tBank.getCurrencies().get(0), tBank.getCurrencies().get(0));
+        softAssert.assertEquals(transferError, TransferError.notEnoughAmount);
 
-        transferError = tBank.transferMoney(cardID, lastCardID, 100, tBank.getCurrencies().get(0), tBank.getCurrencies().get(0));
-        softAssert.assertEquals(TransferError.noErrorMessage, transferError);
+        transferError = transactionsDAO.transferMoney(cardID, lastCardID, 100, tBank.getCurrencies().get(0), tBank.getCurrencies().get(0));
+        softAssert.assertEquals(transferError, TransferError.noErrorMessage);
 
-        transferError = tBank.transferMoney(cardID, lastCardID, 100, tBank.getCurrencies().get(1), tBank.getCurrencies().get(2));
-        softAssert.assertEquals(TransferError.noErrorMessage, transferError);
+        transferError = transactionsDAO.transferMoney(cardID, lastCardID, 100, tBank.getCurrencies().get(1), tBank.getCurrencies().get(2));
+        softAssert.assertEquals(transferError, TransferError.noErrorMessage);
 
         softAssert.assertAll();
     }
@@ -158,30 +193,16 @@ public class TransactionsDAOTests {
         SoftAssert softAssert = new SoftAssert();
         AccountNumbersList accountNumbersList;
 
-        accountNumbersList = tBank.getAccountNumbers("none");
+        accountNumbersList = transactionsDAO.getAccountNumbers("none");
         softAssert.assertFalse(accountNumbersList.isValid());
-        softAssert.assertEquals(TransferError.personalIdDoesNotExist, accountNumbersList.getErrorMessage());
+        softAssert.assertEquals(accountNumbersList.getErrorMessage(), TransferError.personalIdDoesNotExist);
         softAssert.assertNull(accountNumbersList.getAccountNumbers());
 
-        accountNumbersList = tBank.getAccountNumbers(personalID);
+        accountNumbersList = transactionsDAO.getAccountNumbers(personalID);
         softAssert.assertTrue(accountNumbersList.isValid());
-        softAssert.assertEquals(TransferError.noErrorMessage, accountNumbersList.getErrorMessage());
+        softAssert.assertEquals(accountNumbersList.getErrorMessage(), TransferError.noErrorMessage);
         softAssert.assertEquals(1, accountNumbersList.getAccountNumbers().size());
 
         softAssert.assertAll();
-    }
-
-    @AfterClass
-    public void cleanup() throws SQLException {
-        removeTmps("account_card", tmpCardIDs);
-        removeTmps("account", tmpAccIDs);
-    }
-
-    private static void removeTmps(String table, Set<Integer> set) throws SQLException {
-        for (int i : set) {
-            String removeQuery = "delete from t_bank_db." + table + "s where " + table + "_id = " + i;
-            Statement st = connection.createStatement();
-            st.executeUpdate(removeQuery);
-        }
     }
 }

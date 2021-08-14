@@ -145,4 +145,23 @@ CREATE TABLE crowd_funding_events(
                                          references currency_exchange(currency_id)
 );
 
+CREATE TABLE account_loans(
+                              account_loan_id int auto_increment,
+                              account_id int,
+                              card_identifier char(11),
+                              start_money double,
+                              percent double,
+                              periods int,
+                              full_money double,
+                              monthly_payment double,
+                              start_date date,
+                              last_update_date date,
+                              end_date date,
+                              active_loan boolean,
+                              primary key (account_loan_id),
+                              foreign key(account_id)
+                                  references accounts (account_id),
+                              foreign key(card_identifier)
+                                  references account_cards(card_identifier)
+);
 

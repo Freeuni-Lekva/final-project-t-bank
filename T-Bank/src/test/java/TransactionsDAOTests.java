@@ -1,21 +1,17 @@
 import com.example.T_Bank.DAO.DAOInterfaces.*;
-import com.example.T_Bank.DAO.DatabaseConstants;
 import com.example.T_Bank.DAO.Implementations.*;
 import com.example.T_Bank.DAO.TBankDAO;
 import com.example.T_Bank.Storage.AccountNumbersList;
 import com.example.T_Bank.Storage.TransferError;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.testng.annotations.*;
 import org.testng.asserts.SoftAssert;
 
 import java.io.*;
 import java.sql.*;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
 
-public class TransactionsDAOTests {
-    public static BasicDataSource dataSource;
+public class TransactionsDAOTests extends BaseTest {
     public static Connection connection;
     private TBankDAO tBank = new TBankDAO();
     private static Set<Integer> tmpAccIDs;
@@ -23,43 +19,19 @@ public class TransactionsDAOTests {
     private static String personalID;
     private static String cardID;
     private static String lastCardID;
-    private AccountDAO accountDao;
-    private CardDAO cardDao;
     private TransactionsDAO transactionsDAO;
     private CurrencyDAO currencyDAO;
     private TransactionHistoryDAO transactionHistoryDAO;
 
     @BeforeClass
     public void setup() throws SQLException, FileNotFoundException {
-        getConnection();
+        connection = getConnection();
         resetDB();
         transactionHistoryDAO = new TransactionHistoryDAOImplementation(connection);
-        accountDao = new AccountDAOImplementation(connection);
-        cardDao = new CardDAOImplementation(connection);
         currencyDAO = new CurrencyDAOImplementation(connection, transactionHistoryDAO);
         transactionsDAO = new TransactionsDAOImplementation(connection, currencyDAO, transactionHistoryDAO);
         setupAccs();
         setupCards();
-    }
-
-    private void resetDB() throws FileNotFoundException, SQLException {
-        InputStream in = new BufferedInputStream(new FileInputStream("create_test_db.sql"));
-        Scanner scanner = new Scanner(in).useDelimiter("/\\*[\\s\\S]*?\\*/|--[^\\r\\n]*|;");
-        Statement statement = null;
-
-        try {
-            statement = connection.createStatement();
-
-            while (scanner.hasNext()) {
-                String line = scanner.next().trim();
-
-                if (!line.isEmpty())
-                    statement.execute(line);
-            }
-        } finally {
-            if (statement != null)
-                statement.close();
-        }
     }
 
     private void setupCards() throws SQLException {
@@ -153,16 +125,6 @@ public class TransactionsDAOTests {
         }
 
         return res;
-    }
-
-    private void getConnection() throws SQLException {
-        dataSource = new BasicDataSource();
-
-        dataSource.setUrl("jdbc:mysql://localhost:3306/" + DatabaseConstants.testDBName);
-        dataSource.setUsername(DatabaseConstants.databaseUsername);
-        dataSource.setPassword(DatabaseConstants.databasePassword);
-        connection = null;
-        connection = dataSource.getConnection();
     }
 
     @Test

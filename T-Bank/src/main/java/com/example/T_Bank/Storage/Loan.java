@@ -17,10 +17,13 @@ public class Loan {
     private boolean isValid;
     private LoanErrorMessage errorMessage;
     private double monthlyPayment;
+    private double payedAmount;
+    private double toPayAmount;
 
     public Loan(int accountLoanId, int accountId, String cardIdentifier, double startMoney,
                 double percent, int periods, double fullMoney, double monthlyPayment, Date startDate, Date lastUpdateDate,
-                Date endDate, boolean activeLoan, boolean isValid, LoanErrorMessage errorMessage) {
+                Date endDate, boolean activeLoan, boolean isValid, LoanErrorMessage errorMessage,
+                double payedAmount, double toPayAmount) {
         this.accountLoanId = accountLoanId;
         this.accountId = accountId;
         this.cardIdentifier = cardIdentifier;
@@ -35,6 +38,8 @@ public class Loan {
         this.isValid = isValid;
         this.errorMessage = errorMessage;
         this.monthlyPayment = monthlyPayment;
+        this.payedAmount = payedAmount;
+        this.toPayAmount = toPayAmount;
     }
 
     public int getAccountLoanId() {
@@ -83,6 +88,14 @@ public class Loan {
 
     public boolean isValid() {
         return isValid;
+    }
+
+    public double getPayedAmount() {
+        return payedAmount;
+    }
+
+    public double getToPayAmount() {
+        return toPayAmount;
     }
 
     public LoanErrorMessage getErrorMessage() {

@@ -150,11 +150,3 @@ CREATE TABLE crowd_funding_events
     FOREIGN KEY (currency_id)
         REFERENCES currency_exchange (currency_id)
 );
-
--- insert into t_bank_test_db.accounts (first_name, last_name, personal_id, user_name, user_password, birth_date)
--- values ('testName1', 'testSurname1', 'testID1', 'testUsername1', 'testPass1', null);
--- insert into t_bank_test_db.accounts (first_name, last_name, personal_id, user_name, user_password, birth_date)
--- values ('testName2', 'testSurname2', 'testID2', 'testUsername2', 'testPass2', null);
---
--- insert into t_bank_test_db.account_cards (account_id, card_identifier,card_type_id, card_name,gel_balance, usd_balance, euro_balance) values (1, 'CardID1', 1, 'testCard1', 100000, 10000, 10000);
--- insert into t_bank_test_db.account_cards (account_id, card_identifier,card_type_id, card_name,gel_balance, usd_balance, euro_balance) values (2, 'CardID2', 1, 'testCard2', 100000, 10000, 10000);

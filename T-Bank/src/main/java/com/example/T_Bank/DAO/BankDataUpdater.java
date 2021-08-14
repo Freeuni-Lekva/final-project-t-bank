@@ -11,7 +11,7 @@ public class BankDataUpdater extends TimerTask {
     }
     @Override
     public void run() {
-        System.out.println(new Timestamp(System.currentTimeMillis()));
+//        System.out.println(new Timestamp(System.currentTimeMillis()));
         updateLoans();
     }
 

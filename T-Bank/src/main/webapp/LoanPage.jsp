@@ -34,11 +34,12 @@
 <div style="margin-left: 340px">
     <c:forEach items="${Loans}" var="loan" varStatus="loop">
         <div class="Loan">
-            <h1>Loan: 0</h1>
+            <h1>Loan: ${loan.toPayAmount}</h1>
             <span style="font-size: 20px; font-weight: bold">Monthly Payment: ${loan.monthlyPayment}</span>
             <span> Loan: ${loan.startMoney}</span>
-            <span> Covered: 0</span>
-            <h2>${loan.cardIdentifier}</h2>
+            <span> Covered: ${loan.payedAmount}</span><br><br>
+            <span style="font-size: 24px; font-weight: bold">${loan.cardIdentifier}</span>
+            <span>${loan.endDate}</span>
         </div>
     </c:forEach>
 </div>
@@ -64,7 +65,7 @@
 
 
         <h3>${loanSuccess}</h3>
-        <h4 style="red">${loanError}</h4>
+        <h4 style="color: red">${loanError}</h4>
         <button type="submit">Get Loan</button>
     </form>
 </div>

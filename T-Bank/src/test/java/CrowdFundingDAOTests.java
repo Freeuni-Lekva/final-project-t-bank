@@ -1,10 +1,8 @@
 import com.example.T_Bank.DAO.DAOInterfaces.*;
-import com.example.T_Bank.DAO.DatabaseConstants;
 import com.example.T_Bank.DAO.Implementations.*;
 import com.example.T_Bank.DAO.TBankDAO;
 import com.example.T_Bank.Storage.CrowdFundingEvent;
 import com.example.T_Bank.Storage.EventError;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
@@ -12,11 +10,9 @@ import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
 
-public class CrowdFundingDAOTests {
-    public BasicDataSource dataSource;
+public class CrowdFundingDAOTests extends BaseTest {
     public Connection connection;
     private Set<Integer> tmpAccIDs;
     private Set<Integer> tmpCardIDs;
@@ -25,45 +21,19 @@ public class CrowdFundingDAOTests {
     private int lastTestID;
     private String personalID;
     private String cardID;
-    private AccountDAO accountDao;
-    private TransactionsDAO transactionsDAO;
     private CurrencyDAO currencyDAO;
     private CrowdFundingEventDAO crowdFundingEventDAO;
     private TransactionHistoryDAO transactionHistoryDAO;
-    private CardDAO cardDao;
 
     @BeforeClass
     public void setup() throws SQLException, FileNotFoundException {
-        getConnection();
+        connection = getConnection();
         resetDB();
         transactionHistoryDAO = new TransactionHistoryDAOImplementation(connection);
-        accountDao = new AccountDAOImplementation(connection);
-        cardDao = new CardDAOImplementation(connection);
         currencyDAO = new CurrencyDAOImplementation(connection, transactionHistoryDAO);
-        transactionsDAO = new TransactionsDAOImplementation(connection, currencyDAO, transactionHistoryDAO);
         crowdFundingEventDAO = new CrowdFundingEventDAOImplementation(connection, currencyDAO);
         setupAccs();
         setupCards();
-    }
-
-    private void resetDB() throws FileNotFoundException, SQLException {
-        InputStream in = new BufferedInputStream(new FileInputStream("create_test_db.sql"));
-        Scanner scanner = new Scanner(in).useDelimiter("/\\*[\\s\\S]*?\\*/|--[^\\r\\n]*|;");
-        Statement statement = null;
-
-        try {
-            statement = connection.createStatement();
-
-            while (scanner.hasNext()) {
-                String line = scanner.next().trim();
-
-                if (!line.isEmpty())
-                    statement.execute(line);
-            }
-        } finally {
-            if (statement != null)
-                statement.close();
-        }
     }
 
     private int getLastSeed() {
@@ -154,16 +124,6 @@ public class CrowdFundingDAOTests {
 
             statement.executeUpdate();
         }
-    }
-
-    private void getConnection() throws SQLException {
-        dataSource = new BasicDataSource();
-
-        dataSource.setUrl("jdbc:mysql://localhost:3306/" + DatabaseConstants.testDBName);
-        dataSource.setUsername(DatabaseConstants.databaseUsername);
-        dataSource.setPassword(DatabaseConstants.databasePassword);
-        connection = null;
-        connection = dataSource.getConnection();
     }
 
     @Test(priority = 1)

@@ -1,5 +1,6 @@
 use t_bank_db;
 
+DROP TABLE IF EXISTS account_loans;
 DROP TABLE IF EXISTS crowd_funding_events;
 DROP TABLE IF EXISTS account_logs;
 DROP TABLE IF EXISTS account_cards;

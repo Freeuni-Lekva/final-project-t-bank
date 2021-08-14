@@ -10,6 +10,7 @@
 <head>
     <title>Loan</title>
     <link rel="stylesheet" href="HomePage.css">
+    <link rel="stylesheet" href="Loans.css"/>
 </head>
 <body>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -33,8 +34,10 @@
 <div style="margin-left: 340px">
     <c:forEach items="${Loans}" var="loan" varStatus="loop">
         <div class="Loan">
-            <h1>${loan.activeLoan}</h1>
-            <h3>${loan.monthlyPayment}</h3>
+            <h1>Loan: 0</h1>
+            <span style="font-size: 20px; font-weight: bold">Monthly Payment: ${loan.monthlyPayment}</span>
+            <span> Loan: ${loan.startMoney}</span>
+            <span> Covered: 0</span>
             <h2>${loan.cardIdentifier}</h2>
         </div>
     </c:forEach>
@@ -60,8 +63,8 @@
         <input type="number" step="1" name="period" placeholder="0"><br><br>
 
 
-        <h2>${loanSuccess}</h2>
-        <h4>${loanError}</h4>
+        <h3>${loanSuccess}</h3>
+        <h4 style="red">${loanError}</h4>
         <button type="submit">Get Loan</button>
     </form>
 </div>

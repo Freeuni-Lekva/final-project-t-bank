@@ -9,6 +9,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "LoanServlet", value = "/LoanServlet")
 public class LoanServlet extends HttpServlet {
@@ -24,7 +25,7 @@ public class LoanServlet extends HttpServlet {
         request.setAttribute("Accounts", cardsList.getAccountNumbers());
 
         LoanList loanList = tBank.getAllLoans(account.getAccountId());
-        List<Loan> loans = loanList.getLoans();
+        List<Loan> loans = loanList.getLoans().stream().filter(Loan::isActiveLoan).collect(Collectors.toList());
         request.setAttribute("Loans", loans);
 
         request.getRequestDispatcher("LoanPage.jsp").forward(request, response);
@@ -43,16 +44,31 @@ public class LoanServlet extends HttpServlet {
 
         int accountId = account.getAccountId();
         String cardIdentifier = cardsList.getAccountNumbers().get(Integer.parseInt(request.getParameter("accountDropdown")));
-        double startMoney = Double.parseDouble(request.getParameter("amount"));
-        int periods = Integer.parseInt(request.getParameter("period"));
-
-        LoanErrorMessage loanErrorMessage = tBank.takeLoan(accountId, cardIdentifier, startMoney, periods);
-        if (loanErrorMessage == LoanErrorMessage.noErrorMessage) {
-            request.setAttribute("loanSuccess", "Loan Successful");
+        String amount = request.getParameter("amount");
+        String period = request.getParameter("period");
+        if (amount == null || amount.equals("") || period == null || period.equals("")) {
+            LoanList loanList = tBank.getAllLoans(account.getAccountId());
+            List<Loan> loans = loanList.getLoans().stream().filter(Loan::isActiveLoan).collect(Collectors.toList());
+            request.setAttribute("Loans", loans);
+            request.setAttribute("loanError", "Amount and Period can't be Empty!");
+            request.getRequestDispatcher("LoanPage.jsp").forward(request, response);
         } else {
-            request.setAttribute("loanError", loanErrorMessage);
+            double startMoney = Double.parseDouble(amount);
+            int periods = Integer.parseInt(period);
+
+            LoanErrorMessage loanErrorMessage = tBank.takeLoan(accountId, cardIdentifier, startMoney, periods);
+            if (loanErrorMessage == LoanErrorMessage.noErrorMessage) {
+                request.setAttribute("loanSuccess", "Loan Successful");
+            } else {
+                request.setAttribute("loanError", loanErrorMessage);
+            }
+
+            LoanList loanList = tBank.getAllLoans(account.getAccountId());
+            List<Loan> loans = loanList.getLoans().stream().filter(Loan::isActiveLoan).collect(Collectors.toList());
+            request.setAttribute("Loans", loans);
+
+            request.getRequestDispatcher("LoanPage.jsp").forward(request, response);
         }
 
-        request.getRequestDispatcher("LoanPage.jsp").forward(request, response);
     }
 }

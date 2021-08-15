@@ -37,6 +37,11 @@ public class CardCreationServlet extends HttpServlet {
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
 
+        if(account==null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+            return;
+        }
+
         List<CardType> types = tBank.getCardTypes();
         request.setAttribute("cardTypes", types);
 

@@ -21,6 +21,10 @@ public class TransfersServlet extends HttpServlet {
 
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
+        if(account==null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+            return;
+        }
 
         receiverID = request.getParameter("receiverID");
         AccountNumbersList receiverList = tBank.getAccountNumbers(receiverID);
@@ -45,6 +49,10 @@ public class TransfersServlet extends HttpServlet {
 
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
+        if(account==null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+            return;
+        }
         List<String> receiverList = tBank.getAccountNumbers(receiverID).getAccountNumbers();
         List<String> senderList = tBank.getAccountNumbers(account.getPersonalId()).getAccountNumbers();
         request.setAttribute("senderAccounts", senderList);

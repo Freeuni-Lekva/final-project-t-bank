@@ -19,7 +19,12 @@ public class CurrencyServlet extends HttpServlet {
         TBankDAO tBankDAO = (TBankDAO) context.getAttribute("TBankDAO");
         ArrayList<Currency> currencies=tBankDAO.getCurrencies();
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
+
         Account account = sessions.get(request.getSession().getId());
+        if(account==null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+            return;
+        }
         AccountNumbersList list=tBankDAO.getAccountNumbers(account.getPersonalId());
         ArrayList<String> cardIDs=list.getAccountNumbers();
 
@@ -37,13 +42,29 @@ public class CurrencyServlet extends HttpServlet {
 
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
+        if(account==null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+            return;
+        }
         AccountNumbersList list=tBankDAO.getAccountNumbers(account.getPersonalId());
         ArrayList<String> cardIDs=list.getAccountNumbers();
 
+        String fromString=request.getParameter("from");
+        String toString=request.getParameter("to");
+        String valueString=request.getParameter("amount");
 
-        int from= Integer.parseInt(request.getParameter("from"));
-        int to= Integer.parseInt(request.getParameter("to"));
-        int value= Integer.parseInt(request.getParameter("amount"));
+        if(fromString==null || toString==null || valueString==null) {
+            ArrayList<Currency> currencies=tBankDAO.getCurrencies();
+            request.setAttribute("Currencies",currencies);
+            request.setAttribute("CardID",cardIDs);
+            request.setAttribute("error","Please fill in all the Fields");
+            request.getRequestDispatcher("CurrencyExchangePage.jsp").forward(request,response);
+            return;
+        }
+
+        int from= Integer.parseInt(fromString);
+        int to= Integer.parseInt(toString);
+        int value= Integer.parseInt(valueString);
         ArrayList<Currency> currencies=tBankDAO.getCurrencies();
         request.setAttribute("Currencies",currencies);
         request.setAttribute("CardID",cardIDs);

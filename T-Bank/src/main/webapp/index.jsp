@@ -28,7 +28,6 @@
             <button type="submit">Login</button>
             <br>
             <p>New to TBank? <a href="RegisterPage.jsp">Register.</a> </p>
-        <% //RegisterServlet should be added and reference should be added to that servlet as well. %>
     </form>
 </div>
 

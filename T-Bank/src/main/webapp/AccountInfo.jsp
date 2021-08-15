@@ -13,6 +13,7 @@
 </head>
 <body>
 
+
 <div class="navigation">
   <ul>
     <br>
@@ -58,7 +59,7 @@
     </tr>
     <tr>
       <th>Password</th>
-      <td> ${password} </td>
+      <td> <p onmouseover="this.style.color='black';" onmouseout="this.style.color='sandybrown';" >${password}</p>  </td>
     </tr>
 
   </table>

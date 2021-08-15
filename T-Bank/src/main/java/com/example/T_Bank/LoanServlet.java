@@ -20,6 +20,10 @@ public class LoanServlet extends HttpServlet {
 
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
+        if(account==null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+            return;
+        }
 
         AccountNumbersList cardsList = tBank.getAccountNumbers(account.getPersonalId());
         request.setAttribute("Accounts", cardsList.getAccountNumbers());
@@ -38,7 +42,10 @@ public class LoanServlet extends HttpServlet {
 
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
-
+        if(account==null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+            return;
+        }
         AccountNumbersList cardsList = tBank.getAccountNumbers(account.getPersonalId());
         request.setAttribute("Accounts", cardsList.getAccountNumbers());
 

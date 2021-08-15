@@ -21,6 +21,10 @@ public class CreateEventServlet extends HttpServlet {
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         String sessionId = request.getSession().getId();
         Account account = sessions.get(sessionId);
+        if(account==null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+            return;
+        }
         List<String> cards = TBankDAO.getAccountNumbers(account.getPersonalId()).getAccountNumbers();
         List<Currency> currencies = TBankDAO.getCurrencies();
 
@@ -41,6 +45,10 @@ public class CreateEventServlet extends HttpServlet {
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         String sessionId = request.getSession().getId();
         Account account = sessions.get(sessionId);
+        if(account==null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+            return;
+        }
         List<Currency> currencies = TBankDAO.getCurrencies();
         List<String> cards = TBankDAO.getAccountNumbers(account.getPersonalId()).getAccountNumbers();
 

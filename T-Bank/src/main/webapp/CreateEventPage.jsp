@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="HomePage.css">
     <link rel="stylesheet" href="TBank.css">
 </head>
-<body>
+<body style="background-image: url(https://www.colorbook.io/imagecreator.php?hex=fbb486&width=1920&height=1080&text=%201920x1080);">
 <div class="navigation">
     <ul>
         <li><a href="AccountServlet">Account Information </a></li>
@@ -29,7 +29,7 @@
     <p class="note">Welcome to TBank</p>
 </div>
 
-<div class="form">
+<div class="form" style="border:5px solid black">
     <form action="CreateEventServlet" method="post">
         <H1 class="header" name="title">Create event</H1><br>
         <label>Event name</label><br>

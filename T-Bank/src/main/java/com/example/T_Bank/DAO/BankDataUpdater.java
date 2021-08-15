@@ -12,6 +12,7 @@ public class BankDataUpdater extends TimerTask {
     @Override
     public void run() {
 //        System.out.println(new Timestamp(System.currentTimeMillis()));
+        updateDeposits();
         updateLoans();
     }
 
@@ -104,5 +105,97 @@ public class BankDataUpdater extends TimerTask {
     {
         long diffInMillies = Math.abs(timeNow - timeUpdate);
         return timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS);
+    }
+
+    public void updateDeposits() {
+        String allDeposits = "select * from account_deposits where active = ?";
+        try {
+            PreparedStatement depositStm = connection.prepareStatement(allDeposits);
+            depositStm.setBoolean(1, true);
+            ResultSet deposits = depositStm.executeQuery();
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            while (deposits.next()) {
+                int accountDepositId = deposits.getInt(1);
+                Timestamp startDate = deposits.getTimestamp(9);
+                Timestamp endDate = deposits.getTimestamp(11);
+                long minuteDiff = getDateDiff(startDate.getTime(), now.getTime(), TimeUnit.MINUTES);
+                if (minuteDiff >= 1) {
+                    updateDeposit(accountDepositId, minuteDiff, deposits, startDate, endDate, now);
+                }
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void updateDeposit(int accountDepositId, long minuteDiff, ResultSet rs,
+                              Timestamp startDate, Timestamp endDate, Timestamp nowDate) {
+        try {
+            int periods = rs.getInt(8);
+            if (minuteDiff > periods) {
+                closeDeposit(accountDepositId, rs);
+                return;
+            }
+            double percent = rs.getDouble(7);
+            double amount = rs.getDouble(5);
+            amount = amount + ((amount * percent / 100) / periods) * minuteDiff;
+            String updateDepositQuery = "update account_deposits " +
+                    "set balance = ?" +
+                    " where deposit_id = ?";
+            PreparedStatement stm = connection.prepareStatement(updateDepositQuery);
+            stm.setDouble(1, amount);
+            stm.setInt(2, accountDepositId);
+            stm.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    private void updateCard(String card, int currencyId,  double amount) {
+        String currency;
+        String checkQuery = "select currency_name from currency_exchange where currency_id = ? ";
+        try {
+            PreparedStatement checkStm = connection.prepareStatement(checkQuery);
+            checkStm.setInt(1, currencyId);
+            ResultSet result = checkStm.executeQuery();
+            result.next();
+            currency = result.getString(1).toLowerCase() + "_balance";
+            String cardUpdate = "update account_cards set " + currency + " = ? where card_identifier = ?";
+            String query = "select " + currency + " from account_cards where card_identifier = ?";
+            try {
+                PreparedStatement queryStm = connection.prepareStatement(query);
+                queryStm.setString(1, card);
+                ResultSet res = queryStm.executeQuery();
+                res.next();
+                double currencyBalance = res.getDouble(1);
+
+                PreparedStatement cardStm = connection.prepareStatement(cardUpdate);
+                cardStm.setDouble(1, currencyBalance + amount);
+                cardStm.setString(2, card);
+                cardStm.executeUpdate();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    private void closeDeposit(int accountDepositId, ResultSet rs) {
+        try {
+            String closeDepositQuery = "update account_deposits " +
+                    "set active = false" +
+                    " where deposit_id = ? and active = true";
+            PreparedStatement stm = connection.prepareStatement(closeDepositQuery);
+            stm.setInt(1, accountDepositId);
+            if(stm.executeUpdate() == 0) {
+                return;
+            }
+            String cardIdentifier = rs.getString(4);
+            double amount = rs.getDouble(5);
+            updateCard(cardIdentifier, rs.getInt(6), amount);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }

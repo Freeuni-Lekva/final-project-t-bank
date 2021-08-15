@@ -10,5 +10,5 @@ public interface CurrencyDAO {
     public double getExchangeValue(double amount, Currency fromCurrency, Currency toCurrency);
     public TransferError currencyExchange(String accountNumber, double amountNumber,
                                           Currency fromCurrency, Currency toCurrency);
-
+    public String getCurrencyName(int currencyId);
 }

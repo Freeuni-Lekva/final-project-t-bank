@@ -4,7 +4,7 @@
     color: aliceblue;
     padding: 5px 10px 5px 20px;
     margin: 30px 0 0 20px;
-    border: 5px solid green;
+    border: 5px solid mediumseagreen;
     border-radius: 25px;
     float: left;
 }
@@ -20,8 +20,9 @@ button {
     font-weight: bold;
     font-family: Calibri, serif;
     margin-left: 5px;
-    background: #52a03d;
+    background: mediumseagreen;
     border-radius: 5px;
+    border: 2px solid black;
 }
 
 button:hover {
@@ -30,7 +31,7 @@ button:hover {
     font-family: Calibri, serif;
     font-style: italic;
     margin-left: 5px;
-    background: #52a03d;
+    background: mediumseagreen;
     border-radius: 5px;
     color: red;
 }
@@ -47,8 +48,9 @@ button:hover {
 }
 
 .description {
+    color: black;
     border-radius: 10px;
-    background-color: rgba(3, 198, 50, 0.85);
+    background-color:  mediumseagreen;
     width: 92%;
     padding: 8px;
     word-wrap: normal;
@@ -56,7 +58,7 @@ button:hover {
 }
 
 .form {
-    background: rgba(3, 198, 50, 0.85);
+    background: mediumseagreen;
     width: 16%;
     padding: 20px;
     border-radius: 15px;

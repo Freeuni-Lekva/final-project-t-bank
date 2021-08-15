@@ -43,15 +43,14 @@
     </form>
 
 
-
     <c:forEach items="${EventList}" var="event" varStatus="loop">
         <div class="event">
             <h1>${event.eventName}</h1>
             <p class="description">${event.description} </p>
-            <h2 <%--style="margin-right: 5px"--%>>Target: ${event.target} ${event.currency.currencyName} </h2>
+            <h2>Target: ${event.target} ${event.currency.currencyName} </h2>
             <h2>Done: ${event.done} ${event.currency.currencyName} </h2>
             <h2>${event.cardIdentifier}</h2>
-            <form <%--style="margin-left:20px"--%> action="CrowdFundingServlet" method="post">
+            <form action="CrowdFundingServlet" method="post">
                 <input style="width:200px" type="number" name="targetAmount" placeholder="Enter new target Amount."/>
                 <p style="color:red"> ${error} </p>
                 <br>
@@ -65,13 +64,6 @@
         </div>
 
     </c:forEach>
-
-
-
-
-
-
-
 
 
 </div>

@@ -32,52 +32,55 @@
     <p class="note">Welcome to TBank</p>
 </div>
 
-<div >
-    <h1 style="margin-left:340px;"> FROM: </h1>
-    <form action="CurrencyServlet" method="post" name="tmp">
-    <c:forEach items="${Currencies}" var="curr" varStatus="loop">
-
-            <input style="margin-left:340px"  value="${loop.index}"  type="radio" id="currencyType" name="from">
-            <label style="font-weight:bold" for="currencyType">${curr.currencyName} </label>
-            <span style=" font-style: italic" > CALL:${curr.call} BID:${curr.bid}</span>
-            <br>
-    </c:forEach>
-
-        <h1 style="margin-left:340px;"> TO: </h1>
+<div>
+    <div class="exchange">
+        <h1> FROM: </h1>
+        <form action="CurrencyServlet" method="post" name="tmp">
             <c:forEach items="${Currencies}" var="curr" varStatus="loop">
 
-                <input style="margin-left:340px" value="${loop.index}" type="radio" id="currencyType" name="to">
-                <label style="font-weight:bold" for="currencyType">${curr.currencyName} </label>
-                <span style=" font-style: italic" > CALL:${curr.call} BID:${curr.bid}</span>
-                <br>
+            <input value="${loop.index}" type="radio" id="currencyType" name="from">
+            <label style="font-weight:bold" for="currencyType">${curr.currencyName} </label>
+            <span style=" font-style: italic"> CALL:${curr.call} BID:${curr.bid}</span>
+            <br>
             </c:forEach>
-        <br>
-        <br>
+    </div>
+
+    <div class="exchange" style="padding-bottom: 15px">
+        <h1> TO: </h1>
+        <c:forEach items="${Currencies}" var="curr" varStatus="loop">
+
+            <input value="${loop.index}" type="radio" id="currencyType" name="to">
+            <label style="font-weight:bold" for="currencyType">${curr.currencyName} </label>
+            <span style=" font-style: italic"> CALL:${curr.call} BID:${curr.bid}</span>
+            <br>
+        </c:forEach>
+    </div>
+    <br>
+    <br>
 
     <label style="margin-left:340px;">Choose a Card: </label>
-        <label>
-            <select name="cards">
-                <c:forEach items="${CardID}" var="card" varStatus="loop">
-                    <option value="${loop.index}">
+    <label>
+        <select name="cards">
+            <c:forEach items="${CardID}" var="card" varStatus="loop">
+                <option value="${loop.index}">
                         ${card}
-                    </option>
-                </c:forEach>
+                </option>
+            </c:forEach>
 
-            </select>
-        </label>
-        <br>
+        </select>
+    </label>
     <br>
-        <label style="margin-left:340px">Enter Amount of Money: </label>
-        <label>
-            <input type="number" name="amount"/>
-        </label>
-        <button type="submit" name="calculate">Calculate</button>
-        <button type="submit" name="transfer">Transfer</button>
+    <br>
+    <label style="margin-left:340px">Enter Amount of Money: </label>
+    <label>
+        <input type="number" name="amount"/>
+    </label>
+    <button class="exchangeButton" type="submit" name="calculate">Calculate</button>
+    <button class="exchangeButton" type="submit" name="transfer">Transfer</button>
     </form>
 
 
-
-    <h4 style="color: red; font-weight:bold; margin-left:320px" > ${Amount} ${to} ${error} </h4>
+    <h4 style="color: red; font-weight:bold; margin-left:320px"> ${Amount} ${to} ${error} </h4>
 </div>
 
 

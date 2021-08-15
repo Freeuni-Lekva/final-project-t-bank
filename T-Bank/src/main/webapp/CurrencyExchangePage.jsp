@@ -33,20 +33,20 @@
 </div>
 
 <div >
-    <h1 style="margin-left:320px;"> FROM: </h1>
+    <h1 style="margin-left:340px;"> FROM: </h1>
     <form action="CurrencyServlet" method="post" name="tmp">
     <c:forEach items="${Currencies}" var="curr" varStatus="loop">
 
-            <input style="margin-left:320px"  value="${loop.index}"  type="radio" id="currencyType" name="from">
+            <input style="margin-left:340px"  value="${loop.index}"  type="radio" id="currencyType" name="from">
             <label style="font-weight:bold" for="currencyType">${curr.currencyName} </label>
             <span style=" font-style: italic" > CALL:${curr.call} BID:${curr.bid}</span>
             <br>
     </c:forEach>
 
-        <h1 style="margin-left:320px;"> TO: </h1>
+        <h1 style="margin-left:340px;"> TO: </h1>
             <c:forEach items="${Currencies}" var="curr" varStatus="loop">
 
-                <input style="margin-left:320px" value="${loop.index}" type="radio" id="currencyType" name="to">
+                <input style="margin-left:340px" value="${loop.index}" type="radio" id="currencyType" name="to">
                 <label style="font-weight:bold" for="currencyType">${curr.currencyName} </label>
                 <span style=" font-style: italic" > CALL:${curr.call} BID:${curr.bid}</span>
                 <br>
@@ -54,7 +54,7 @@
         <br>
         <br>
 
-    <label style="margin-left:320px;">Choose a Card: </label>
+    <label style="margin-left:340px;">Choose a Card: </label>
         <label>
             <select name="cards">
                 <c:forEach items="${CardID}" var="card" varStatus="loop">
@@ -67,7 +67,7 @@
         </label>
         <br>
     <br>
-        <label style="margin-left:320px">Enter Amount of Money: </label>
+        <label style="margin-left:340px">Enter Amount of Money: </label>
         <label>
             <input type="number" name="amount"/>
         </label>

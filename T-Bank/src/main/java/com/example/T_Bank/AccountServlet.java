@@ -19,7 +19,6 @@ public class AccountServlet extends HttpServlet {
         Account account = sessions.get(request.getSession().getId());
 
         if(account==null) {
-            System.out.println("Was Here");
              request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
              return;
         }

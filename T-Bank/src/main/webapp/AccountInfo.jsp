@@ -59,7 +59,7 @@
     </tr>
     <tr>
       <th>Password</th>
-      <td> <p onmouseover="this.style.color='black';" onmouseout="this.style.color='sandybrown';" >${password}</p>  </td>
+      <td> <p style=color:sandybrown; onmouseover="this.style.color='black';" onmouseout="this.style.color='sandybrown';" >${password}</p>  </td>
     </tr>
 
   </table>

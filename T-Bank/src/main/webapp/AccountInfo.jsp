@@ -16,16 +16,18 @@
 <div class="navigation">
   <ul>
     <br>
-    <li> <a class="accountInfoTag" href="AccountServlet">Account Information </a> </li>
-      <li><a href="CardCreationServlet">Add or Remove a Card</a></li>
-      <li><a href="CardsListServlet">View All Cards</a></li>
-      <li><a href="CurrencyServlet">Currency Exchange</a></li>
-      <li><a href="CrowdFundingServlet"> Crowd Funding - My Events </a> </li>
-      <li>Deposits and Loans</li>
-      <li><a href="TransfersServlet">Transfer by ID</a></li>
-      <li><a href="IBANTransfersServlet">Transfer by IBAN</a></li>
+    <li><a class="accountInfoTag" href="AccountServlet">Account Information </a></li>
+    <li><a href="CardCreationServlet">Add a Card</a></li>
+    <li><a href="CardsListServlet">View All Cards</a></li>
+    <li><a href="CurrencyServlet">Currency Exchange</a></li>
+    <li><a href="CrowdFundingServlet">My Events</a></li>
     <li><a href="EventsListServlet">View All Events</a></li>
-      <li><a style="border:2px solid; color:red" href="LogoutServlet">Log Out</a></li>
+    <li><a href="LoanServlet">Loans</a></li>
+    <li><a href="DepositsServlet">Deposits</a></li>
+    <li><a href="TransfersServlet">Transfer by ID</a></li>
+    <li><a href="IBANTransfersServlet">Transfer by IBAN</a></li>
+    <li><a href="TransactionsHistoryServlet">Transactions History</a></li>
+    <li><a style="border:2px solid; color:red" href="LogoutServlet">Log Out</a></li>
   </ul>
   <p class="note">Welcome to TBank</p>
 </div>

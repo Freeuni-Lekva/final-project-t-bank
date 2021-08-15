@@ -40,7 +40,7 @@
 
             <input value="${loop.index}" type="radio" id="currencyType" name="from">
             <label style="font-weight:bold" for="currencyType">${curr.currencyName} </label>
-            <span style=" font-style: italic"> CALL:${curr.call} BID:${curr.bid}</span>
+            <span style=" font-style: italic; font-size:15px;" > CALL:${curr.call} BID:${curr.bid}</span>
             <br>
             </c:forEach>
     </div>
@@ -51,7 +51,7 @@
 
             <input value="${loop.index}" type="radio" id="currencyType" name="to">
             <label style="font-weight:bold" for="currencyType">${curr.currencyName} </label>
-            <span style=" font-style: italic"> CALL:${curr.call} BID:${curr.bid}</span>
+            <span style=" font-style: italic; font-size:15px"> CALL:${curr.call} BID:${curr.bid}</span>
             <br>
         </c:forEach>
     </div>

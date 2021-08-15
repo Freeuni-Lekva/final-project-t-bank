@@ -22,6 +22,36 @@ public class TransactionHistoryServlet extends HttpServlet {
         TBankDAO tBankDAO = (TBankDAO) context.getAttribute("TBankDAO");
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
+        if(account==null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+            return;
+        }
+
+
+        request.setAttribute("income", new ArrayList<Transaction>());
+        request.setAttribute("expense", new ArrayList<Transaction>());
+        request.setAttribute("currency", new ArrayList<Transaction>());
+
+        request.setAttribute("currencyCheckBox", "false");
+        request.setAttribute("incomeCheckBox", "false");
+        request.setAttribute("expenseCheckBox", "false");
+
+
+        request.setAttribute("tBankDAO", tBankDAO);
+        request.getRequestDispatcher("TransactionHistory.jsp").forward(request, response);
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ServletContext context = getServletContext();
+        TBankDAO tBankDAO = (TBankDAO) context.getAttribute("TBankDAO");
+        Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
+        Account account = sessions.get(request.getSession().getId());
+        if(account==null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+            return;
+        }
         int accountId = account.getAccountId();
 
         request.setAttribute("income", new ArrayList<Transaction>());
@@ -66,9 +96,5 @@ public class TransactionHistoryServlet extends HttpServlet {
         }
         request.setAttribute("tBankDAO", tBankDAO);
         request.getRequestDispatcher("TransactionHistory.jsp").forward(request, response);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
 }

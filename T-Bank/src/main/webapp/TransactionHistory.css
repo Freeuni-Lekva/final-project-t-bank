@@ -16,6 +16,11 @@
     margin-left: 30px;
 }
 
+label {
+    font-style:italic;
+    font-size:20px;
+}
+
 .content:not(:first-child) {
     margin-left: 20px;
 }
@@ -37,5 +42,29 @@
     justify-content: space-between;
     align-items: center;
     border: 5px solid;
-    border-radius: 20px;
+    border-radius: 10px;
+    background-color:navajowhite;
+    margin-bottom:10px;
+    box-shadow:5px 3px #444343;
+}
+
+button {
+    font-size: 15px;
+    font-weight: bold;
+    font-family: Calibri, serif;
+    margin-left: 5px;
+    background: deepskyblue;
+    border-radius: 5px;
+    border: 2px solid black;
+}
+
+button:hover {
+    font-size: 15px;
+    font-weight: bold;
+    font-family: Calibri, serif;
+    font-style: italic;
+    margin-left: 5px;
+    background: deepskyblue;
+    border-radius: 5px;
+    color: red;
 }

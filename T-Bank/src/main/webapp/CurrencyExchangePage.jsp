@@ -80,7 +80,7 @@
     </form>
 
 
-    <h4 style="color: red; font-weight:bold; margin-left:320px"> ${Amount} ${to} ${error} </h4>
+    <h4 style="color: red; font-weight:bold; margin-left:340px"> ${Amount} ${to} ${error} </h4>
 </div>
 
 

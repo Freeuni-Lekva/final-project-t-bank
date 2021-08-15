@@ -30,7 +30,7 @@
 
 <div class="upper">
     <div class="tr">
-        <form class="content" action="TransactionsHistoryServlet" method="get">
+        <form class="content" action="TransactionsHistoryServlet" method="post">
             <div class="checkboxes">
                 <div class="content_elemets">
                     <%if (request.getAttribute("incomeCheckBox").equals("true")) { %>
@@ -58,7 +58,7 @@
                 </div>
             </div>
             <br>
-            <button style="margin-left:10px" type="submit" name="filter">Filter</button>
+            <button style="margin-left:30px; margin-top:-1px" type="submit" name="filter">Filter</button>
             <br>
         </form>
 

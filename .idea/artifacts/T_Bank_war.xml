@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="T-Bank:war">
+    <output-path>$PROJECT_DIR$/T-Bank/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>T-Bank</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="T-Bank-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="T-Bank:war exploded" />
+    </root>
+  </artifact>
+</component>

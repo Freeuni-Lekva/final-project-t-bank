@@ -184,12 +184,13 @@ public class BankDataUpdater extends TimerTask {
     private void closeDeposit(int accountDepositId, ResultSet rs) {
         try {
             String closeDepositQuery = "update account_deposits " +
-                    "active = ? " +
-                    "where deposit_id = ? ";
+                    "set active = false" +
+                    " where deposit_id = ? and active = true";
             PreparedStatement stm = connection.prepareStatement(closeDepositQuery);
-            stm.setBoolean(1, false);
-            stm.setInt(2, accountDepositId);
-            stm.executeUpdate();
+            stm.setInt(1, accountDepositId);
+            if(stm.executeUpdate() == 0) {
+                return;
+            }
             String cardIdentifier = rs.getString(4);
             double amount = rs.getDouble(5);
             updateCard(cardIdentifier, rs.getInt(6), amount);

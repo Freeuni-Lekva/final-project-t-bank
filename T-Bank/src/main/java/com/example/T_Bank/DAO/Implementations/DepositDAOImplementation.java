@@ -50,8 +50,8 @@ public class DepositDAOImplementation implements DepositDAO{
             stm.setString(1, depositName);
             stm.setInt(2, accountID);
             stm.setString(3, cardIdentifier);
-            stm.setDouble(4, 0);
-            stm.setInt(5, 0);
+            stm.setDouble(4, amount);
+            stm.setInt(5, 1);
             stm.setInt(6, 15);
             stm.setDouble(7, periods);
             stm.setTimestamp(8, startTime);
@@ -60,7 +60,7 @@ public class DepositDAOImplementation implements DepositDAO{
             stm.setBoolean(11, true);
             stm.executeUpdate();
 
-            updateCard(cardIdentifier, 0, amount);
+            updateCard(cardIdentifier, 1, -amount);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -68,12 +68,13 @@ public class DepositDAOImplementation implements DepositDAO{
 
     @Override
     public void addAmountToDeposit(int depositID, double amount) throws SQLException {
-        String query = "update account_deposits set balance = balance + ? where deposit_id = ?";
+        String query = "update account_deposits set balance = balance + ? where deposit_id = ? and active = true";
         PreparedStatement stm = connection.prepareStatement(query);
         stm.setDouble(1, amount);
         stm.setInt(2, depositID);
-        stm.executeUpdate();
-
+        if (stm.executeUpdate() == 0) {
+            return;
+        }
         query = "select card_identifier, currency_id from account_deposits where deposit_id = ?";
         stm = connection.prepareStatement(query);
         stm.setInt(1, depositID);
@@ -81,19 +82,20 @@ public class DepositDAOImplementation implements DepositDAO{
         ResultSet rs = stm.executeQuery();
         rs.next();
 
-        updateCard(rs.getString("card_identifier"), rs.getInt("currency_id"), amount);
+        updateCard(rs.getString("card_identifier"), rs.getInt("currency_id"), -amount);
     }
 
     @Override
     public void closeDeposit(int depositID) {
         try {
             String closeDepositQuery = "update account_deposits " +
-                    "active = ? " +
-                    "where deposit_id = ? ";
+                    "set active = false " +
+                    "where deposit_id = ? and active = true";
             PreparedStatement stm = connection.prepareStatement(closeDepositQuery);
-            stm.setBoolean(1, false);
-            stm.setInt(2, depositID);
-            stm.executeUpdate();
+            stm.setInt(1, depositID);
+            if (stm.executeUpdate() == 0) {
+                return;
+            }
 
             String query = "select card_identifier, balance, currency_id from account_deposits where deposit_id = ?";
             stm = connection.prepareStatement(query);
@@ -104,6 +106,7 @@ public class DepositDAOImplementation implements DepositDAO{
             String cardIdentifier = rs.getString(1);
             double balance = rs.getDouble(2);
             updateCard(cardIdentifier, rs.getInt(3), balance);
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

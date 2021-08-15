@@ -15,7 +15,22 @@ public class AccountDAOImplementation implements AccountDAO {
         accounts = new ArrayList<>();
     }
 
-
+    public String getAccountUsername(int accountId) {
+        String query = "Select user_name from accounts where account_id = ?";
+        try {
+            PreparedStatement usernameStm = connection.prepareStatement(query);
+            usernameStm.setInt(1, accountId);
+            ResultSet username = usernameStm.executeQuery();
+            if(!username.next()) {
+                return null;
+            }
+            String user = username.getString("user_name");
+            return user;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return null;
+    }
 
     private Account badAccount(ErrorMessage errorMessage){
         Account badAccount = new Account(null, null, null, null,
@@ -148,5 +163,4 @@ public class AccountDAOImplementation implements AccountDAO {
             throwables.printStackTrace();
         }
     }
-
 }

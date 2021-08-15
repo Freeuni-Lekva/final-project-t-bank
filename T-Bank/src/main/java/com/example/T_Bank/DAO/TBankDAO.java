@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyDAO,
-                                 CrowdFundingEventDAO,TransactionHistoryDAO, LoanDAO {
+        CrowdFundingEventDAO,TransactionHistoryDAO, LoanDAO, DepositDAO {
     private BasicDataSource dataSource;
     private Connection connection;
     private AccountDAO accountDao;
@@ -23,6 +23,7 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
     private CrowdFundingEventDAO crowdFundingEventDAO;
     private TransactionHistoryDAO transactionHistoryDAO;
     private LoanDAO loanDAO;
+    private DepositDAO depositDAO;
 
     private CardDAO cardDao;
     private Timer timer;
@@ -49,6 +50,7 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
         timer = new Timer();
         BankDataUpdater bankDataUpdater = new BankDataUpdater(connection);
         timer.schedule(bankDataUpdater, new Date(), 30000);
+        depositDAO = new DepositDAOImplementation(connection);
     }
 
     public CardInfo addCard(int accountId, CardType cardType, String cardName) {
@@ -163,6 +165,11 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
     }
 
     @Override
+    public String getCurrencyName(int currencyId) {
+        return currencyDAO.getCurrencyName(currencyId);
+    }
+
+    @Override
     public LoanErrorMessage takeLoan(int accountId, String cardIdentifier, double startMoney, int periods) {
         return loanDAO.takeLoan(accountId, cardIdentifier, startMoney, periods);
     }
@@ -172,5 +179,28 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
         return loanDAO.getAllLoans(accountId);
     }
 
+    @Override
+    public void closeDeposit(int depositID) {
+        depositDAO.closeDeposit(depositID);
+    }
 
+    @Override
+    public void openDeposit(int accountID, String cardIdentifier, int periods, double amount, String depositName) {
+        depositDAO.openDeposit(accountID, cardIdentifier, periods, amount, depositName);
+    }
+
+    @Override
+    public void addAmountToDeposit(int depositID, double amount) throws SQLException {
+        depositDAO.addAmountToDeposit(depositID, amount);
+    }
+
+    @Override
+    public String getAccountUsername(int accountId) {
+        return accountDao.getAccountUsername(accountId);
+    }
+
+    @Override
+    public ArrayList<Deposit> getAllDeposits(int accountId) {
+        return depositDAO.getAllDeposits(accountId);
+    }
 }

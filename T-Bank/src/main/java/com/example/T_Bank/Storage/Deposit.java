@@ -15,8 +15,11 @@ public class Deposit {
     private Timestamp lastUpdate;
     private Timestamp endDate;
     private boolean active;
+    private double startMoney;
 
-    public Deposit(int depositID, String depositName, int accountId, String cardIdentifier, double balance, int currencyId, double percent, int periods, Timestamp startDate, Timestamp lastUpdate, Timestamp endDate, boolean active) {
+    public Deposit(int depositID, String depositName, int accountId, String cardIdentifier,
+                   double balance, int currencyId, double percent, int periods, Timestamp startDate,
+                   Timestamp lastUpdate, Timestamp endDate, boolean active, double startMoney) {
         this.depositID = depositID;
         this.depositName = depositName;
         this.accountId = accountId;
@@ -29,6 +32,11 @@ public class Deposit {
         this.lastUpdate = lastUpdate;
         this.endDate = endDate;
         this.active = active;
+        this.startMoney = startMoney;
+    }
+
+    public double getStartMoney() {
+        return startMoney;
     }
 
     public int getDepositID() {

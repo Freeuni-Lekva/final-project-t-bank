@@ -181,6 +181,7 @@ CREATE TABLE account_deposits(
                                  last_update_date timestamp,
                                  end_date timestamp,
                                  active boolean,
+                                 start_money double,
                                  primary key (deposit_id),
                                  foreign key(account_id) references accounts(account_id),
                                  foreign key(currency_id)
@@ -190,4 +191,4 @@ CREATE TABLE account_deposits(
 );
 
 
-select * from accounts;
+

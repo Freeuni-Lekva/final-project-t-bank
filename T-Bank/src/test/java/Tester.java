@@ -26,9 +26,8 @@ public class Tester {
         TBankDAO dao = new TBankDAO();
         dao.register("koba", "paikidze", "00001111999", "koba",
                 "kobasaba", null);
-        for(int i = 1; i <= 10; i++) {
-            LoanErrorMessage loan = dao.takeLoan(1, "TBMTSC00001", i * 100, i + 1);
-        }
+        dao.openDeposit(1, "TBMTSC00001", 1, 100, "depo1");
+
     }
 
 }

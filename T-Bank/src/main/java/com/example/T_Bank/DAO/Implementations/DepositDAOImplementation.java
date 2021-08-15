@@ -23,10 +23,12 @@ public class DepositDAOImplementation implements DepositDAO{
             stm.setInt(1, accountID);
             ResultSet res = stm.executeQuery();
             while (res.next()) {
-                Deposit curr = new Deposit(res.getInt(1), res.getString(2), res.getInt(3), res.getString(4),
-                        res.getDouble(5), res.getInt(6), res.getDouble(7),
+                Deposit curr = new Deposit(res.getInt(1), res.getString(2), res.getInt(3),
+                        res.getString(4), res.getDouble(5),
+                        res.getInt(6), res.getDouble(7),
                         res.getInt(8), res.getTimestamp(9), res.getTimestamp(10),
-                        res.getTimestamp(11), res.getBoolean(12));
+                        res.getTimestamp(11), res.getBoolean(12),
+                        res.getDouble(13));
                 result.add(curr);
             }
             return result;
@@ -40,8 +42,8 @@ public class DepositDAOImplementation implements DepositDAO{
     @Override
     public void openDeposit(int accountID, String cardIdentifier, int periods, double amount, String depositName) {
         String addQuery = "insert into account_deposits(deposit_name, account_id, card_identifier, balance, currency_id, percent, " +
-                "periods, start_date, last_update_date, end_date, active)" +
-                "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "periods, start_date, last_update_date, end_date, active, start_money)" +
+                "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             Timestamp startTime = new Timestamp(System.currentTimeMillis());
             long current = startTime.getTime();
@@ -58,8 +60,8 @@ public class DepositDAOImplementation implements DepositDAO{
             stm.setTimestamp(9, startTime);
             stm.setTimestamp(10, endTime);
             stm.setBoolean(11, true);
+            stm.setDouble(12, amount);
             stm.executeUpdate();
-
             updateCard(cardIdentifier, 1, -amount);
         } catch (SQLException throwables) {
             throwables.printStackTrace();

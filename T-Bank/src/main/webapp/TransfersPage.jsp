@@ -37,15 +37,17 @@
 <div class="form" style="border:5px solid black">
     <h1 class="header">Transfer Money</h1>
     <form action="TransfersServlet" method="get">
+
+    </form>
+
+    <form action="TransfersServlet" method="post">
         <label>Receiver ID</label><br>
         <input type="text" name="receiverID" placeholder="Enter Receiver ID" value="${receiverID}"><br>
 
         <h4>${errorMessage}</h4>
-        <button type="submit">Check ID</button>
+        <button name="check" type="submit">Check ID</button>
         <br>
-    </form>
 
-    <form action="TransfersServlet" method="post">
         <label>Receiver IBAN</label><br>
         <select style="width: 95%" name="receiverDropdown">
             <c:forEach items="${receiverAccounts}" var="account" varStatus="loop1">
@@ -84,7 +86,7 @@
 
         <h4>${transferError}</h4>
         <h3>${transferSuccess}</h3>
-        <button type="submit">Transfer</button>
+        <button name="transfer" type="submit">Transfer</button>
     </form>
 </div>
 </body>

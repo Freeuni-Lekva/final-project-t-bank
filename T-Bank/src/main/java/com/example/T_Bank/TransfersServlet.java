@@ -21,25 +21,14 @@ public class TransfersServlet extends HttpServlet {
 
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
-        if(account==null) {
-            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+        if (account == null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request, response);
             return;
         }
 
-        receiverID = request.getParameter("receiverID");
-        AccountNumbersList receiverList = tBank.getAccountNumbers(receiverID);
-        AccountNumbersList senderList = tBank.getAccountNumbers(account.getPersonalId());
-        request.setAttribute("senderAccounts", senderList.getAccountNumbers());
-
-        if (receiverList.isValid() || receiverID == null) {
-            List<String> accountCards = receiverList.getAccountNumbers();
-            request.setAttribute("receiverAccounts", accountCards);
-            request.setAttribute("receiverID", receiverID);
-            request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
-        } else {
-            request.setAttribute("errorMessage", receiverList.getErrorMessage());
-            request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
-        }
+        List<String> senderList = tBank.getAccountNumbers(account.getPersonalId()).getAccountNumbers();
+        request.setAttribute("senderAccounts", senderList);
+        request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
     }
 
     @Override
@@ -49,8 +38,8 @@ public class TransfersServlet extends HttpServlet {
 
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
-        if(account==null) {
-            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+        if (account == null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request, response);
             return;
         }
         List<String> receiverList = tBank.getAccountNumbers(receiverID).getAccountNumbers();
@@ -58,30 +47,49 @@ public class TransfersServlet extends HttpServlet {
         request.setAttribute("senderAccounts", senderList);
         String toAccount = request.getParameter("receiverDropdown");
 
-        if (receiverID == null || receiverID.equals("") || toAccount == null || toAccount.equals("")) {
-            request.setAttribute("transferError", "Target account cant be empty!");
-            request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
-        } else {
-            String fromAccountNumber = senderList.get(Integer.parseInt(request.getParameter("senderDropdown")));
-            String toAccountNumber = receiverList.get(Integer.parseInt(toAccount));
-            double amount = 0.0;
-            if (!request.getParameter("amount").equals("")) {
-                amount = Double.parseDouble((request.getParameter("amount")));
-            }
-            if (amount <= 0){
-                request.setAttribute("transferError", "Amount should be more than 0");
-            }else {
-                Currency fromCurrency = tBank.getCurrencies().get(Integer.parseInt(request.getParameter("fromCurrency")));
-                Currency toCurrency = tBank.getCurrencies().get(Integer.parseInt(request.getParameter("toCurrency")));
+        if (request.getParameter("check") != null) {
+            receiverID = request.getParameter("receiverID");
+            AccountNumbersList receiversList = tBank.getAccountNumbers(receiverID);
+            request.setAttribute("senderAccounts", senderList);
 
-                TransferError transferError = tBank.transferMoney(fromAccountNumber, toAccountNumber, amount, fromCurrency, toCurrency);
-                if (transferError != TransferError.noErrorMessage) {
-                    request.setAttribute("transferError", transferError);
-                } else {
-                    request.setAttribute("transferSuccess", "Transfer Successful!");
-                }
+            if (receiversList.isValid() || receiverID == null) {
+                List<String> accountCards = receiversList.getAccountNumbers();
+                request.setAttribute("receiverAccounts", accountCards);
+                request.setAttribute("receiverID", receiverID);
+                request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", receiversList.getErrorMessage());
+                request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
             }
-            request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
+        }
+
+        if (request.getParameter("transfer") != null) {
+
+            if (receiverID == null || receiverID.equals("") || toAccount == null || toAccount.equals("")) {
+                request.setAttribute("transferError", "Target account cant be empty!");
+                request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
+            } else {
+                String fromAccountNumber = senderList.get(Integer.parseInt(request.getParameter("senderDropdown")));
+                String toAccountNumber = receiverList.get(Integer.parseInt(toAccount));
+                double amount = 0.0;
+                if (!request.getParameter("amount").equals("")) {
+                    amount = Double.parseDouble((request.getParameter("amount")));
+                }
+                if (amount <= 0) {
+                    request.setAttribute("transferError", "Amount should be more than 0");
+                } else {
+                    Currency fromCurrency = tBank.getCurrencies().get(Integer.parseInt(request.getParameter("fromCurrency")));
+                    Currency toCurrency = tBank.getCurrencies().get(Integer.parseInt(request.getParameter("toCurrency")));
+
+                    TransferError transferError = tBank.transferMoney(fromAccountNumber, toAccountNumber, amount, fromCurrency, toCurrency);
+                    if (transferError != TransferError.noErrorMessage) {
+                        request.setAttribute("transferError", transferError);
+                    } else {
+                        request.setAttribute("transferSuccess", "Transfer Successful!");
+                    }
+                }
+                request.getRequestDispatcher("TransfersPage.jsp").forward(request, response);
+            }
         }
     }
 }

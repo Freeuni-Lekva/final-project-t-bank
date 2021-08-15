@@ -47,7 +47,7 @@
 <div style="width: 80%">
     <div style="margin-left: 340px; text-align: center;">
         <form action="EventsListServlet" method="post">
-            <input id="searchBar" type="text" name="searchBar" placeholder="Enter personal ID...">
+            <input id="searchBar" type="text" name="idSearchBar" placeholder="Enter personal ID...">
             <button name="searchButton" type="submit">Search</button>
             <br>
             <h4 style="color: red">${eventError}</h4>

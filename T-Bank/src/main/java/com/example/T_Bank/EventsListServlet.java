@@ -52,7 +52,7 @@ public class EventsListServlet extends HttpServlet {
         request.setAttribute("senderAccounts", senderList.getAccountNumbers());
 
         if (request.getParameter("searchButton") != null){
-            String searchedID = request.getParameter("searchBar");
+            String searchedID = request.getParameter("idSearchBar");
 
             if (searchedID == null || searchedID.equals("")) {
                 List<CrowdFundingEvent> events = tBank.getPublicCrowdFundingEvents().stream().filter(crowdFundingEvent -> crowdFundingEvent.isActive()).collect(Collectors.toList());

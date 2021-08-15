@@ -29,22 +29,9 @@ public class EventsListServlet extends HttpServlet {
         AccountNumbersList senderList = tBank.getAccountNumbers(account.getPersonalId());
         request.setAttribute("senderAccounts", senderList.getAccountNumbers());
 
-        String searchedID = request.getParameter("searchBar");
-
-        if (searchedID == null || searchedID.equals("")) {
-            List<CrowdFundingEvent> events = tBank.getPublicCrowdFundingEvents().stream().filter(crowdFundingEvent -> crowdFundingEvent.isActive()).collect(Collectors.toList());
-            events = getActiveMoneys(events);
-            request.setAttribute("events", events);
-        } else {
-            EventList events = tBank.getSpecificEvents(searchedID);
-            if (events.isValid()) {
-                List<CrowdFundingEvent> fundingEvents = events.getAllEvents().stream().filter(crowdFundingEvent -> crowdFundingEvent.isActive()).collect(Collectors.toList());
-                fundingEvents = getActiveMoneys(fundingEvents);
-                request.setAttribute("events", fundingEvents);
-            } else {
-                request.setAttribute("eventError", events.getErrorMessage());
-            }
-        }
+        List<CrowdFundingEvent> events = tBank.getPublicCrowdFundingEvents().stream().filter(crowdFundingEvent -> crowdFundingEvent.isActive()).collect(Collectors.toList());
+        events = getActiveMoneys(events);
+        request.setAttribute("events", events);
 
         request.getRequestDispatcher("EventsListPage.jsp").forward(request, response);
     }
@@ -64,34 +51,56 @@ public class EventsListServlet extends HttpServlet {
         AccountNumbersList senderList = tBank.getAccountNumbers(account.getPersonalId());
         request.setAttribute("senderAccounts", senderList.getAccountNumbers());
 
-        String id = request.getParameter("eventID");
-        if (id.equals("") || id == null) {
-            request.setAttribute("transferError", "Please Choose an Event");
-        } else {
-            int eventId = Integer.parseInt(id);
-            String fromAccount = senderList.getAccountNumbers().get(Integer.parseInt(request.getParameter("senderDropdown")));
-            Currency currency = tBank.getCurrencies().get(Integer.parseInt(request.getParameter("fromCurrency")));
-            double amount = 0.0;
-            if (!request.getParameter("amount").equals("")) {
-                amount = Double.parseDouble((request.getParameter("amount")));
-            }
+        if (request.getParameter("searchButton") != null){
+            String searchedID = request.getParameter("idSearchBar");
 
-            if (amount <= 0) {
-                request.setAttribute("transferError", "Amount should be more than 0");
+            if (searchedID == null || searchedID.equals("")) {
+                List<CrowdFundingEvent> events = tBank.getPublicCrowdFundingEvents().stream().filter(crowdFundingEvent -> crowdFundingEvent.isActive()).collect(Collectors.toList());
+                events = getActiveMoneys(events);
+                request.setAttribute("events", events);
             } else {
-                EventError error = tBank.sendFunds(eventId, fromAccount, amount, currency);
-                if (error.equals(EventError.noErrorMessage)) {
-                    request.setAttribute("transferSuccess", "Funding Successful");
+                EventList events = tBank.getSpecificEvents(searchedID);
+                if (events.isValid()) {
+                    List<CrowdFundingEvent> fundingEvents = events.getAllEvents().stream().filter(crowdFundingEvent -> crowdFundingEvent.isActive()).collect(Collectors.toList());
+                    fundingEvents = getActiveMoneys(fundingEvents);
+                    request.setAttribute("events", fundingEvents);
                 } else {
-                    request.setAttribute("transferError", error);
+                    request.setAttribute("eventError", events.getErrorMessage());
                 }
             }
+            request.getRequestDispatcher("EventsListPage.jsp").forward(request, response);
         }
 
-        List<CrowdFundingEvent> events = tBank.getPublicCrowdFundingEvents().stream().filter(crowdFundingEvent -> crowdFundingEvent.isActive()).collect(Collectors.toList());
-        events = getActiveMoneys(events);
-        request.setAttribute("events", events);
-        request.getRequestDispatcher("EventsListPage.jsp").forward(request, response);
+        if(request.getParameter("fundButton") != null){
+            String id = request.getParameter("eventID");
+            if (id.equals("") || id == null) {
+                request.setAttribute("transferError", "Please Choose an Event");
+            } else {
+                int eventId = Integer.parseInt(id);
+                String fromAccount = senderList.getAccountNumbers().get(Integer.parseInt(request.getParameter("senderDropdown")));
+                Currency currency = tBank.getCurrencies().get(Integer.parseInt(request.getParameter("fromCurrency")));
+                double amount = 0.0;
+                if (!request.getParameter("amount").equals("")) {
+                    amount = Double.parseDouble((request.getParameter("amount")));
+                }
+
+                if (amount <= 0) {
+                    request.setAttribute("transferError", "Amount should be more than 0");
+                } else {
+                    EventError error = tBank.sendFunds(eventId, fromAccount, amount, currency);
+                    if (error.equals(EventError.noErrorMessage)) {
+                        request.setAttribute("transferSuccess", "Funding Successful");
+                    } else {
+                        request.setAttribute("transferError", error);
+                    }
+                }
+            }
+
+            List<CrowdFundingEvent> events = tBank.getPublicCrowdFundingEvents().stream().filter(crowdFundingEvent -> crowdFundingEvent.isActive()).collect(Collectors.toList());
+            events = getActiveMoneys(events);
+            request.setAttribute("events", events);
+            request.getRequestDispatcher("EventsListPage.jsp").forward(request, response);
+        }
     }
 
     private List<CrowdFundingEvent> getActiveMoneys(List<CrowdFundingEvent> events) {

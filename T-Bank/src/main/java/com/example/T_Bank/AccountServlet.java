@@ -18,14 +18,21 @@ public class AccountServlet extends HttpServlet {
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
 
-        request.setAttribute("FirstName",account.getFirstName());
-        request.setAttribute("LastName",account.getLastName());
-        request.setAttribute("UserName",account.getUserName());
-        request.setAttribute("password",account.getPassword());
-        request.setAttribute("PersonalID",account.getPersonalId());
-        request.setAttribute("AccountID",account.getAccountId());
+        if(account==null) {
+             request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+             return;
+        }
 
-        request.getRequestDispatcher("AccountInfo.jsp").forward(request,response);
+            request.setAttribute("FirstName", account.getFirstName());
+            request.setAttribute("LastName", account.getLastName());
+            request.setAttribute("UserName", account.getUserName());
+            request.setAttribute("password", account.getPassword());
+            request.setAttribute("PersonalID", account.getPersonalId());
+            request.setAttribute("AccountID", account.getAccountId());
+
+            request.getRequestDispatcher("AccountInfo.jsp").forward(request, response);
+
+
 
     }
 

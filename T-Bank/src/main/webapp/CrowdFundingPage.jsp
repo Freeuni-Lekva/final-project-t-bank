@@ -53,6 +53,7 @@
             <h2>${event.cardIdentifier}</h2>
             <form style="margin-left:20px" action="CrowdFundingServlet" method="post">
                 <input style="width:200px" type="number" name="targetAmount" placeholder="Enter new target Amount."/>
+                <p style="color:red"> ${error} </p>
                 <br>
                 <br>
                 <button type="submit" name="${loop.index}Modify">Modify Target</button>

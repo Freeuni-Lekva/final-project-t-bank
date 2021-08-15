@@ -22,6 +22,11 @@ public class CardsListServlet extends HttpServlet {
 
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
+
+        if(account==null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+            return;
+        }
         int accountId = account.getAccountId();
 
         List<CardInfo> cardInfos = tBank.getAccountCards(accountId);

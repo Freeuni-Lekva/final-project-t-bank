@@ -21,6 +21,10 @@ public class CrowdFundingServlet extends HttpServlet {
         TBankDAO tBankDAO = (TBankDAO) context.getAttribute("TBankDAO");
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
+        if(account==null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+            return;
+        }
         String personalID = account.getPersonalId();
         EventList wrapper=tBankDAO.getSpecificEvents(personalID);
         ArrayList<CrowdFundingEvent> eventList=wrapper.getAllEvents();
@@ -37,18 +41,30 @@ public class CrowdFundingServlet extends HttpServlet {
         TBankDAO tBankDAO = (TBankDAO) context.getAttribute("TBankDAO");
         Map<String, Account> sessions = (Map<String, Account>) context.getAttribute("Sessions");
         Account account = sessions.get(request.getSession().getId());
+        if(account==null) {
+            request.getRequestDispatcher("SessionExpiredPage.jsp").forward(request,response);
+            return;
+        }
         String personalID = account.getPersonalId();
+
         EventList wrapper=tBankDAO.getSpecificEvents(personalID);
         ArrayList<CrowdFundingEvent> eventList=wrapper.getAllEvents();
         ArrayList<CrowdFundingEvent> activeList=getActiveEvents(eventList);
 
 
         CrowdFundingEvent event=getEventWithID(request,activeList);
-        System.out.println(event.getEventId());
-        System.out.println(event.getEventName());
+
+
 
         if(request.getParameter(activeList.indexOf(event)+"Modify")!=null) {
-            int newTarget= Integer.parseInt(request.getParameter("targetAmount"));
+            String newTargetString=request.getParameter("targetAmount");
+            if(newTargetString==null || newTargetString.equals("")) {
+                request.setAttribute("error","Please Enter Amount.");
+                request.setAttribute("EventList",activeList);
+                request.getRequestDispatcher("CrowdFundingPage.jsp").forward(request, response);
+                return;
+            }
+            int newTarget= Integer.parseInt(newTargetString);
             tBankDAO.changeEventTarget(event.getEventId(),newTarget);
             wrapper=tBankDAO.getSpecificEvents(personalID);
             eventList=wrapper.getAllEvents();

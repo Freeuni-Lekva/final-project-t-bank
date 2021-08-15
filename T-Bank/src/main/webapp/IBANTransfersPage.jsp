@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="TBank.css">
     <link rel="stylesheet" href="HomePage.css">
 </head>
-<body>
+<body style="background-image: url(https://www.colorbook.io/imagecreator.php?hex=fbb486&width=1920&height=1080&text=%201920x1080);">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <div class="navigation">
@@ -34,7 +34,7 @@
     <p class="note">Welcome to TBank</p>
 </div>
 
-<div class="form">
+<div class="form" style="border:5px solid black">
     <h1 class="header">Transfer Money</h1>
     <form action="IBANTransfersServlet" method="post">
         <label>Receiver IBAN</label><br>

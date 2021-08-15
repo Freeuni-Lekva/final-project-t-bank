@@ -49,10 +49,23 @@ public class CurrencyDAOImplementation implements CurrencyDAO {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
         return clientCurrencies;
     }*/
 
+    @Override
+    public String getCurrencyName(int currencyId) {
+        String query = "select currency_name from currency_exchange where currency_id = ?";
+        try {
+            PreparedStatement stm = connection.prepareStatement(query);
+            stm.setInt(1, currencyId);
+            ResultSet res = stm.executeQuery();
+            res.next();
+            return res.getString(1);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return "";
+    }
 
     @Override
     public ArrayList<Currency> getCurrencies() {

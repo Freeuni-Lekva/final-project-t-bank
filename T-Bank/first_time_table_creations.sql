@@ -167,3 +167,24 @@ CREATE TABLE account_loans(
                                   references account_cards(card_identifier)
 );
 
+CREATE TABLE account_deposits(
+                                 deposit_id int auto_increment,
+                                 deposit_name varchar(100),
+                                 account_id int,
+                                 card_identifier char(11),
+                                 balance double,
+                                 currency_id int,
+                                 percent double,
+                                 periods int,
+                                 start_date timestamp,
+                                 last_update_date timestamp,
+                                 end_date timestamp,
+                                 active boolean,
+                                 primary key (deposit_id),
+                                 foreign key(account_id) references accounts(account_id),
+                                 foreign key(currency_id)
+                                     references currency_exchange(currency_id),
+                                 foreign key(card_identifier)
+                                     references account_cards(card_identifier)
+);
+

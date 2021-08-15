@@ -4,7 +4,7 @@
     color: aliceblue;
     padding: 5px 10px 5px 20px;
     margin: 30px 0 0 20px;
-    border: 5px solid darkblue;
+    border: 5px solid mediumseagreen;
     border-radius: 25px;
     float: left;
 }
@@ -15,22 +15,57 @@
     width: 50%;
 }
 
+button {
+    font-size: 20px;
+    font-weight: bold;
+    font-family: Calibri, serif;
+    margin-left: 5px;
+    background: mediumseagreen;
+    border-radius: 5px;
+    border: 2px solid black;
+}
+
+button:hover {
+    font-size: 20px;
+    font-weight: bold;
+    font-family: Calibri, serif;
+    font-style: italic;
+    margin-left: 5px;
+    background: mediumseagreen;
+    border-radius: 5px;
+    color: red;
+}
+
+#searchBar {
+    height: 30px;
+    width: 600px;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.input {
+    width: 95%;
+}
+
 .description {
+    color: black;
     border-radius: 10px;
-    background-color: darkblue;
+    background-color:  mediumseagreen;
     width: 92%;
     padding: 8px;
+    word-wrap: normal;
+    height: 140px;
 }
 
 .form {
-    background: deepskyblue;
+    background: mediumseagreen;
     width: 16%;
     padding: 20px;
     border-radius: 15px;
 }
 
 h1 {
-    text-align: center;
+    font-style: italic;
 }
 
 h4 {

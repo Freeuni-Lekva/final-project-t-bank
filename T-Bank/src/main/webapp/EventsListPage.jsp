@@ -47,7 +47,7 @@
 <div style="width: 80%">
     <div style="margin-left: 340px; text-align: center;">
         <form action="EventsListServlet" method="post">
-            <input type="text" name="searchBar" placeholder="Enter personal ID...">
+            <input id="searchBar" type="text" name="searchBar" placeholder="Enter personal ID...">
             <button name="searchButton" type="submit">Search</button>
             <br>
             <h4 style="color: red">${eventError}</h4>
@@ -59,7 +59,7 @@
             <div class="event">
                 <h1>${event.eventName}</h1>
                 <h2 name="money">${event.target} ${event.currency.currencyName}</h2>
-                <p class="description" style=" word-wrap: normal; height: 140px ">${event.description}</p>
+                <p class="description">${event.description}</p>
                 <h2>${event.cardIdentifier}</h2>
                 <button class="defaultButton" onclick="copyID(${event.eventId}); copyName(this);"
                         value="${event.eventName}">Fund
@@ -87,7 +87,7 @@
         </select><br><br>
 
         <label>Amount</label><br>
-        <input type="number" step="0.01" name="amount" placeholder="00.00"><br><br>
+        <input class="input" type="number" step="0.01" name="amount" placeholder="00.00"><br><br>
 
         <select name="fromCurrency" id="fromCurrency">
             <option value="0">GEL</option>

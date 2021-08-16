@@ -62,7 +62,7 @@ public class DepositServlet extends HttpServlet {
                 //  LoanList loanList = tBank.getAllLoans(account.getAccountId());
                 List<Deposit> deposits = tBank.getAllDeposits(account.getAccountId());
                 request.setAttribute("Deposits", deposits);
-                request.setAttribute("depositError", "Amount and Period can't be Empty!");
+                request.setAttribute("depositError", "Amount, Period or Name can't be Empty!");
                 request.getRequestDispatcher("DepositPage.jsp").forward(request, response);
                 return;
             } else {
@@ -71,7 +71,7 @@ public class DepositServlet extends HttpServlet {
 
                 DepositError ErrorMessage = tBank.openDeposit(accountId, cardIdentifier, period, money, name);
                 if (ErrorMessage == ErrorMessage.noErrorMessage) {
-                    request.setAttribute("success", "Loan Successful");
+                    request.setAttribute("success", "Deposit Successful");
                 } else if (ErrorMessage == ErrorMessage.accountIdNotValid) {
                     request.setAttribute("depositError", ErrorMessage);
                 } else if (ErrorMessage == ErrorMessage.cardNotValid) {

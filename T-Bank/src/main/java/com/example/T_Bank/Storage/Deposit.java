@@ -19,7 +19,7 @@ public class Deposit {
 
     public Deposit(int depositID, String depositName, int accountId, String cardIdentifier,
                    double balance, int currencyId, double percent, int periods, Timestamp startDate,
-                   Timestamp lastUpdate, Timestamp endDate, boolean active, double startMoney) {
+                   Timestamp lastUpdate, Timestamp endDate, boolean active, double aDouble) {
         this.depositID = depositID;
         this.depositName = depositName;
         this.accountId = accountId;

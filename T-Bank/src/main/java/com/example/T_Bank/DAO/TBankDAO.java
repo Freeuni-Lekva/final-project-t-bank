@@ -185,8 +185,8 @@ public class TBankDAO implements AccountDAO, CardDAO, TransactionsDAO, CurrencyD
     }
 
     @Override
-    public void openDeposit(int accountID, String cardIdentifier, int periods, double amount, String depositName) {
-        depositDAO.openDeposit(accountID, cardIdentifier, periods, amount, depositName);
+    public DepositError openDeposit(int accountID, String cardIdentifier, int periods, double amount, String depositName) {
+        return depositDAO.openDeposit(accountID, cardIdentifier, periods, amount, depositName);
     }
 
     @Override

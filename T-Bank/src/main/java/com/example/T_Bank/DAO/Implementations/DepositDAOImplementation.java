@@ -2,6 +2,8 @@ package com.example.T_Bank.DAO.Implementations;
 
 import com.example.T_Bank.DAO.DAOInterfaces.DepositDAO;
 import com.example.T_Bank.Storage.Deposit;
+import com.example.T_Bank.Storage.DepositError;
+import com.example.T_Bank.Storage.LoanErrorMessage;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -39,11 +41,68 @@ public class DepositDAOImplementation implements DepositDAO{
         return result;
     }
 
+    private boolean checkColumnValidity(String columnName, String table, String strValue, int intValue){
+        String checkQuery = "select count(*) from " + table + " where " + columnName + " = ?";
+        PreparedStatement stm = null;
+        try {
+            stm = connection.prepareStatement(checkQuery);
+            if(strValue == null){
+                stm.setInt(1, intValue);
+            }else{
+                stm.setString(1, strValue);
+            }
+            ResultSet rs = stm.executeQuery();
+            rs.next();
+            int count = rs.getInt(1);
+            if(count == 0){
+                return false;
+            }
+            if(count == 1){
+                return true;
+            }
+            if(count > 1){
+                return false;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return false;
+    }
+
     @Override
-    public void openDeposit(int accountID, String cardIdentifier, int periods, double amount, String depositName) {
+    public DepositError openDeposit(int accountID, String cardIdentifier, int periods, double amount, String depositName) {
+        if(!checkColumnValidity("account_id", "accounts", null, accountID)){
+            return DepositError.accountIdNotValid;
+        }
+
+        if(!checkColumnValidity("card_identifier", "account_cards", cardIdentifier, 0)){
+            return DepositError.cardNotValid;
+        }
+
+        if (periods < 0) {
+            return DepositError.periodsLessThanZero;
+        }
+
+        if (amount < 0) {
+            return DepositError.initialNegativeDeposit;
+        }
+
+        String checkQuery = "select gel_balance from account_cards where card_identifier = ?";
+        try {
+            PreparedStatement checkStm = connection.prepareStatement(checkQuery);
+            checkStm.setString(1, cardIdentifier);
+            ResultSet res = checkStm.executeQuery();
+            res.next();
+            if (res.getDouble(1) < amount) {
+                return DepositError.notEnoughOnBalance;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
         String addQuery = "insert into account_deposits(deposit_name, account_id, card_identifier, balance, currency_id, percent, " +
-                "periods, start_date, last_update_date, end_date, active, start_money)" +
-                "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "periods, start_date, last_update_date, end_date, active,start_money)" +
+                "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
         try {
             Timestamp startTime = new Timestamp(System.currentTimeMillis());
             long current = startTime.getTime();
@@ -54,7 +113,7 @@ public class DepositDAOImplementation implements DepositDAO{
             stm.setString(3, cardIdentifier);
             stm.setDouble(4, amount);
             stm.setInt(5, 1);
-            stm.setInt(6, 15);
+            stm.setDouble(6, 15);
             stm.setDouble(7, periods);
             stm.setTimestamp(8, startTime);
             stm.setTimestamp(9, startTime);
@@ -66,6 +125,7 @@ public class DepositDAOImplementation implements DepositDAO{
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        return DepositError.noErrorMessage;
     }
 
     @Override
@@ -112,6 +172,7 @@ public class DepositDAOImplementation implements DepositDAO{
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+
     }
 
     private void updateCard(String card, int currencyId, double balance) {

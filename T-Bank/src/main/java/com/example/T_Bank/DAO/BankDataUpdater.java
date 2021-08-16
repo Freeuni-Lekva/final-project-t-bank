@@ -11,7 +11,6 @@ public class BankDataUpdater extends TimerTask {
     }
     @Override
     public void run() {
-
         updateDeposits();
         updateLoans();
     }
@@ -113,19 +112,15 @@ public class BankDataUpdater extends TimerTask {
             depositStm.setBoolean(1, true);
             ResultSet deposits = depositStm.executeQuery();
             Timestamp now = new Timestamp(System.currentTimeMillis());
-//            System.out.println("ciklamde");
-//            System.out.println(depositStm);
+
+
             while (deposits.next()) {
-//                System.out.println("cikli");
+
                 int accountDepositId = deposits.getInt(1);
                 Timestamp startDate = deposits.getTimestamp(9);
                 Timestamp endDate = deposits.getTimestamp(11);
-//                System.out.println("startDate: " + startDate);
-//                System.out.println("now: " + now);
                 long minuteDiff = getDateDiff(startDate.getTime(), now.getTime(), TimeUnit.MINUTES);
-                System.out.println("diff minute:" + minuteDiff);
                 if (minuteDiff >= 1) {
-//                    System.out.println("update unda shevide");
                     updateDeposit(accountDepositId, minuteDiff, deposits, startDate, endDate, now);
                 }
             }
@@ -136,7 +131,6 @@ public class BankDataUpdater extends TimerTask {
 
     public void updateDeposit(int accountDepositId, long minuteDiff, ResultSet rs,
                               Timestamp startDate, Timestamp endDate, Timestamp nowDate) {
-//        System.out.println("update deposit");
         try {
             int periods = rs.getInt(8);
             if(minuteDiff >= periods){
@@ -146,9 +140,7 @@ public class BankDataUpdater extends TimerTask {
             double startMoney = rs.getDouble(13);
             double yearDiff = (double)minuteDiff / 12.0;
 
-            double mustBe = startMoney * Math.pow(1 + percent, yearDiff);
-//            double amount = rs.getDouble(5);
-//            double toUpdate = mustBe - amount;
+            double mustBe = startMoney + (startMoney * percent) / 12 * (double)minuteDiff;
 
             String updateDepositQuery = "update account_deposits " +
                     "set balance = ?" +
@@ -157,8 +149,6 @@ public class BankDataUpdater extends TimerTask {
             stm.setDouble(1, mustBe);
             stm.setInt(2, accountDepositId);
             stm.executeUpdate();
-//            System.out.println("deposit update query");
-            System.out.println(stm);
 
             if (minuteDiff >= periods) {
                 closeDeposit(accountDepositId, rs.getString(4), mustBe);
@@ -177,12 +167,11 @@ public class BankDataUpdater extends TimerTask {
             PreparedStatement stm = connection.prepareStatement(updateQuery);
             stm.setDouble(1, amount);
             stm.setString(2, card);
-//            System.out.println(stm);
+
             stm.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
     }
 
     private void closeDeposit(int accountDepositId,

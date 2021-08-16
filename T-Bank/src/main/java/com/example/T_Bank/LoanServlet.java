@@ -31,7 +31,6 @@ public class LoanServlet extends HttpServlet {
         LoanList loanList = tBank.getAllLoans(account.getAccountId());
         List<Loan> loans = loanList.getLoans().stream().filter(Loan::isActiveLoan).collect(Collectors.toList());
         request.setAttribute("Loans", loans);
-
         request.getRequestDispatcher("LoanPage.jsp").forward(request, response);
     }
 

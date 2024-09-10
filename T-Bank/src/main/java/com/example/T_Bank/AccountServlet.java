@@ -11,6 +11,10 @@ import java.util.Map;
 
 @WebServlet(name = "AccountServlet", value = "/AccountServlet")
 public class AccountServlet extends HttpServlet {
+    // kobas code 1
+    // kobas code 2
+
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletContext context=getServletContext();
